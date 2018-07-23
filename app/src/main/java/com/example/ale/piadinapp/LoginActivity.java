@@ -39,7 +39,8 @@ import java.util.List;
 import static android.Manifest.permission.READ_CONTACTS;
 
 import android.widget.Toast;
-import com.example.ale.network.DBHelper;
+import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.SessionManager;
 
 /**
  * A login screen that offers login via email/password.
@@ -64,6 +65,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // Utente: è data la possibilità di collegarsi con più account differenti dalla App.
     private User myUser;
 
+    private SessionManager session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+
+        session = new SessionManager(this);
+
+/*        if(session.loggedIn()){
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }*/
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -342,6 +352,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
                 if (myUser.userId>0){
+                    session.setLoggedIn(true);
                     finish();
                     Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
                     LoginActivity.this.startActivity(myIntent);
@@ -356,7 +367,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                         finish();
                                         dbTools = new DBHelper(mContext);
                                         myUser=dbTools.insertUser(myUser);
-
+                                        session.setLoggedIn(true);
                                         // Toast message in basso "Login effettuato"
                                         Toast myToast = Toast.makeText(mContext,R.string.updatingReport, Toast.LENGTH_SHORT);
                                         myToast.show();

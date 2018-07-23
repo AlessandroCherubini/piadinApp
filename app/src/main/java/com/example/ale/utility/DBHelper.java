@@ -1,4 +1,4 @@
-package com.example.ale.network;
+package com.example.ale.utility;
 
 import android.content.ContentValues;
 import android.content.Context;
