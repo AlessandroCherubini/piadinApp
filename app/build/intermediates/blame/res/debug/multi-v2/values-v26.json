@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Ale\\Desktop\\Cose di Ale\\Mobile Programming\\PiadinApp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v26\\values-v26.xml",
+            "outputFile": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v26\\values-v26.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\d3947282b69062894f7bc950886765da\\res\\values-v26\\values-v26.xml",
