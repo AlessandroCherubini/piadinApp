@@ -865,7 +865,6 @@ id edit_query
 id email
 id email_login_form
 id email_sign_in_button
-id empty_text
 id end
 id end_padder
 id enterAlways
@@ -1037,8 +1036,6 @@ layout abc_tooltip
 layout activity_home
 layout activity_login
 layout activity_main
-layout activity_prova
-layout content_http
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
 layout design_layout_snackbar

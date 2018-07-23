@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,14 +35,32 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.example.ale.utility.CustomRequest;
 /**
  * A login screen that offers login via email/password.
  */
@@ -66,6 +85,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private User myUser;
 
     private SessionManager session;
+    private RequestQueue queue;
+    final String url = "http://piadinapp.altervista.org/get_user.php";
+    final String urlCrea = "http://piadinapp.altervista.org/create_user.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +99,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         session = new SessionManager(this);
 
+        queue = Volley.newRequestQueue(this);
 /*        if(session.loggedIn()){
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
@@ -317,7 +340,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         UserLoginTask(String email, String password, Context context) {
             mEmail = email;
             mPassword = password;
-            mContext= context;
+            mContext = context;
         }
 
         @Override
@@ -326,17 +349,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             try{
                 dbHelper = new DBHelper(mContext);
                 myUser = dbHelper.getUser(mEmail);
+                ArrayList infos = getUserDB(mEmail);
 
-                if (myUser.userId>0) {
-                    // Account exists, check password.
-                    if (myUser.password.equals(mPassword))
+                //if(!infos.isEmpty()){
+                    if (myUser.userId>0) {
+                        // Account exists, check password.
+                        if (myUser.password.equals(mPassword))
+                            return true;
+                        else
+                            return false;
+                    } else {
+                        myUser.password=mPassword;
                         return true;
-                    else
-                        return false;
-                } else {
-                    myUser.password=mPassword;
-                    return true;
-                }
+                    }
+               // }
+
             } finally{
                 if (dbHelper!=null)
                     dbHelper.close();
@@ -349,10 +376,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
+            ArrayList infos = getUserDB(mEmail);
 
             if (success) {
                 if (myUser.userId>0){
-                    session.setLoggedIn(true);
+                    //session.setLoggedIn(true);
                     finish();
                     Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
                     LoginActivity.this.startActivity(myIntent);
@@ -366,7 +394,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     try{
                                         finish();
                                         dbTools = new DBHelper(mContext);
-                                        myUser=dbTools.insertUser(myUser);
+                                        myUser = dbTools.insertUser(myUser);
+                                        // TODO: da decidere il nickname!
+                                        String nickname = mEmail.split("@")[0];
+
+                                        insertUserDB(nickname, mEmail, mPassword);
                                         session.setLoggedIn(true);
                                         // Toast message in basso "Login effettuato"
                                         Toast myToast = Toast.makeText(mContext,R.string.updatingReport, Toast.LENGTH_SHORT);
@@ -404,5 +436,106 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+    // Metodi per collegarsi e recuperare informazioni sugli utenti dal DB esterno.
+
+    public ArrayList<String> getUserDB(final String emailUtente){
+        Map<String, String> params = new HashMap();
+        params.put("username", emailUtente);
+
+        JSONObject parameters = new JSONObject(params);
+        Log.d("JSON", parameters.toString());
+        final ArrayList<String> results = new ArrayList<>();
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                        Log.d("JSON2", response.toString());
+                        try{
+                            //JSONArray jArray = response.getJSONArray("user");
+                            JSONObject utente = response.getJSONObject("user");
+
+                            String email = utente.getString("email");
+                            String password = utente.getString("password");
+
+                            results.add(email);
+                            results.add(password);
+
+                            //view.setText(textView);
+
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                            //return null;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (error instanceof TimeoutError){
+                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof NoConnectionError) {
+                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        queue.add(jsObjRequest);
+
+        return results;
+    }
+
+    public void insertUserDB(final String nickname, final String email, final String password){
+        Map<String, String> params = new HashMap();
+        params.put("nickname", nickname);
+        params.put("password", password);
+        params.put("email", email);
+
+        JSONObject parameters = new JSONObject(params);
+        Log.d("JSON", parameters.toString());
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, urlCrea, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("JSON2", response.toString());
+                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (error instanceof TimeoutError){
+                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof NoConnectionError) {
+                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        queue.add(jsObjRequest);
+    }
+
 }
 

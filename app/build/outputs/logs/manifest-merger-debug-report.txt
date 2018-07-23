@@ -7,6 +7,7 @@ INJECTED from C:\Users\Ale\Desktop\PiadinApp\piadinApp\app\src\main\AndroidManif
 MERGED from [com.android.support:design:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\d3947282b69062894f7bc950886765da\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.1.aar\71c528955d402354f03474fc5d786612\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\49213af357d8f37f72db00cfd9174611\AndroidManifest.xml:2:1-11:12
+MERGED from [com.android.volley:volley:1.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\volley-1.1.1.aar\dd3508124a226a06cb6f141a7d0c0954\AndroidManifest.xml:2:1-11:12
 MERGED from [com.android.support:support-v4:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\support-v4-27.1.1.aar\b0b7e60eb3a884e7db1255fdce86ab42\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-fragment:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\support-fragment-27.1.1.aar\ebe82d2b5cd4c96d26f6af6251281b05\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:animated-vector-drawable:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-27.1.1.aar\03d6786f7e0aecfa385e832580db1988\AndroidManifest.xml:17:1-22:12
@@ -62,6 +63,8 @@ application
 ADDED from C:\Users\Ale\Desktop\PiadinApp\piadinApp\app\src\main\AndroidManifest.xml:13:5-37:19
 MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\49213af357d8f37f72db00cfd9174611\AndroidManifest.xml:9:5-20
 MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\49213af357d8f37f72db00cfd9174611\AndroidManifest.xml:9:5-20
+MERGED from [com.android.volley:volley:1.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\volley-1.1.1.aar\dd3508124a226a06cb6f141a7d0c0954\AndroidManifest.xml:9:5-20
+MERGED from [com.android.volley:volley:1.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\volley-1.1.1.aar\dd3508124a226a06cb6f141a7d0c0954\AndroidManifest.xml:9:5-20
 	android:supportsRtl
 		ADDED from C:\Users\Ale\Desktop\PiadinApp\piadinApp\app\src\main\AndroidManifest.xml:19:9-35
 	android:label
@@ -118,6 +121,8 @@ MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\Ale\.gradle\cache
 MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.1.aar\71c528955d402354f03474fc5d786612\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\49213af357d8f37f72db00cfd9174611\AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\49213af357d8f37f72db00cfd9174611\AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.volley:volley:1.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\volley-1.1.1.aar\dd3508124a226a06cb6f141a7d0c0954\AndroidManifest.xml:7:5-43
+MERGED from [com.android.volley:volley:1.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\volley-1.1.1.aar\dd3508124a226a06cb6f141a7d0c0954\AndroidManifest.xml:7:5-43
 MERGED from [com.android.support:support-v4:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\support-v4-27.1.1.aar\b0b7e60eb3a884e7db1255fdce86ab42\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-v4:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\support-v4-27.1.1.aar\b0b7e60eb3a884e7db1255fdce86ab42\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-fragment:27.1.1] C:\Users\Ale\.gradle\caches\transforms-1\files-1.1\support-fragment-27.1.1.aar\ebe82d2b5cd4c96d26f6af6251281b05\AndroidManifest.xml:20:5-44

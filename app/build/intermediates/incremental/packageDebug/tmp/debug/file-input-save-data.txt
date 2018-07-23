@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Mon Jul 23 15:57:04 CEST 2018
+#Mon Jul 23 17:50:36 CEST 2018
 1.base=C\:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
 0.baseType=DIRECTORY
 1.baseType=DIRECTORY
