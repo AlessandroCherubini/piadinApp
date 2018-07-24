@@ -132,12 +132,16 @@
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-xxhdpi-v4\\abc_ic_star_half_black_36dp.png"
     },
     {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_send.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\drawable\\ic_menu_send.xml"
+    },
+    {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\color_switch_thumb_material_light.xml.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\color\\switch_thumb_material_light.xml"
     },
     {
-        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_send.xml.flat",
-        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\drawable\\ic_menu_send.xml"
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_tab_1.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\fragment_tab_1.xml"
     },
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat",
@@ -302,6 +306,10 @@
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_media_action.xml.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\support-media-compat-27.1.1.aar\\95f40cf95a079ca8941b790032098460\\res\\layout\\notification_media_action.xml"
+    },
+    {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_tab_3.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\fragment_tab_3.xml"
     },
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\color-v23_design_tint_password_toggle.xml.flat",
@@ -1104,6 +1112,10 @@
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\93d73c0aa5e9efe8c18a695c8d677393\\res\\anim-v21\\design_bottom_sheet_slide_out.xml"
     },
     {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_tab_2.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\fragment_tab_2.xml"
+    },
+    {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldrtl-xhdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-ldrtl-xhdpi-v17\\abc_ic_menu_copy_mtrl_am_alpha.png"
     },
@@ -1324,12 +1336,12 @@
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.1.1.aar\\2dbe8dd6739926f021ab81bd977f7ac1\\res\\layout-v21\\notification_action.xml"
     },
     {
-        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat",
-        "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-mdpi-v4\\abc_list_selector_disabled_holo_dark.9.png"
-    },
-    {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\menu_home.xml.flat",
         "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\menu\\home.xml"
+    },
+    {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat",
+        "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-mdpi-v4\\abc_list_selector_disabled_holo_dark.9.png"
     },
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat",
