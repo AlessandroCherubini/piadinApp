@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true">
@@ -18,6 +19,20 @@
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal" />
 
+        <!-- Name Label -->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:textColor="@color/primary_dark"
+                android:hint="@string/nome" />
+        </android.support.design.widget.TextInputLayout>
+
         <!--  Email Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -32,7 +47,7 @@
                 android:hint="@string/email" />
         </android.support.design.widget.TextInputLayout>
 
-        <!--  Password Label -->
+        <!-- Password Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,8 +61,23 @@
                 android:hint="@string/password"/>
         </android.support.design.widget.TextInputLayout>
 
+        <!-- Password Re-enter Label -->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_reEnterPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:textColor="@color/primary_dark"
+                android:hint="@string/re_enter_password"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Signup Button -->
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -55,16 +85,16 @@
             android:padding="12dp"
             android:background="@color/primary_dark"
             android:textColor="@color/accent"
-            android:text="@string/login"/>
+            android:text="@string/registrazione_btn"/>
 
-        <TextView android:id="@+id/link_signup"
+        <TextView android:id="@+id/link_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:textColor="@color/primary_dark"
-            android:text="@string/link_registrazione"
+            android:text="@string/login_swap"
             android:gravity="center"
-            android:textSize="16dip"/>
+            android:textColor="@color/primary_dark"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 </ScrollView>

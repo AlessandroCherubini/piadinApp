@@ -129,7 +129,6 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.ordini) {
-
                 Intent intent = new Intent(this, MyOrders.class);
                 startActivity(intent);
             }
