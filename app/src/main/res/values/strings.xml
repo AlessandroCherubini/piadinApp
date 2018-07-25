@@ -2,7 +2,7 @@
     <string name="app_name">PiadinApp</string>
     <string name="main_top_cover">Main Top</string>
     <string name="main_title">GianGusto</string>
-    <string name="login">LOGIN</string>
+    <string name="login">Login</string>
     <string name="signup">Registrazione</string>
     <string name="title_activity_login">Login</string>
 

@@ -27,7 +27,15 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name"
+            android:label="@string/login"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".SignUpActivity"
+            android:label="@string/signup"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
