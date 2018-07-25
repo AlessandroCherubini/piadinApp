@@ -45,6 +45,15 @@
             android:name="com.example.ale.piadinapp.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.example.ale.piadinapp.MyOrders"
+            android:label="@string/title_activity_my_orders"
+            android:parentActivityName="com.example.ale.piadinapp.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

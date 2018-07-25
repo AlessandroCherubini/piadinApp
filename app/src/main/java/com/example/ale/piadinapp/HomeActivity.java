@@ -1,5 +1,6 @@
 package com.example.ale.piadinapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -128,6 +129,9 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.ordini) {
+
+                Intent intent = new Intent(this, MyOrders.class);
+                startActivity(intent);
             }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

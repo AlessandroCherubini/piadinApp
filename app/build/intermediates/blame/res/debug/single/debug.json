@@ -156,6 +156,10 @@
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-xxhdpi-v4\\abc_list_pressed_holo_light.9.png"
     },
     {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_my_orders.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\activity_my_orders.xml"
+    },
+    {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-xxhdpi-v4\\abc_btn_radio_to_on_mtrl_000.png"
     },
@@ -560,6 +564,10 @@
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\color-v23\\abc_tint_default.xml"
     },
     {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_scrolling.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\activity_scrolling.xml"
+    },
+    {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_part_chronometer.xml.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.1.1.aar\\2dbe8dd6739926f021ab81bd977f7ac1\\res\\layout\\notification_template_part_chronometer.xml"
     },
@@ -734,6 +742,10 @@
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\color_abc_hint_foreground_material_dark.xml.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\color\\abc_hint_foreground_material_dark.xml"
+    },
+    {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_content_scrolling.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\content_scrolling.xml"
     },
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_spinner_textfield_background_material.xml.flat",
@@ -1048,6 +1060,10 @@
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-ldrtl-xhdpi-v17\\abc_spinner_mtrl_am_alpha.9.png"
     },
     {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\menu_menu_scrolling.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\menu\\menu_scrolling.xml"
+    },
+    {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_popup_background_mtrl_mult.9.png.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-mdpi-v4\\abc_popup_background_mtrl_mult.9.png"
     },
@@ -1082,6 +1098,10 @@
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_ic_star_half_black_36dp.png.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\f4b3236e8a9276c45814d5cdcd6a3c2d\\res\\drawable-mdpi-v4\\abc_ic_star_half_black_36dp.png"
+    },
+    {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_content_my_orders.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\layout\\content_my_orders.xml"
     },
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_alert_dialog_material.xml.flat",
@@ -1638,6 +1658,10 @@
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_design_navigation_item_subheader.xml.flat",
         "source": "C:\\Users\\dabli\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\93d73c0aa5e9efe8c18a695c8d677393\\res\\layout\\design_navigation_item_subheader.xml"
+    },
+    {
+        "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\menu_menu_my_orders.xml.flat",
+        "source": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\src\\main\\res\\menu\\menu_my_orders.xml"
     },
     {
         "merged": "C:\\Users\\dabli\\Desktop\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_manage.xml.flat",
