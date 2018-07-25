@@ -6,23 +6,16 @@
     <string name="signup">Registrazione</string>
     <string name="title_activity_login">Login</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Login</string>
-    <string name="action_sign_in_short">Login</string>
-    <string name="error_invalid_email">Questa email è incorretta.</string>
-    <string name="error_invalid_password">Questa password è troppo corta.</string>
-    <string name="error_incorrect_password">Password errata.</string>
-    <string name="error_field_required">Campo obbligatorio richiesto.</string>
-    <string name="permission_rationale">"Sono richiesti i permessi dei contatti per
-        inviare una email al fine di completare l'operazione."
-    </string>
-    <string name="confirm_registry">Email non trovata.
-        Vuoi creare un nuovo utente con questa email e password?</string>
-    <string name="yes">Sì</string>
-    <string name="no">No</string>
-    <string name="updatingReport">Login effettuato con successo.</string>
-    <string name="title_activity_http">HTTPActivity</string>
+    <!-- Strings related to registration -->
+    <string name="link_registrazione">Non hai un account? Creane uno!</string>
+    <!-- String Login -->
+    <string name="auth">"Autenticazione in corso..."</string>
+
+    <string name="nome">Nome</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="re_enter_password">Reinserisci la password</string>
+    <string name="registrazione_btn">Registra l\'account</string>
+    <string name="login_swap">Hai già un account? Login!</string>
 
 </resources>

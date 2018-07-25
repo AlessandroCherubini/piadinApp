@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void registerActivity(View view){
-        //Intent intent = new Intent(this, )
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
     }
 /*
     private void logout(){

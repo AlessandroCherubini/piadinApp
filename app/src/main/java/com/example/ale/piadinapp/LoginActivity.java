@@ -1,46 +1,18 @@
 package com.example.ale.piadinapp;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.example.ale.utility.*;
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
+
+import android.content.Intent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static android.Manifest.permission.READ_CONTACTS;
-
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -48,426 +20,230 @@ import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.example.ale.utility.DBHelper;
-import com.example.ale.utility.SessionManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.example.ale.utility.CustomRequest;
-/**
- * A login screen that offers login via email/password.
- */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
-    // Utente: è data la possibilità di collegarsi con più account differenti dalla App.
-    private User myUser;
+public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
+    private static final int REQUEST_SIGNUP = 0;
 
-    private SessionManager session;
-    private RequestQueue queue;
-    final String url = "http://piadinapp.altervista.org/get_user.php";
-    final String urlCrea = "http://piadinapp.altervista.org/create_user.php";
+    @BindView(R.id.input_email) EditText _emailText;
+    @BindView(R.id.input_password) EditText _passwordText;
+    @BindView(R.id.btn_login) Button _loginButton;
+    @BindView(R.id.link_signup) TextView _signupLink;
+
+    String email, password;
+    DBHelper helper;
+    final String getUserURL = "http://piadinapp.altervista.org/get_user.php";
+    String userExternalName = "";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        ButterKnife.bind(this);
 
-        session = new SessionManager(this);
+        _loginButton.setOnClickListener(new View.OnClickListener() {
 
-        queue = Volley.newRequestQueue(this);
-/*        if(session.loggedIn()){
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            finish();
-        }*/
-
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+            public void onClick(View v) {
+                login();
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        _signupLink.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-                attemptLogin();
+            public void onClick(View v) {
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                startActivityForResult(intent, REQUEST_SIGNUP);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
+    public void login() {
+        Log.d(TAG, "Login");
+
+        email = _emailText.getText().toString();
+        password = _passwordText.getText().toString();
+
+        if (!validate()) {
+            onLoginFailed();
             return;
         }
 
-        getLoaderManager().initLoader(0, null, this);
-    }
+        _loginButton.setEnabled(false);
 
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
+        helper = new DBHelper(this);
+        User internalUser = helper.getUserByEmail(email);
+        Log.d("UTENTE/PASSWORD1", "password interna: " + internalUser.password);
+        Log.d("UTENTE/PASSWORD2", "password immessa: " + password);
+        Log.d("UTENTE/EMAIL1", "email interna: " + internalUser.email);
+        Log.d("UTENTE/EMAIL2", "email inserita: " + email);
 
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
-    }
+        Log.d("UTENTE", internalUser.toString());
 
+        // controllo che l'utente esista nel dB interno.
+        if(!internalUser.password.isEmpty()){
+            // L'utente esiste ma la password inserita è errata!
+            if(!internalUser.password.equals(password)){
+                Toast.makeText(getBaseContext(), "Login fallito! Password errata!", Toast.LENGTH_LONG).show();
+                _passwordText.setError("Password errata");
+                _loginButton.setEnabled(true);
+                return;
+            }else{
+                // Tutto ok! email e password corretti! Procediamo con il login!
+                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                        R.style.AppTheme_Dark_Dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Autenticazione in corso...");
+                progressDialog.show();
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        //mAuthTask = new UserLoginTask(email, password, this);
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password, this);
-            mAuthTask.execute((Void) null);
-        }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-        private final Context mContext;
-
-        UserLoginTask(String email, String password, Context context) {
-            mEmail = email;
-            mPassword = password;
-            mContext = context;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            DBHelper dbHelper=null;
-            try{
-                dbHelper = new DBHelper(mContext);
-                myUser = dbHelper.getUser(mEmail);
-                ArrayList infos = getUserDB(mEmail);
-
-                //if(!infos.isEmpty()){
-                    if (myUser.userId>0) {
-                        // Account exists, check password.
-                        if (myUser.password.equals(mPassword))
-                            return true;
-                        else
-                            return false;
-                    } else {
-                        myUser.password=mPassword;
-                        return true;
-                    }
-               // }
-
-            } finally{
-                if (dbHelper!=null)
-                    dbHelper.close();
-            }
-            // return false if no previous checks are true
-            //return false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-            ArrayList infos = getUserDB(mEmail);
-
-            if (success) {
-                if (myUser.userId>0){
-                    //session.setLoggedIn(true);
-                    finish();
-                    Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                    LoginActivity.this.startActivity(myIntent);
-                } else {
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    DBHelper dbTools=null;
-                                    try{
-                                        finish();
-                                        dbTools = new DBHelper(mContext);
-                                        myUser = dbTools.insertUser(myUser);
-                                        // TODO: da decidere il nickname!
-                                        String nickname = mEmail.split("@")[0];
-
-                                        insertUserDB(nickname, mEmail, mPassword);
-                                        session.setLoggedIn(true);
-                                        // Toast message in basso "Login effettuato"
-                                        Toast myToast = Toast.makeText(mContext,R.string.updatingReport, Toast.LENGTH_SHORT);
-                                        myToast.show();
-                                        // Cambio di activity e redirect alla Home Page
-                                        Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        LoginActivity.this.startActivity(myIntent);
-                                    } finally{
-                                        if (dbTools!=null)
-                                            dbTools.close();
-                                    }
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                                    mPasswordView.requestFocus();
-                                    break;
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                // On complete call either onLoginSuccess or onLoginFailed
+                                onLoginSuccess();
+                                // onLoginFailed();
+                                progressDialog.dismiss();
                             }
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
-                    builder.setMessage(R.string.confirm_registry).setPositiveButton(R.string.yes, dialogClickListener)
-                            .setNegativeButton(R.string.no, dialogClickListener).show();
-                }
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                        }, 3000);
             }
+        }else{
+            // Utente inesistente!
+            Log.d("UTENTE/INESISTENTE", "Utente inesistente nel dB interno!");
+            // cerco nel dB esterno.
+            userExistsInExternalDB(email);
+            Log.d("UTENTE/DBESTERNO", "Ho cercato nel dB esterno l'utente");
+            Log.d("UTENTE/DBESTERNO2", "Utente si chiama: " + userExternalName);
+            if(!userExternalName.equals(null)){
+                // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
+                User newUser = new User(0, userExternalName, password, email);
+                helper.insertUser(newUser);
+                Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
+                // Procediamo con il login!
+                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                        R.style.AppTheme_Dark_Dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Autenticazione in corso...");
+                progressDialog.show();
+
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                // On complete call either onLoginSuccess or onLoginFailed
+                                onLoginSuccess();
+                                // onLoginFailed();
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+            }else{
+                Toast.makeText(getBaseContext(), "Utente inesistente: ti devi prima registrare!", Toast.LENGTH_LONG).show();
+                _emailText.setError("Utente inesistente");
+                _loginButton.setEnabled(true);
+                return;
+            }
+
         }
 
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SIGNUP) {
+            if (resultCode == RESULT_OK) {
+
+                // TODO: Implement successful signup logic here
+                // By default we just finish the Activity and log them in automatically
+                this.finish();
+            }
         }
     }
 
-    // Metodi per collegarsi e recuperare informazioni sugli utenti dal DB esterno.
+    @Override
+    public void onBackPressed() {
+        // Disable going back to the MainActivity
+        moveTaskToBack(true);
+    }
 
-    public ArrayList<String> getUserDB(final String emailUtente){
+    public void onLoginSuccess() {
+        _loginButton.setEnabled(true);
+        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+        finish();
+    }
+
+    public void onLoginFailed() {
+        Toast.makeText(getBaseContext(), "Login fallito!", Toast.LENGTH_LONG).show();
+
+        _loginButton.setEnabled(true);
+    }
+
+    public boolean validate() {
+        boolean valid = true;
+
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
+
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _emailText.setError("Indirizzo email non valido");
+            valid = false;
+        } else {
+            _emailText.setError(null);
+        }
+
+        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+            _passwordText.setError("Deve contenere dai 4 ai 10 caratteri alfanumerici");
+            valid = false;
+        } else {
+            _passwordText.setError(null);
+        }
+
+        return valid;
+    }
+
+    public void userExistsInExternalDB(final String emailUtente){
+
         Map<String, String> params = new HashMap();
-        params.put("username", emailUtente);
+        params.put("email", emailUtente);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
 
         JSONObject parameters = new JSONObject(params);
         Log.d("JSON", parameters.toString());
-        final ArrayList<String> results = new ArrayList<>();
 
-        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, getUserURL, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
-                        Log.d("JSON2", response.toString());
+
+                        Log.d("UTENTE/CONTROLLO_UTENTE", response.toString());
                         try{
                             //JSONArray jArray = response.getJSONArray("user");
-                            JSONObject utente = response.getJSONObject("user");
+                            JSONObject successObject = response.getJSONObject("user");
 
-                            String email = utente.getString("email");
-                            String password = utente.getString("password");
+                            String username = successObject.getString("name");
+                            Log.d("UTENTE/NomeEsterno", username);
 
-                            results.add(email);
-                            results.add(password);
-
-                            //view.setText(textView);
+                            setExternalName(username);
 
                         }catch(JSONException e){
                             e.printStackTrace();
-                            //return null;
                         }
 
                     }
@@ -494,48 +270,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         queue.add(jsObjRequest);
 
-        return results;
     }
 
-    public void insertUserDB(final String nickname, final String email, final String password){
-        Map<String, String> params = new HashMap();
-        params.put("nickname", nickname);
-        params.put("password", password);
-        params.put("email", email);
-
-        JSONObject parameters = new JSONObject(params);
-        Log.d("JSON", parameters.toString());
-
-        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, urlCrea, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("JSON2", response.toString());
-                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                if (error instanceof TimeoutError){
-                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
-                }else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof AuthFailureError) {
-                    Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ServerError) {
-                    Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof NetworkError) {
-                    Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        queue.add(jsObjRequest);
+    public void setExternalName(String name){
+        userExternalName = name;
     }
-
 }
-

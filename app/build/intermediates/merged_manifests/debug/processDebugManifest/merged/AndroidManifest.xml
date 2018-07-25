@@ -42,6 +42,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name="com.example.ale.piadinapp.HomeActivity" />
+        <activity android:name="com.example.ale.piadinapp.SignUpActivity" />
     </application>
 
 </manifest>

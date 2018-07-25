@@ -420,6 +420,14 @@
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable-hdpi-v4\\abc_btn_switch_to_on_mtrl_00001.9.png"
     },
     {
+        "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\anim_push_left_out.xml.flat",
+        "source": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\src\\main\\res\\anim\\push_left_out.xml"
+    },
+    {
+        "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\anim_push_left_in.xml.flat",
+        "source": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\src\\main\\res\\anim\\push_left_in.xml"
+    },
+    {
         "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ab_share_pack_mtrl_alpha.9.png.flat",
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable-hdpi-v4\\abc_ab_share_pack_mtrl_alpha.9.png"
     },
@@ -1088,10 +1096,6 @@
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable\\abc_cab_background_internal_bg.xml"
     },
     {
-        "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher.xml"
-    },
-    {
         "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_btn_check_to_on_mtrl_015.png.flat",
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable-xxhdpi-v4\\abc_btn_check_to_on_mtrl_015.png"
     },
@@ -1312,6 +1316,10 @@
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable-xxhdpi-v4\\abc_popup_background_mtrl_mult.9.png"
     },
     {
+        "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_logo.png.flat",
+        "source": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\src\\main\\res\\drawable\\logo.png"
+    },
+    {
         "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_seekbar_thumb_material.xml.flat",
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable\\abc_seekbar_thumb_material.xml"
     },
@@ -1504,6 +1512,10 @@
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable-hdpi-v4\\abc_popup_background_mtrl_mult.9.png"
     },
     {
+        "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_sign_up.xml.flat",
+        "source": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\src\\main\\res\\layout\\activity_sign_up.xml"
+    },
+    {
         "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_list_menu_item_checkbox.xml.flat",
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\layout\\abc_list_menu_item_checkbox.xml"
     },
@@ -1622,10 +1634,6 @@
     {
         "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat",
         "source": "C:\\Users\\Ale\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\71c528955d402354f03474fc5d786612\\res\\drawable-xhdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png"
-    },
-    {
-        "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     },
     {
         "merged": "C:\\Users\\Ale\\Desktop\\PiadinApp\\piadinApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_list_menu_item_icon.xml.flat",
