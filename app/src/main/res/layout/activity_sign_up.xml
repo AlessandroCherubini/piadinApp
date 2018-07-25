@@ -83,6 +83,8 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
+            android:background="@color/primary_dark"
+            android:textColor="@color/accent"
             android:text="@string/registrazione_btn"/>
 
         <TextView android:id="@+id/link_login"
