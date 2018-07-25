@@ -602,6 +602,7 @@ dimen abc_text_size_title_material
 dimen abc_text_size_title_material_toolbar
 dimen activity_horizontal_margin
 dimen activity_vertical_margin
+dimen app_bar_height
 dimen compat_button_inset_horizontal_material
 dimen compat_button_inset_vertical_material
 dimen compat_button_padding_horizontal_material
@@ -661,6 +662,8 @@ dimen hint_pressed_alpha_material_light
 dimen item_touch_helper_max_drag_scroll_per_frame
 dimen item_touch_helper_swipe_escape_max_velocity
 dimen item_touch_helper_swipe_escape_velocity
+dimen nav_header_height
+dimen nav_header_vertical_spacing
 dimen notification_action_icon_size
 dimen notification_action_text_size
 dimen notification_big_circle_margin
@@ -676,6 +679,7 @@ dimen notification_small_icon_size_as_large
 dimen notification_subtext_size
 dimen notification_top_pad
 dimen notification_top_pad_large_text
+dimen text_margin
 dimen tooltip_corner_radius
 dimen tooltip_horizontal_padding
 dimen tooltip_margin
@@ -778,6 +782,12 @@ drawable design_password_eye
 drawable design_snackbar_background
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable ic_menu_camera
+drawable ic_menu_gallery
+drawable ic_menu_manage
+drawable ic_menu_send
+drawable ic_menu_share
+drawable ic_menu_slideshow
 drawable main_title
 drawable main_top_cover
 drawable navigation_empty_icon
@@ -793,6 +803,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable side_nav_bar
 drawable standard
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -820,6 +831,7 @@ id action_menu_presenter
 id action_mode_bar
 id action_mode_bar_stub
 id action_mode_close_button
+id action_settings
 id action_text
 id actions
 id activity_chooser_view_content
@@ -827,6 +839,7 @@ id add
 id alertTitle
 id all
 id always
+id app_bar
 id async
 id auto
 id barrier
@@ -861,6 +874,7 @@ id design_navigation_view
 id dimensions
 id direct
 id disableHome
+id drawer_layout
 id edit_query
 id email
 id email_login_form
@@ -873,6 +887,7 @@ id enterAlwaysCollapsed
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
+id fab
 id fill
 id fill_horizontal
 id fill_vertical
@@ -887,6 +902,7 @@ id icon
 id icon_group
 id ifRoom
 id image
+id imageView
 id info
 id invisible
 id italic
@@ -899,12 +915,17 @@ id listMode
 id list_item
 id login_form
 id login_progress
+id logout
 id masked
 id media_actions
+id menu
 id message
 id middle
 id mini
 id multiply
+id nav_send
+id nav_share
+id nav_view
 id navigation_header_container
 id never
 id none
@@ -912,7 +933,9 @@ id normal
 id notification_background
 id notification_main_column
 id notification_main_column_container
+id ordini
 id packed
+id pager
 id parallax
 id parent
 id parentPanel
@@ -920,6 +943,7 @@ id parent_matrix
 id password
 id percent
 id pin
+id profile
 id progress_circular
 id progress_horizontal
 id radio
@@ -967,7 +991,9 @@ id status_bar_latest_event_content
 id submenuarrow
 id submit_area
 id tabMode
+id tab_layout
 id tag_transition_group
+id tessera
 id text
 id text2
 id textSpacerNoButtons
@@ -980,6 +1006,8 @@ id time
 id title
 id titleDividerNoCustom
 id title_template
+id toolbar
+id toolbar_layout
 id top
 id topPanel
 id top_cereali
@@ -1037,8 +1065,14 @@ layout abc_tooltip
 layout activity_home
 layout activity_login
 layout activity_main
+layout activity_my_orders
 layout activity_prova
+layout activity_scrolling
+layout app_bar_home
+layout content_home
 layout content_http
+layout content_my_orders
+layout content_scrolling
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
 layout design_layout_snackbar
@@ -1053,6 +1087,10 @@ layout design_navigation_item_subheader
 layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_password_icon
+layout fragment_tab_1
+layout fragment_tab_2
+layout fragment_tab_3
+layout nav_header_home
 layout notification_action
 layout notification_action_tombstone
 layout notification_media_action
@@ -1072,6 +1110,10 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+menu activity_home_drawer
+menu home
+menu menu_my_orders
+menu menu_scrolling
 mipmap ic_launcher
 mipmap ic_launcher_round
 string abc_action_bar_home_description
@@ -1103,6 +1145,7 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string action_settings
 string action_sign_in
 string action_sign_in_short
 string app_name
@@ -1114,9 +1157,16 @@ string error_field_required
 string error_incorrect_password
 string error_invalid_email
 string error_invalid_password
+string hello_blank_fragment
+string large_text
 string login
 string main_title
 string main_top_cover
+string nav_header_desc
+string nav_header_subtitle
+string nav_header_title
+string navigation_drawer_close
+string navigation_drawer_open
 string no
 string password_toggle_content_description
 string path_password_eye
@@ -1129,8 +1179,11 @@ string prompt_password
 string search_menu_title
 string signup
 string status_bar_notification_info_overflow
+string title_activity_home
 string title_activity_http
 string title_activity_login
+string title_activity_my_orders
+string title_activity_scrolling
 string updatingReport
 string yes
 style AlertDialog_AppCompat
