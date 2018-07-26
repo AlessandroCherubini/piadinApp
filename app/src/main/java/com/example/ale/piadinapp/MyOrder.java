@@ -87,6 +87,7 @@ public class MyOrder extends AppCompatActivity
 
             Intent intent = new Intent(this, Badge.class);
             startActivity(intent);
+            finish();
 
         } else if (id == R.id.logout) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {

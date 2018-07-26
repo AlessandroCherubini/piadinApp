@@ -131,6 +131,7 @@ public class Badge extends AppCompatActivity
 
             Intent intent = new Intent(this, MyOrder.class);
             startActivity(intent);
+            finish();
 
         }
 

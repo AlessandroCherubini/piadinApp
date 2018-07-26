@@ -142,6 +142,7 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
             if (id == R.id.profile) {
+                
 
         } else if (id == R.id.tessera) {
 
