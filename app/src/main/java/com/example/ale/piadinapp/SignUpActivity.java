@@ -47,6 +47,7 @@ public class SignUpActivity extends AppCompatActivity {
     String name, email, password, reEnterPassword;
     final String urlCrea = "http://piadinapp.altervista.org/create_user.php";
     private RequestQueue queue;
+    SessionManager session;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
         queue = Volley.newRequestQueue(this);
+        session = new SessionManager(this);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,18 +118,16 @@ public class SignUpActivity extends AppCompatActivity {
 
         DBHelper dbHelper = new DBHelper(this);
 
-        /*name = _nameText.getText().toString();
-        //String address = _addressText.getText().toString();
-        email = _emailText.getText().toString();
-        //String mobile = _mobileText.getText().toString();
-        password = _passwordText.getText().toString();*/
-
         User newUser = new User(0, name, password, email);
         dbHelper.insertUser(newUser);
         User user = dbHelper.getUser(name);
         Log.d("UTENTE CREATO", user.toString());
         insertUserDB(name, password, email);
         dbHelper.close();
+
+        // sessione per l'utente.
+        session.setLoggedIn(true);
+        session.createLoginSession(name, password);
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -151,27 +151,12 @@ public class SignUpActivity extends AppCompatActivity {
             _nameText.setError(null);
         }
 
-/*        if (address.isEmpty()) {
-            _addressText.setError("Inserisci un indirizzo email valido");
-            valid = false;
-        } else {
-            _addressText.setError(null);
-        }*/
-
-
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("Inserisci un indirizzo email valido");
             valid = false;
         } else {
             _emailText.setError(null);
         }
-
-/*        if (mobile.isEmpty() || mobile.length()!=10) {
-            _mobileText.setError("Enter Valid Mobile Number");
-            valid = false;
-        } else {
-            _mobileText.setError(null);
-        }*/
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             _passwordText.setError("Deve contenere dai 4 ai 10 caratteri alfanumerici");
