@@ -48,12 +48,15 @@ public class LoginActivity extends AppCompatActivity {
     DBHelper helper;
     final String getUserURL = "http://piadinapp.altervista.org/get_user.php";
     String userExternalName = "";
+    SessionManager session;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        session = new SessionManager(this);
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -184,6 +187,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
+
+        User utente = helper.getUserByEmail(_emailText.getText().toString());
+        Log.d("UTENTE/CREDENTIANLS", utente.nickname + " " + utente.email);
+        helper.close();
+
+        session.setLoggedIn(true);
+        session.createLoginSession(utente.nickname, utente.email);
+
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
     }
