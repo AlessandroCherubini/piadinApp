@@ -25,10 +25,10 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     DBHelper helper;
     final String getUserURL = "http://piadinapp.altervista.org/get_user.php";
     String userExternalName = "";
+    //boolean wait = true;
     SessionManager session;
 
     @Override
@@ -130,38 +131,8 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             // Utente inesistente!
             Log.d("UTENTE/INESISTENTE", "Utente inesistente nel dB interno!");
-            // cerco nel dB esterno.
-            userExistsInExternalDB(email);
-            Log.d("UTENTE/DBESTERNO", "Ho cercato nel dB esterno l'utente");
-            Log.d("UTENTE/DBESTERNO2", "Utente si chiama: " + userExternalName);
-            if(!userExternalName.equals(null)){
-                // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
-                User newUser = new User(0, userExternalName, password, email);
-                helper.insertUser(newUser);
-                Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
-                // Procediamo con il login!
-                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                        R.style.AppTheme_Dark_Dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Autenticazione in corso...");
-                progressDialog.show();
-
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                // On complete call either onLoginSuccess or onLoginFailed
-                                onLoginSuccess();
-                                // onLoginFailed();
-                                progressDialog.dismiss();
-                            }
-                        }, 3000);
-            }else{
-                Toast.makeText(getBaseContext(), "Utente inesistente: ti devi prima registrare!", Toast.LENGTH_LONG).show();
-                _emailText.setError("Utente inesistente");
-                _loginButton.setEnabled(true);
-                return;
-            }
-
+            // cerco nel dB esterno: se esiste allora lo aggiungo nel DB interno e loggo.
+            addUserIfInExternalDBExists(email);
         }
 
     }
@@ -228,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
         return valid;
     }
 
-    public void userExistsInExternalDB(final String emailUtente){
+    public void addUserIfInExternalDBExists(final String emailUtente){
 
         Map<String, String> params = new HashMap();
         params.put("email", emailUtente);
@@ -245,13 +216,43 @@ public class LoginActivity extends AppCompatActivity {
 
                         Log.d("UTENTE/CONTROLLO_UTENTE", response.toString());
                         try{
-                            //JSONArray jArray = response.getJSONArray("user");
-                            JSONObject successObject = response.getJSONObject("user");
+                            Log.d("UTENTE/DENTRO", "Sono dentro il try");
+                            JSONArray success = response.getJSONArray("user");
 
-                            String username = successObject.getString("name");
+                            Log.d("UTENTE/DENTRO", success.toString());
+                            JSONObject obj = success.getJSONObject(0);
+                            String username = obj.getString("name");
                             Log.d("UTENTE/NomeEsterno", username);
 
-                            setExternalName(username);
+                            Log.d("UTENTE/DBESTERNO", "Ho cercato nel dB esterno l'utente");
+
+                            if(!username.isEmpty()){
+                                // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
+                                User newUser = new User(0, username, password, email);
+                                helper.insertUser(newUser);
+                                Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
+                                // Procediamo con il login!
+                                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                                        R.style.AppTheme_Dark_Dialog);
+                                progressDialog.setIndeterminate(true);
+                                progressDialog.setMessage("Autenticazione in corso...");
+                                progressDialog.show();
+
+                                new android.os.Handler().postDelayed(
+                                        new Runnable() {
+                                            public void run() {
+                                                // On complete call either onLoginSuccess or onLoginFailed
+                                                onLoginSuccess();
+                                                // onLoginFailed();
+                                                progressDialog.dismiss();
+                                            }
+                                        }, 3000);
+                            }else{
+                                Toast.makeText(getBaseContext(), "Utente inesistente: ti devi prima registrare!", Toast.LENGTH_LONG).show();
+                                _emailText.setError("Utente inesistente");
+                                _loginButton.setEnabled(true);
+                                return;
+                            }
 
                         }catch(JSONException e){
                             e.printStackTrace();
@@ -277,13 +278,15 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        }) {
+            @Override
+            public Request.Priority getPriority() {
+                return Priority.IMMEDIATE;
+            }
+        };
 
         queue.add(jsObjRequest);
 
     }
 
-    public void setExternalName(String name){
-        userExternalName = name;
-    }
 }

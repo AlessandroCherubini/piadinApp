@@ -99,8 +99,6 @@ public class SignUpActivity extends AppCompatActivity {
         progressDialog.setMessage("Creazione dell'account...");
         progressDialog.show();
 
-        // TODO: Implement your own signup logic here.
-
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {

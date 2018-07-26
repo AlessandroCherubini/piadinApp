@@ -99,15 +99,4 @@ public class DBHelper extends SQLiteOpenHelper{
         return myUser;
     }
 
-    public boolean userExists (String email){
-        String query = "Select username from logins where email='"+email+"'";
-        SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery(query, null);
-        Log.d("UTENTE/CURSOR", cursor.getString(0));
-        if(cursor == null){
-            return false;
-        }
-
-        return true;
-    }
 }
