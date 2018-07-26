@@ -3,6 +3,8 @@ package com.example.ale.piadinapp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +41,8 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#552d27")));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         session = new SessionManager(this);
@@ -90,7 +94,7 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto.
+        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
         HashMap<String, String> utente;
         utente = session.getUserDetails();
 
