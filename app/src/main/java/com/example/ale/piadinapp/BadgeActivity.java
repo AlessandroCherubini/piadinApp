@@ -4,10 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,7 +16,7 @@ import android.view.MenuItem;
 
 import com.example.ale.utility.SessionManager;
 
-public class Badge extends AppCompatActivity
+public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SessionManager session;
@@ -84,6 +81,10 @@ public class Badge extends AppCompatActivity
 
         if (id == R.id.profile) {
 
+            Intent intent = new Intent(this, MyProfileActivity.class);
+            startActivity(intent);
+            finish();
+
         } else if (id == R.id.tessera) {
 
 
@@ -95,7 +96,7 @@ public class Badge extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             //Yes button clicked
 
-                            final ProgressDialog progressDialog = new ProgressDialog(Badge.this,
+                            final ProgressDialog progressDialog = new ProgressDialog(BadgeActivity.this,
                                     R.style.AppTheme_Dark_Dialog);
                             progressDialog.setIndeterminate(true);
                             progressDialog.setMessage("Logout in corso...");
@@ -129,7 +130,7 @@ public class Badge extends AppCompatActivity
 
         } else if (id == R.id.ordini) {
 
-            Intent intent = new Intent(this, MyOrder.class);
+            Intent intent = new Intent(this, MyOrderActivity.class);
             startActivity(intent);
             finish();
 
