@@ -16,8 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.ale.utility.SessionManager;
+
+import java.util.HashMap;
 
 public class MyProfileActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,6 +44,16 @@ public class MyProfileActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
+        HashMap<String, String> utente;
+        utente = session.getUserDetails();
+
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        txtProfileName.setText(utente.get("name"));
+
+        TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        txtProfileEmail.setText(utente.get("email"));
     }
 
     @Override
