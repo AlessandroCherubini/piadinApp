@@ -1,5 +1,8 @@
 package com.example.ale.piadinapp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Piadina {
 
     private int id;
@@ -7,14 +10,14 @@ public class Piadina {
     private String descrizione;
     private double price;
     private int rating;
+    List<Ingrediente> ingredienti = new ArrayList<>();
 
 
 
-
-    public Piadina(int id, String nome, String descrizione, double price, int rating) {
+    public Piadina(int id, String nome, List<Ingrediente>ingredienti, double price, int rating) {
         this.id = id;
         this.nome = nome;
-        this.descrizione = descrizione;
+        this.ingredienti=ingredienti;
         this.price = price;
         this.rating = rating;
     }
@@ -35,13 +38,6 @@ public class Piadina {
         this.nome = nome;
     }
 
-    public String getDescrizione() {
-        return descrizione;
-    }
-
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
-    }
 
     public double getPrice() {
         return price;
@@ -57,6 +53,21 @@ public class Piadina {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public List<Ingrediente> getIngredienti() {
+        return ingredienti;
+    }
+
+    public void setIngredienti(List<Ingrediente> ingredienti) {
+        this.ingredienti = ingredienti;
+    }
+
+    @Override
+    public String toString() {
+        return "Piadina{" +
+                "nome='" + nome + '\'' +
+                '}';
     }
 
 

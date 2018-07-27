@@ -8,13 +8,11 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_margin="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:padding="8dp">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -34,7 +32,7 @@
                 android:layout_alignLeft="@id/textViewTitle"
                 android:layout_below="@id/textViewTitle"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:paddingBottom="5dp"
                 android:text="Descrizione"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#000000" />
@@ -57,7 +55,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="11dp"
-                android:background="@drawable/rounded_corners_addbutton"
+                android:background="@drawable/button_selector"
+                android:elevation="4dp"
                 android:src="@drawable/ic_add_button_20dp" />
 
 

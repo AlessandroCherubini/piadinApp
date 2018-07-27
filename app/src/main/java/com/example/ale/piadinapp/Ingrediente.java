@@ -13,6 +13,11 @@ public class Ingrediente {
 
     }
 
+    public Ingrediente(String name){
+
+        this.name=name;
+    }
+
     public String getName() {
         return name;
     }
@@ -31,9 +36,7 @@ public class Ingrediente {
 
     @Override
     public String toString() {
-        return "Ingrediente{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 }
 

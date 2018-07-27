@@ -52,7 +52,11 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
 
         //binding the data with the viewholder views
         holder.textViewTitle.setText(piadina.getNome());
-        holder.textViewIngredients.setText(String.valueOf(piadina.getDescrizione()));
+        String formattedString = piadina.ingredienti.toString()
+                .replace("[", "")  //remove the right bracket
+                .replace("]", "")  //remove the left bracket
+                .trim();
+        holder.textViewIngredients.setText(formattedString);
         //holder.textViewRating.setText(String.valueOf(piadina.getRating()));
         holder.textViewPrice.setText(String.valueOf(piadina.getPrice()));
 

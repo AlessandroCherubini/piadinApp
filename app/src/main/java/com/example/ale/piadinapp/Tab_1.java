@@ -22,8 +22,10 @@ public class Tab_1 extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    //a list to store all the products
     List<Piadina> piadinaList;
+
+    List<Ingrediente> ingredienti;
+
 
     //the recyclerview
     RecyclerView recyclerView;
@@ -107,22 +109,13 @@ public class Tab_1 extends Fragment{
         //initializing the productlist
         piadinaList = new ArrayList<>();
 
-        piadinaList.add(
-                new Piadina(
-                        1,
-                        "Cheru",
-                        "non c'è niente dentro questa piadina",
-                        4.3,
-                        3));
+        ingredienti= new ArrayList<>();
+
+        ingredienti.add(new Ingrediente("tonno",44));
+        ingredienti.add(new Ingrediente("cavallo"));
 
         piadinaList.add(
-                new Piadina(
-                        1,
-                        "Montanara",
-                        "Speck, noci, funghi, latte",
-                        10,
-                        6));
-
+                new Piadina(1,"cheru",ingredienti,5,5));
 
         //creating recyclerview adapter
         PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
