@@ -16,10 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.ale.utility.SessionManager;
 
-public class MyOrder extends AppCompatActivity
+import java.util.HashMap;
+
+public class MyProfileActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SessionManager session;
@@ -27,11 +30,11 @@ public class MyOrder extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_order);
+        setContentView(R.layout.activity_my_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        session = new SessionManager(this);
 
+        session = new SessionManager(this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -41,6 +44,16 @@ public class MyOrder extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
+        HashMap<String, String> utente;
+        utente = session.getUserDetails();
+
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        txtProfileName.setText(utente.get("name"));
+
+        TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        txtProfileEmail.setText(utente.get("email"));
     }
 
     @Override
@@ -56,7 +69,7 @@ public class MyOrder extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my_order, menu);
+        getMenuInflater().inflate(R.menu.my_profile, menu);
         return true;
     }
 
@@ -83,10 +96,12 @@ public class MyOrder extends AppCompatActivity
 
         if (id == R.id.profile) {
 
+
         } else if (id == R.id.tessera) {
 
-            Intent intent = new Intent(this, Badge.class);
+            Intent intent = new Intent(this, BadgeActivity.class);
             startActivity(intent);
+            finish();
 
         } else if (id == R.id.logout) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -96,7 +111,7 @@ public class MyOrder extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             //Yes button clicked
 
-                            final ProgressDialog progressDialog = new ProgressDialog(MyOrder.this,
+                            final ProgressDialog progressDialog = new ProgressDialog(MyProfileActivity.this,
                                     R.style.AppTheme_Dark_Dialog);
                             progressDialog.setIndeterminate(true);
                             progressDialog.setMessage("Logout in corso...");
@@ -130,6 +145,9 @@ public class MyOrder extends AppCompatActivity
 
         } else if (id == R.id.ordini) {
 
+            Intent intent = new Intent(this, MyOrderActivity.class);
+            startActivity(intent);
+            finish();
 
         }
 

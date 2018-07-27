@@ -4,10 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,10 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.ale.utility.SessionManager;
 
-public class Badge extends AppCompatActivity
+import java.util.HashMap;
+
+public class MyOrderActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SessionManager session;
@@ -27,10 +27,9 @@ public class Badge extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_badge);
+        setContentView(R.layout.activity_my_order);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         session = new SessionManager(this);
 
 
@@ -42,6 +41,16 @@ public class Badge extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
+        HashMap<String, String> utente;
+        utente = session.getUserDetails();
+
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        txtProfileName.setText(utente.get("name"));
+
+        TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        txtProfileEmail.setText(utente.get("email"));
     }
 
     @Override
@@ -57,7 +66,7 @@ public class Badge extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.badge, menu);
+        getMenuInflater().inflate(R.menu.my_order, menu);
         return true;
     }
 
@@ -84,8 +93,15 @@ public class Badge extends AppCompatActivity
 
         if (id == R.id.profile) {
 
+            Intent intent = new Intent(this, MyProfileActivity.class);
+            startActivity(intent);
+            finish();
+
         } else if (id == R.id.tessera) {
 
+            Intent intent = new Intent(this, BadgeActivity.class);
+            startActivity(intent);
+            finish();
 
         } else if (id == R.id.logout) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -95,7 +111,7 @@ public class Badge extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             //Yes button clicked
 
-                            final ProgressDialog progressDialog = new ProgressDialog(Badge.this,
+                            final ProgressDialog progressDialog = new ProgressDialog(MyOrderActivity.this,
                                     R.style.AppTheme_Dark_Dialog);
                             progressDialog.setIndeterminate(true);
                             progressDialog.setMessage("Logout in corso...");
@@ -129,8 +145,6 @@ public class Badge extends AppCompatActivity
 
         } else if (id == R.id.ordini) {
 
-            Intent intent = new Intent(this, MyOrder.class);
-            startActivity(intent);
 
         }
 

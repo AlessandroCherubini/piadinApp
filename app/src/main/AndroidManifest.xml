@@ -46,7 +46,7 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MyOrder"
+            android:name=".MyOrderActivity"
             android:label="@string/title_activity_my_order"
             android:parentActivityName=".HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -55,8 +55,17 @@
                 android:value="com.example.ale.piadinapp.HomeActivity" />
         </activity>
         <activity
-            android:name=".Badge"
+            android:name=".BadgeActivity"
             android:label="@string/title_activity_badge"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".MyProfileActivity"
+            android:label="@string/title_activity_my_profile"
             android:parentActivityName=".HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

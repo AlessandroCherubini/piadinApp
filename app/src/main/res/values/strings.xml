@@ -37,6 +37,7 @@
     <string name="tessera">Tessera</string>
     <string name="logout">Logout</string>
     <string name="title_activity_badge">Badge</string>
+    <string name="title_activity_my_profile">MyProfileActivity</string>
 
 
 </resources>

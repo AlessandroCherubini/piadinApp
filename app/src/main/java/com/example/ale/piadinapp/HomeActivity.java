@@ -3,18 +3,13 @@ package com.example.ale.piadinapp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -147,9 +142,12 @@ public class HomeActivity extends AppCompatActivity
 
             if (id == R.id.profile) {
 
+                Intent intent = new Intent(this, MyProfileActivity.class);
+                startActivity(intent);
+
         } else if (id == R.id.tessera) {
 
-                Intent intent = new Intent(this, Badge.class);
+                Intent intent = new Intent(this, BadgeActivity.class);
                 startActivity(intent);
 
         } else if (id == R.id.logout) {
@@ -194,7 +192,7 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.ordini) {
 
-                Intent intent = new Intent(this, MyOrder.class);
+                Intent intent = new Intent(this, MyOrderActivity.class);
                 startActivity(intent);
 
             }

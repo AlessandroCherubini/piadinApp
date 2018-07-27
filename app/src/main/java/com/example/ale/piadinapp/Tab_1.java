@@ -4,18 +4,29 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class Tab_1 extends Fragment {
+public class Tab_1 extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    //a list to store all the products
+    List<Piadina> piadinaList;
+
+    //the recyclerview
+    RecyclerView recyclerView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -52,11 +63,14 @@ public class Tab_1 extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 
 
         return inflater.inflate(R.layout.fragment_tab_1, container, false);
@@ -74,10 +88,55 @@ public class Tab_1 extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+
+        recyclerView = (RecyclerView)getView().findViewById(R.id.recyclerViewMenu);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //initializing the productlist
+        piadinaList = new ArrayList<>();
+
+        piadinaList.add(
+                new Piadina(
+                        1,
+                        "Cheru",
+                        "non c'è niente dentro questa piadina",
+                        4.3,
+                        3));
+
+        piadinaList.add(
+                new Piadina(
+                        1,
+                        "Montanara",
+                        "Speck, noci, funghi, latte",
+                        10,
+                        6));
+
+
+        //creating recyclerview adapter
+        PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
+            @Override public void onPositionClicked(int position) {
+                // callback performed on click
+
+                String nome = piadinaList.get(position).getNome();
+                Toast.makeText(getActivity(),nome+" "+"aggiunta al carrello",Toast.LENGTH_SHORT).show();
+            }
+
+        });
+        //setting adapter to recyclerview
+        recyclerView.setAdapter(adapter);
+
     }
 
     @Override
