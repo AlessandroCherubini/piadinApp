@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 
 public class DBHelper extends SQLiteOpenHelper{
@@ -165,11 +166,26 @@ public class DBHelper extends SQLiteOpenHelper{
 
 
     // Metodo per le ottenere le Piadine dal database Interno.
-    public Cursor getPiadine() {
+    public ArrayList<Piadina> getPiadine() {
+        ArrayList<Piadina> piadine = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_PIADINE_NAME + " ORDER BY " + COLUMN_PIADINE_ID + " ASC;";
         Cursor cursorPiadine = db.rawQuery(sql, null);
-        return cursorPiadine;
+        if (cursorPiadine.moveToFirst()){
+            do {
+                long idPiadina = cursorPiadine.getLong(0);
+                String nomePiadina = cursorPiadine.getString(1);
+                String descrizionePiadina = cursorPiadine.getString(2);
+                double prezzoPiadina = cursorPiadine.getDouble(3);
+                long lastUpdatePiadina = cursorPiadine.getLong(4);
+
+                Piadina piadina = new Piadina(idPiadina, nomePiadina, descrizionePiadina, prezzoPiadina, lastUpdatePiadina);
+
+                piadine.add(piadina);
+            } while (cursorPiadine.moveToNext());
+        }
+        return piadine;
     }
 
 

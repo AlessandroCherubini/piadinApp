@@ -1,5 +1,6 @@
 package com.example.ale.piadinapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.ale.utility.DBHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +25,11 @@ public class Tab_1 extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    List<Piadina> piadinaList;
+    ArrayList<Piadina> piadinaList;
+    ArrayList<Ingrediente> ingredienti;
 
-    List<Ingrediente> ingredienti;
-
+    //Context mContext = getActivity();
+    DBHelper helper;
 
     //the recyclerview
     RecyclerView recyclerView;
@@ -66,7 +70,6 @@ public class Tab_1 extends Fragment{
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
     }
 
     @Override
@@ -88,6 +91,7 @@ public class Tab_1 extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        helper = new DBHelper(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
 
@@ -107,15 +111,8 @@ public class Tab_1 extends Fragment{
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         //initializing the productlist
-        piadinaList = new ArrayList<>();
 
-        ingredienti= new ArrayList<>();
-
-        ingredienti.add(new Ingrediente("tonno",44));
-        ingredienti.add(new Ingrediente("cavallo"));
-
-        piadinaList.add(
-                new Piadina(1,"cheru",ingredienti,5,5));
+        piadinaList = helper.getPiadine();
 
         //creating recyclerview adapter
         PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
