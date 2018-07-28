@@ -1,4 +1,5 @@
 package com.example.ale.piadinapp;
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.*;
 
 import android.app.ProgressDialog;

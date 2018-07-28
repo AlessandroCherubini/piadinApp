@@ -1,7 +1,7 @@
 package com.example.ale.utility;
-import com.example.ale.piadinapp.Ingrediente;
-import com.example.ale.piadinapp.Piadina;
-import com.example.ale.piadinapp.User;
+import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.classi.User;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,12 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 

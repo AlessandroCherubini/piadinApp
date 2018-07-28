@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/museo_slab</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -13,8 +13,11 @@
     <!-- lo stile per la home activity, fab etc -->
     <style name="AppTheme.AppBarOverlay"
         parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay"
-        parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- lo stile per il nome dell'activity Home/Ordini e Impostazioni -->
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:fontFamily">@font/museo_slab</item>
+    </style>
 
     <!-- lo stile per la barra progressiva -->
     <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">
