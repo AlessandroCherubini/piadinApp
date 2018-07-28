@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primaryDarkColor"
                 android:hint="@string/nome" />
         </android.support.design.widget.TextInputLayout>
 
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primaryDarkColor"
                 android:hint="@string/email" />
         </android.support.design.widget.TextInputLayout>
 
@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primaryDarkColor"
                 android:hint="@string/password"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primaryDarkColor"
                 android:hint="@string/re_enter_password"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -83,8 +83,8 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:background="@color/primary_dark"
-            android:textColor="@color/accent"
+            android:background="@color/primaryDarkColor"
+            android:textColor="@color/primaryTextColor"
             android:text="@string/registrazione_btn"/>
 
         <TextView android:id="@+id/link_login"
@@ -93,7 +93,7 @@
             android:layout_marginBottom="24dp"
             android:text="@string/login_swap"
             android:gravity="center"
-            android:textColor="@color/primary_dark"
+            android:textColor="@color/primaryDarkColor"
             android:textSize="16sp"/>
 
     </LinearLayout>

@@ -2,28 +2,28 @@ package com.example.ale.piadinapp;
 
 public class Piadina {
 
-    private int id;
+    private long id;
     private String nome;
     private String descrizione;
     private double price;
-    private int rating;
+    //private int rating;
+    private long lastUpdated;
 
 
-
-
-    public Piadina(int id, String nome, String descrizione, double price, int rating) {
+    public Piadina(long id, String nome, String descrizione, double price, long lastUpdated) {
         this.id = id;
         this.nome = nome;
         this.descrizione = descrizione;
         this.price = price;
-        this.rating = rating;
+        //this.rating = rating;
+        this.lastUpdated = lastUpdated;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -51,13 +51,20 @@ public class Piadina {
         this.price = price;
     }
 
-    public int getRating() {
+    /*public int getRating() {
         return rating;
     }
 
     public void setRating(int rating) {
         this.rating = rating;
+    }*/
+
+    public long getLastUpdated() {
+        return lastUpdated;
     }
 
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 
 }
