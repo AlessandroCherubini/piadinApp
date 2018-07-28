@@ -8,12 +8,11 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_margin="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -21,6 +20,7 @@
                 android:layout_height="25dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="3dp"
+                android:fontFamily="@font/museo_slab"
                 android:text="Nome Piadina"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#000000"
@@ -30,10 +30,11 @@
                 android:id="@+id/textViewIngredients"
                 android:layout_width="258dp"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/textViewTitle"
                 android:layout_below="@id/textViewTitle"
+                android:layout_alignLeft="@id/textViewTitle"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
                 android:text="Descrizione"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#000000" />
@@ -41,13 +42,28 @@
 
             <TextView
                 android:id="@+id/textViewPrice"
-                android:layout_width="40dp"
-                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="39dp"
                 android:layout_marginRight="5dp"
-                android:layout_toStartOf="@+id/addButton"
+                android:layout_toEndOf="@+id/textViewIngredients"
+                android:fontFamily="@font/museo_slab"
                 android:gravity="center"
-                android:text="12€" />
+                android:text="5.9" />
+
+            <TextView
+                android:id="@+id/textViewPrice2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="120dp"
+                android:layout_marginRight="5dp"
+                android:layout_toEndOf="@+id/textViewPrice"
+                android:fontFamily="@font/museo_slab"
+                android:gravity="center"
+                android:text="@string/euro" />
 
             <ImageButton
                 android:id="@+id/addButton"
@@ -56,7 +72,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="11dp"
-                android:background="@drawable/rounded_corners_addbutton"
+                android:background="@drawable/button_selector"
+                android:elevation="4dp"
                 android:src="@drawable/ic_add_button_20dp" />
 
 

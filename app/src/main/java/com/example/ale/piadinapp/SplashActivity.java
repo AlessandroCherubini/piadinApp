@@ -1,13 +1,10 @@
 package com.example.ale.piadinapp;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -21,9 +18,10 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
-import com.example.ale.utility.LoadingTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;

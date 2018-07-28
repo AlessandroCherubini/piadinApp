@@ -6,20 +6,21 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_person_24dp"
             android:title="@string/profilo" />
         <item
             android:id="@+id/ordini"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:checked="true"
+            android:icon="@drawable/ic_receipt_24dp"
             android:title="@string/ordini" />
         <item
             android:id="@+id/tessera"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_style_24dp"
             android:title="@string/tessera" />
 
         <item
             android:id="@+id/logout"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_input_24dp"
             android:title="@string/logout" />
     </group>
 

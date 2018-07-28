@@ -21,6 +21,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.home.PagerAdapter;
+import com.example.ale.piadinapp.home.TabCreaPiadina;
+import com.example.ale.piadinapp.home.TabLeTuePiadine;
+import com.example.ale.piadinapp.home.TabMenu;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
@@ -28,8 +32,8 @@ import java.util.HashMap;
 
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Tab_1.OnFragmentInteractionListener,
-                    Tab_2.OnFragmentInteractionListener, Tab_3.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TabMenu.OnFragmentInteractionListener,
+        TabCreaPiadina.OnFragmentInteractionListener, TabLeTuePiadine.OnFragmentInteractionListener {
 
     SessionManager session;
     DBHelper helper;
