@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp;
+package com.example.ale.piadinapp.classi;
 
 import android.app.Application;
 import android.content.Context;

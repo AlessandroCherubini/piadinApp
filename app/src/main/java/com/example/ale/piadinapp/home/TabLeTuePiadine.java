@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp;
+package com.example.ale.piadinapp.home;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,11 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.example.ale.piadinapp.R;
 
 
-public class Tab_3 extends Fragment {
+public class TabLeTuePiadine extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -24,7 +24,7 @@ public class Tab_3 extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public Tab_3() {
+    public TabLeTuePiadine() {
         // Required empty public constructor
     }
 
@@ -34,11 +34,11 @@ public class Tab_3 extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Tab_3.
+     * @return A new instance of fragment TabLeTuePiadine.
      */
     // TODO: Rename and change types and number of parameters
-    public static Tab_3 newInstance(String param1, String param2) {
-        Tab_3 fragment = new Tab_3();
+    public static TabLeTuePiadine newInstance(String param1, String param2) {
+        TabLeTuePiadine fragment = new TabLeTuePiadine();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,7 +59,7 @@ public class Tab_3 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_tab_3, container, false);
+        return inflater.inflate(R.layout.fragment_mie_piadine, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

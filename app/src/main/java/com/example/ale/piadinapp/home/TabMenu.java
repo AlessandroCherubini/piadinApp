@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp;
+package com.example.ale.piadinapp.home;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.R;
 import com.example.ale.utility.DBHelper;
 
 import java.util.ArrayList;
@@ -75,7 +78,7 @@ public class TabMenu extends Fragment{
 
 
 
-        return inflater.inflate(R.layout.fragment_tab_1, container, false);
+        return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
