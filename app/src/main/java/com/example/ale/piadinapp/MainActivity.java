@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 /*        if(!session.loggedIn()){
             logout();
         }*/
+
     }
 
     /** Called when the user taps the login button */

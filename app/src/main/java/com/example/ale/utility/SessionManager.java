@@ -20,7 +20,7 @@ public class SessionManager {
     Context _context;
 
     // Shared pref mode
-    int PRIVATE_MODE = 0;
+    //int PRIVATE_MODE = 0;
 
     // Sharedpref file name
     private static final String PREF_NAME = "piadinApp";
@@ -34,10 +34,12 @@ public class SessionManager {
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
 
+    //public static final String KEY_DB = "db_version";
+
     // Constructor
     public SessionManager(Context context) {
         this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        pref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
     /**
@@ -129,4 +131,5 @@ public class SessionManager {
     public boolean loggedIn(){
         return pref.getBoolean("loggedInmode", false);
     }
+
 }

@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#fff</color>
-    <color name="primary_dark">#4e322c</color>
-    <color name="primary_darker">#552d27</color>
-    <color name="accent">#fff</color>
+<!--    <color name="primaryColor">#fff</color>
+    <color name="primaryLightColor">#4e322c</color>
+    <color name="primaryDarkColor">#552d27</color>-->
 
-    <color name="black">#000000</color>
+    <color name="primaryColor">#6d4c41</color>
+    <color name="primaryLightColor">#9c786c</color>
+    <color name="primaryDarkColor">#40241a</color>
+    <color name="secondaryColor">#d32f2f</color>
+    <color name="secondaryLightColor">#ff6659</color>
+    <color name="secondaryDarkColor">#9a0007</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#ffffff</color>
+
+ <!--   <color name="black">#000000</color>
     <color name="jet">#222222</color>
     <color name="oil">#333333</color>
     <color name="monsoon">#777777</color>
     <color name="jumbo">#888888</color>
     <color name="aluminum">#999999</color>
     <color name="base">#AAAAAA</color>
-    <color name="iron">#CCCCCC</color>
-    <color name="white">#FFFFFF</color>
+    <color name="iron"></color>
+    <color name="white">#FFFFFF</color>-->
 </resources>

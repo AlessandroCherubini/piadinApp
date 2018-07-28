@@ -1,32 +1,29 @@
 package com.example.ale.piadinapp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Piadina {
 
-    private int id;
+    private long id;
     private String nome;
     private String descrizione;
     private double price;
-    private int rating;
-    List<Ingrediente> ingredienti = new ArrayList<>();
+    //private int rating;
+    private long lastUpdated;
 
 
-
-    public Piadina(int id, String nome, List<Ingrediente>ingredienti, double price, int rating) {
+    public Piadina(long id, String nome, String descrizione, double price, long lastUpdated) {
         this.id = id;
         this.nome = nome;
-        this.ingredienti=ingredienti;
+        this.descrizione = descrizione;
         this.price = price;
-        this.rating = rating;
+        //this.rating = rating;
+        this.lastUpdated = lastUpdated;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -38,6 +35,13 @@ public class Piadina {
         this.nome = nome;
     }
 
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
 
     public double getPrice() {
         return price;
@@ -47,28 +51,20 @@ public class Piadina {
         this.price = price;
     }
 
-    public int getRating() {
+    /*public int getRating() {
         return rating;
     }
 
     public void setRating(int rating) {
         this.rating = rating;
+    }*/
+
+    public long getLastUpdated() {
+        return lastUpdated;
     }
 
-    public List<Ingrediente> getIngredienti() {
-        return ingredienti;
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
-
-    public void setIngredienti(List<Ingrediente> ingredienti) {
-        this.ingredienti = ingredienti;
-    }
-
-    @Override
-    public String toString() {
-        return "Piadina{" +
-                "nome='" + nome + '\'' +
-                '}';
-    }
-
 
 }
