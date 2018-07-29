@@ -24,6 +24,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_LOGINS_NAME = "username";
     public static final String COLUMN_LOGINS_PASSWORD = "password";
     public static final String COLUMN_LOGINS_EMAIL = "email";
+    //public static final String COLUMN_LOGINS_PHONE = "phone";
 
     // tabella: piadine
     public static final String TABLE_PIADINE_NAME = "piadine";
@@ -112,8 +113,10 @@ public class DBHelper extends SQLiteOpenHelper{
             queryValues.userId = database.insert("logins", null, values);
         }catch(Exception e){
             Log.d("INSERT", e.toString());
+        }finally{
+            database.close();
         }
-        database.close();
+
         return queryValues;
     }
 
@@ -127,19 +130,24 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-/*    public User getUser (String username){
-        String query = "Select userId, password, email from logins where username ='"+username+"'";
-        User myUser = new User(0, username,"", "");
-        SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery(query, null);
-        if (cursor.moveToFirst()){
-            do {
-                myUser.userId=cursor.getLong(0);
-                myUser.password=cursor.getString(1);
-                myUser.email=cursor.getString(2);
-            } while (cursor.moveToNext());
-        }
-        return myUser;
+    public int updateUserEMail (User queryValues){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
+        values.put(COLUMN_LOGINS_EMAIL, queryValues.email);
+        queryValues.userId = database.insert("logins", null, values);
+        database.close();
+        return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
+    }
+
+/*    public int updateUserPhone (User queryValues){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
+        values.put(COLUMN_LOGINS_PHONE, queryValues.phone);
+        queryValues.userId = database.insert("logins", null, values);
+        database.close();
+        return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }*/
 
     public User getUserByEmail (String email){
@@ -281,6 +289,23 @@ public class DBHelper extends SQLiteOpenHelper{
                 Log.d("DB/PRINT", "Nome Ingrediente: " + cursor.getString(1));
                 Log.d("DB/PRINT", "Prezzo Ingrediente: " + cursor.getDouble(2));
                 Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(3));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+    }
+
+    public void printLoginsTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_LOGINS_NAME + ";";
+        Log.d("DB/PRINT", "Stampa tabella utenti!");
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()){
+            do {
+                Log.d("DB/PRINT", "ID Utente: " + cursor.getLong(0));
+                Log.d("DB/PRINT", "Nome Utente: " + cursor.getString(1));
+                Log.d("DB/PRINT", "Password Utente: " + cursor.getString(2));
+                Log.d("DB/PRINT", "Email Utente: " + cursor.getString(3));
             } while (cursor.moveToNext());
         }
         db.close();

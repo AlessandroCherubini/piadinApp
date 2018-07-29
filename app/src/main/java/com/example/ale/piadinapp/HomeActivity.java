@@ -36,7 +36,6 @@ public class HomeActivity extends AppCompatActivity
         TabCreaPiadina.OnFragmentInteractionListener, TabLeTuePiadine.OnFragmentInteractionListener {
 
     SessionManager session;
-    DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +173,7 @@ public class HomeActivity extends AppCompatActivity
                                                 // termina la sessione dell'utente.
                                                 session.logoutUser();
                                                 progressDialog.dismiss();
+                                                finish();
                                             }
                                         }, 2000);
                                 break;

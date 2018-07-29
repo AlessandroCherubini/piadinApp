@@ -5,6 +5,7 @@ public class User {
     public String nickname;
     public String email;
     public String password;
+    public String phone;
 
     public User(long userId, String username, String password, String email){
         this.userId = userId;

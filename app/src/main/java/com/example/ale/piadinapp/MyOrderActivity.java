@@ -123,6 +123,7 @@ public class MyOrderActivity extends AppCompatActivity
                                             // termina la sessione dell'utente.
                                             session.logoutUser();
                                             progressDialog.dismiss();
+                                            finish();
                                         }
                                     }, 2000);
                             break;
