@@ -125,10 +125,13 @@ public class SignUpActivity extends AppCompatActivity {
 
         // sessione per l'utente.
         session.setLoggedIn(true);
-        session.createLoginSession(name, password);
+        session.createLoginSession(name, email);
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+
+        // redirect alla Home Activity
+        startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 
