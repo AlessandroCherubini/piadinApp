@@ -129,6 +129,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+
+        // redirect alla Home Activity
+        startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 
