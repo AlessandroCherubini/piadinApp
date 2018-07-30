@@ -1,6 +1,7 @@
 package com.example.ale.piadinapp.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.ale.piadinapp.MyOrderActivity;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.R;
@@ -26,7 +28,7 @@ public class TabMenu extends Fragment{
     private static final String ARG_PARAM2 = "param2";
 
     ArrayList<Piadina> piadinaList;
-    ArrayList<Ingrediente> ingredienti;
+
 
     //Context mContext = getActivity();
     DBHelper helper;
@@ -114,13 +116,19 @@ public class TabMenu extends Fragment{
 
         piadinaList = helper.getPiadine();
 
+
+
         //creating recyclerview adapter
         PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
             @Override public void onPositionClicked(int position) {
                 // callback performed on click
 
-                String nome = piadinaList.get(position).getNome();
-                Toast.makeText(getActivity(),nome+" "+"aggiunta al carrello",Toast.LENGTH_SHORT).show();
+
+                // Toast.makeText(getActivity(),nome+" "+"aggiunta al carrello",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(),CustomizePiadinaActivity.class);
+                intent.putExtra("indexPiadina",position);
+                startActivity(intent);
+
             }
 
         });
@@ -147,6 +155,6 @@ public class TabMenu extends Fragment{
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+            void onFragmentInteraction(Uri uri);
     }
 }

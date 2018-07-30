@@ -193,6 +193,23 @@ public class DBHelper extends SQLiteOpenHelper{
         return piadine;
     }
 
+    public Piadina getPiadinaByPosition (long position){
+        position++;
+        String query = "Select nome, descrizione, prezzo, updated_at from piadine where id_piadine='"+position+"'";
+        Piadina myPiadina= new Piadina(position, "","",0,0);
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(query, null);
+        if (cursor.moveToFirst()){
+            do {
+                myPiadina.setNome(cursor.getString(0));
+                myPiadina.setDescrizione(cursor.getString(1));
+                myPiadina.setPrice(cursor.getDouble(2));
+                myPiadina.setLastUpdated(cursor.getLong(3));
+            } while (cursor.moveToNext());
+        }
+        return myPiadina;
+    }
+
 
     public void insertPiadina (Piadina piadina){
         SQLiteDatabase database = this.getWritableDatabase();

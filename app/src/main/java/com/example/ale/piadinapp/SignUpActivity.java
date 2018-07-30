@@ -125,6 +125,13 @@ public class SignUpActivity extends AppCompatActivity {
 
         insertUserInExternalDB(name, password, email);
 
+        // sessione per l'utente.
+        session.setLoggedIn(true);
+        session.createLoginSession(name, password);
+
+        _signupButton.setEnabled(true);
+        setResult(RESULT_OK, null);
+        finish();
     }
 
     public void onSignupFailed() {

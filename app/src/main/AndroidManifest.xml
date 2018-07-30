@@ -76,6 +76,15 @@
                 android:value="com.example.ale.piadinapp.HomeActivity" />
         </activity>
         <activity
+            android:name=".home.CustomizePiadinaActivity"
+            android:label="@string/title_activity_customize_piadina"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.HomeActivity" />
+        </activity>
+        <activity
             android:name=".EditUserActivity"
             android:label="@string/title_activity_my_profile"
             android:parentActivityName=".MyProfileActivity"></activity>
