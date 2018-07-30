@@ -30,7 +30,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String TABLE_PIADINE_NAME = "piadine";
     public static final String COLUMN_PIADINE_ID = "id_piadine";
     public static final String COLUMN_PIADINE_NAME = "nome";
-    public static final String COLUMN_PIADINE_DESCRIZIONE = "descrizione";
+    public static final String COLUMN_PIADINE_INGREDIENTI = "ingredienti";
     public static final String COLUMN_PIADINE_PREZZO = "prezzo";
     public static final String COLUMN_PIADINE_TIMESTAMP = "updated_at";
 
@@ -61,7 +61,7 @@ public class DBHelper extends SQLiteOpenHelper{
         String query_piadine = "CREATE TABLE " + TABLE_PIADINE_NAME
                 + "(" + COLUMN_PIADINE_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PIADINE_NAME +
-                " VARCHAR, " + COLUMN_PIADINE_DESCRIZIONE +
+                " VARCHAR, " +COLUMN_PIADINE_INGREDIENTI+
                 " TEXT, " + COLUMN_PIADINE_PREZZO +
                 " DOUBLE, " + COLUMN_PIADINE_TIMESTAMP + " LONG);";
 
@@ -178,11 +178,12 @@ public class DBHelper extends SQLiteOpenHelper{
             do {
                 long idPiadina = cursorPiadine.getLong(0);
                 String nomePiadina = cursorPiadine.getString(1);
-                String descrizionePiadina = cursorPiadine.getString(2);
+                String ingredientiPiadina = cursorPiadine.getString(2);
                 double prezzoPiadina = cursorPiadine.getDouble(3);
                 long lastUpdatePiadina = cursorPiadine.getLong(4);
 
-                Piadina piadina = new Piadina(idPiadina, nomePiadina, descrizionePiadina, prezzoPiadina, lastUpdatePiadina);
+                ArrayList<Ingrediente> ingredienti = getIngredientiFromString(ingredientiPiadina);
+                Piadina piadina = new Piadina(idPiadina, nomePiadina, ingredienti, prezzoPiadina, lastUpdatePiadina);
 
                 piadine.add(piadina);
             } while (cursorPiadine.moveToNext());
@@ -194,9 +195,10 @@ public class DBHelper extends SQLiteOpenHelper{
     public void insertPiadina (Piadina piadina){
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        String piadinaIngredienti = piadina.printIngredienti();
 
         values.put(COLUMN_PIADINE_NAME, piadina.getNome());
-        values.put(COLUMN_PIADINE_DESCRIZIONE, piadina.getDescrizione());
+        values.put(COLUMN_PIADINE_INGREDIENTI, piadinaIngredienti);
         values.put(COLUMN_PIADINE_PREZZO, piadina.getPrice());
         values.put(COLUMN_PIADINE_TIMESTAMP, piadina.getLastUpdated());
 
@@ -230,7 +232,6 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }
 
-
     public long getInternalTimeStampPiadine(){
         long timeStamp = 0;
 
@@ -257,6 +258,35 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
         return timeStamp;
+    }
+
+    public Ingrediente getIngredienteByName (String nomeIngrediente) {
+        String query = "Select id_ingrediente, prezzo, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
+        Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, 0);
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ingrediente.setIdIngrediente(cursor.getLong(0));
+                ingrediente.setPrice(cursor.getDouble(1));
+                ingrediente.setLastUpdated(cursor.getLong(2));
+            } while (cursor.moveToNext());
+        }
+        return ingrediente;
+    }
+
+    public ArrayList<Ingrediente> getIngredientiFromString (String stringaIngredienti){
+        ArrayList<Ingrediente> listaIngredienti = new ArrayList<>();
+
+        String[] result = stringaIngredienti.split(",\\s");
+
+        for (int i=0; i < result.length; i++) {
+            Log.d("STRINGA", result[i]);
+            Ingrediente ingrediente = getIngredienteByName(result[i]);
+            listaIngredienti.add(ingrediente);
+        }
+
+        return listaIngredienti;
     }
 
     public void printPiadineTable(){

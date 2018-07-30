@@ -27,6 +27,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class SplashActivity extends AppCompatActivity {
 
     //String urlVersione = "http://piadinapp.altervista.org/get_db_version.php";
@@ -104,7 +106,9 @@ public class SplashActivity extends AppCompatActivity {
                                     String descrizionePiadina = piadina.getString("descrizione");
                                     Double prezzoPiadina = piadina.getDouble("prezzo");
 
-                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, descrizionePiadina, prezzoPiadina, serverTimeStamp);
+                                    ArrayList<Ingrediente> ingredientiPiadina = helper.getIngredientiFromString(descrizionePiadina);
+
+                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, ingredientiPiadina, prezzoPiadina, serverTimeStamp);
                                     helper.insertPiadina(piadinaInterna);
                                 }
                                 Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");

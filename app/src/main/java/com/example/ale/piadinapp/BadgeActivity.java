@@ -120,8 +120,9 @@ public class BadgeActivity extends AppCompatActivity
                                         public void run() {
                                             // termina la sessione dell'utente.
                                             session.logoutUser();
-                                            progressDialog.dismiss();
                                             finish();
+                                            progressDialog.dismiss();
+
                                         }
                                     }, 2000);
                             break;
