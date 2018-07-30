@@ -179,10 +179,8 @@ public class SplashActivity extends AppCompatActivity {
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
                                     String allergeniIngrediente = ingrediente.getString("allergeni");
                                     Log.d("ALLERGENI", allergeniIngrediente);
-                                    //ArrayList<String> allergeni = editAllergeni(allergeniIngrediente);
 
-                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente,
-                                            allergeniIngrediente, serverTimeStamp);
+                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente, serverTimeStamp);
                                     helper.insertIngrediente(ingredienteInterno);
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");

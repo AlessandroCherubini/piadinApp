@@ -51,6 +51,8 @@ public class MyProfileActivity extends AppCompatActivity
 
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
+        //TextView emailText = (TextView) findViewById()
     }
 
     @Override

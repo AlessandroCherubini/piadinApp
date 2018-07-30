@@ -257,7 +257,7 @@ public class DBHelper extends SQLiteOpenHelper{
         Cursor cursorPiadine = db.rawQuery(sql, null);
 
         if(cursorPiadine.moveToFirst()){
-            timeStamp = cursorPiadine.getLong(3);
+            timeStamp = cursorPiadine.getLong(4);
         }
 
         return timeStamp;
