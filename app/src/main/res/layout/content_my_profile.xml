@@ -20,6 +20,46 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <ImageView
+                android:id="@+id/username_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_person_24dp" />
+
+            <TextView
+                android:id="@+id/profile_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_toEndOf="@id/username_icon"
+                android:text="@string/nome"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/primaryColor" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_username"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/username_icon"
+                android:text="@string/username_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/secondaryColor" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/item_divider" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <ImageView
                 android:id="@+id/ivContactItem1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,7 +157,7 @@
                 android:layout_toEndOf="@id/password_icon"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/password"
+                android:text="@string/change_password"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/primaryColor" />
         </RelativeLayout>
