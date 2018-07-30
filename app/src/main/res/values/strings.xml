@@ -11,6 +11,7 @@
     <string name="title_activity_my_profile">Profilo Personale</string>
     <string name="title_activity_my_orders">Ordini</string>
     <string name="title_activity_my_order">Ordini</string>
+    <string name="title_activity_customize_piadina">Personalizza la Piadina</string>
 
     <!-- Strings related to registration -->
     <string name="link_registrazione">Non hai un account? Creane uno!</string>
@@ -43,12 +44,17 @@
     <string name="logout">Logout</string>
 
     <string name="euro">€</string>
-    <string name="title_activity_customize_piadina">CustomizePiadinaActivity</string>
+    <string name="prefisso_personalizza">Piadina selezionata:</string>
+    <string name="personalizza_piadina">Personalizza</string>
+    <string name="formato">Che formato desideri?</string>
+    <string name="impasto">Che impasto preferisci?</string>
     <string name="normale">Piadina</string>
     <string name="rotolo">Rotolo\u00A0\u00A0 +1€</string>
     <string name="baby">Baby\u00A0\u00A0 -1€</string>
     <string name="impasto_normale">Normale</string>
     <string name="integrale">Integrale\u00A0\u00A0 +0,30€</string>
+    <string name="ingredienti">Ingredienti:</string>
+    <string name="aggiungi_carrello">Aggiungi al carrello</string>
     <!-- Pagina Il mio Profilo -->
     <string name="change_password">Cambia password</string>
     <string name="username_label">Nome account</string>

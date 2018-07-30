@@ -4,23 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    >
+    tools:context=".HomeActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/rl"
-        android:layout_width="match_parent"
-        android:layout_height="295dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:padding="10dp"
+    <RelativeLayout
+        android:layout_width="387dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.179"
-        tools:context=".MainActivity">
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/formato"
@@ -28,19 +22,32 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="39dp"
-            android:text="Che formato desideri?" />
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="88dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/formato"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.036"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <RadioGroup
             android:id="@+id/rg1"
-            android:layout_width="358dp"
-            android:layout_height="wrap_content"
+            android:layout_width="337dp"
+            android:layout_height="54dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/formato"
-            android:layout_marginTop="56dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="108dp"
+            android:layout_marginEnd="7dp"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.304"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <RadioButton
                 android:id="@+id/rb_normale"
@@ -59,41 +66,95 @@
 
             <RadioButton
                 android:id="@+id/rb_baby"
-                android:layout_width="114dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
                 android:text="@string/baby" />
         </RadioGroup>
 
         <TextView
-            android:id="@+id/textView11"
-            android:layout_width="wrap_content"
+            android:id="@+id/nome_piadina"
+            android:layout_width="128dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="Personalizza la tua piadina"
-            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="58dp"
+            android:layout_marginEnd="51dp"
+            android:layout_toEndOf="@+id/prefisso_piadina"
+            android:fontFamily="@font/museo_slab"
+            android:text="@string/personalizza_piadina"
+            android:textAppearance="@android:style/TextAppearance.Material.Medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/prefisso_piadina"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/prefisso_piadina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="59dp"
+            android:fontFamily="@font/museo_slab"
+            android:text="@string/prefisso_personalizza"
+            android:textAppearance="@android:style/TextAppearance.Material.Medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.113"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/impasto"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/formato"
+            android:layout_height="18dp"
             android:layout_below="@+id/rg1"
-            android:text="Che formato desideri?" />
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="0dp"
+            android:text="@string/impasto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.037"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/impasto2"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_below="@+id/rg1"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="73dp"
+            android:text="@string/ingredienti"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.037"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RadioGroup
             android:id="@+id/rg2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/formato"
+            android:layout_width="335dp"
+            android:layout_height="59dp"
             android:layout_below="@+id/impasto"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="9dp"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.32"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <RadioButton
                 android:id="@+id/rb_impasto_normale"
-                android:layout_width="wrap_content"
+                android:layout_width="154dp"
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:paddingRight="10dp"
@@ -103,10 +164,128 @@
                 android:id="@+id/rb_integrale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/rg2"
                 android:paddingRight="10dp"
                 android:text="@string/integrale" />
 
         </RadioGroup>
-    </RelativeLayout>
 
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="89dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="257dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="165dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_remove_black_24dp"
+                    android:drawablePadding="30dp"
+                    android:text="Prosciutto Cotto" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_remove_black_24dp"
+                    android:drawablePadding="30dp"
+                    android:text="Mozzarella" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_remove_black_24dp"
+                    android:drawablePadding="30dp"
+                    android:text="Gamberetti" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_remove_black_24dp"
+                    android:drawablePadding="30dp"
+                    android:text="Lattuga" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_remove_black_24dp"
+                    android:drawablePadding="30dp"
+                    android:text="Salsa Rosa" />
+                <!-- TextView and other stuff -->
+
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_above="@+id/button"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="76dp"
+            android:layout_marginBottom="54dp"
+            android:background="@color/primaryColor"
+            android:drawableLeft="@android:drawable/ic_menu_add"
+            android:fontFamily="@font/museo_slab"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="Altri Ingredienti"
+            android:textColor="@color/primaryTextColor" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/primaryDarkColor"
+            android:drawableLeft="@drawable/ic_add_shopping_cart_black_24dp"
+            android:drawablePadding="20dp"
+            android:fontFamily="@font/museo_slab"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp"
+            android:text="@string/aggiungi_carrello"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="106dp"
+            android:layout_height="38dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="-4dp"
+            android:layout_marginEnd="55dp"
+            android:layout_marginBottom="15dp"
+            android:layout_toEndOf="@+id/button"
+            android:text="totale:" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="11dp"
+            android:layout_marginBottom="33dp"
+            android:text="€" />
+
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
