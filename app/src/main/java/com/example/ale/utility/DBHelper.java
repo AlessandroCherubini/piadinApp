@@ -39,6 +39,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_INGREDIENTI_ID = "id_ingrediente";
     public static final String COLUMN_INGREDIENTI_NAME = "nome";
     public static final String COLUMN_INGREDIENTI_PREZZO = "prezzo";
+    public static final String COLUMN_INGREDIENTI_ALLERGENI = "allergeni";
     public static final String COLUMN_INGREDIENTI_TIMESTAMP = "updated_at";
 
     // costruttore.
@@ -69,7 +70,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 + "(" + COLUMN_INGREDIENTI_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_INGREDIENTI_NAME +
                 " VARCHAR, " + COLUMN_INGREDIENTI_PREZZO +
-                " DOUBLE, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
+                " DOUBLE, " + COLUMN_INGREDIENTI_ALLERGENI +
+                " VARCHAR, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
 
 
         // creazione tabella: users
@@ -219,6 +221,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
         values.put(COLUMN_INGREDIENTI_NAME, ingrediente.getName());
         values.put(COLUMN_INGREDIENTI_PREZZO, ingrediente.getPrice());
+        values.put(COLUMN_INGREDIENTI_ALLERGENI, ingrediente.getListaAllergeni());
         values.put(COLUMN_INGREDIENTI_TIMESTAMP, ingrediente.getLastUpdated());
 
         try {
@@ -261,15 +264,16 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
     public Ingrediente getIngredienteByName (String nomeIngrediente) {
-        String query = "Select id_ingrediente, prezzo, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
-        Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, 0);
+        String query = "Select id_ingrediente, prezzo, allergeni, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
+        Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, "", 0);
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
                 ingrediente.setIdIngrediente(cursor.getLong(0));
                 ingrediente.setPrice(cursor.getDouble(1));
-                ingrediente.setLastUpdated(cursor.getLong(2));
+                ingrediente.setListaAllergeni(cursor.getString(2));
+                ingrediente.setLastUpdated(cursor.getLong(3));
             } while (cursor.moveToNext());
         }
         return ingrediente;
@@ -318,7 +322,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 Log.d("DB/PRINT", "ID Ingrediente: " + cursor.getLong(0));
                 Log.d("DB/PRINT", "Nome Ingrediente: " + cursor.getString(1));
                 Log.d("DB/PRINT", "Prezzo Ingrediente: " + cursor.getDouble(2));
-                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(3));
+                Log.d("DB/PRINT", "Allergeni Ingrediente: " + cursor.getString(3));
+                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(4));
             } while (cursor.moveToNext());
         }
         db.close();

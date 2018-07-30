@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SplashActivity extends AppCompatActivity {
@@ -176,8 +177,12 @@ public class SplashActivity extends AppCompatActivity {
                                     long idIngrediente = ingrediente.getLong("id_ingrediente");
                                     String nomeIngrediente = ingrediente.getString("nome");
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
+                                    String allergeniIngrediente = ingrediente.getString("allergeni");
+                                    Log.d("ALLERGENI", allergeniIngrediente);
+                                    //ArrayList<String> allergeni = editAllergeni(allergeniIngrediente);
 
-                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, serverTimeStamp);
+                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente,
+                                            allergeniIngrediente, serverTimeStamp);
                                     helper.insertIngrediente(ingredienteInterno);
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
