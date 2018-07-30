@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
@@ -77,14 +79,6 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Possiamo mettere il pulsante per la piadina", Snackbar.LENGTH_LONG)
-                        .setAction("Aziiiooone", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -208,4 +202,5 @@ public class HomeActivity extends AppCompatActivity
     }
 
      public void onFragmentInteraction(Uri uri){}
+
 }

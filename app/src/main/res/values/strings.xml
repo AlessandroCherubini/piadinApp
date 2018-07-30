@@ -42,6 +42,12 @@
     <string name="logout">Logout</string>
 
     <string name="euro">€</string>
+    <string name="title_activity_customize_piadina">CustomizePiadinaActivity</string>
+    <string name="normale">Piadina</string>
+    <string name="rotolo">Rotolo\u00A0\u00A0 +1€</string>
+    <string name="baby">Baby\u00A0\u00A0 -1€</string>
+    <string name="impasto_normale">Normale</string>
+    <string name="integrale">Integrale\u00A0\u00A0 +0,30€</string>
 
 
 
