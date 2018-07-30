@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.ale.utility.SessionManager;
@@ -46,11 +47,17 @@ public class MyProfileActivity extends AppCompatActivity
         HashMap<String, String> utente;
         utente = session.getUserDetails();
 
-        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.username_nav);
         txtProfileName.setText(utente.get("name"));
 
-        TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        TextView txtProfileEmail = navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
+        TextView emailText = findViewById(R.id.profile_email);
+        emailText.setText(utente.get("email"));
+
+        TextView nameText = findViewById(R.id.profile_username);
+        nameText.setText(utente.get("name"));
     }
 
     @Override
@@ -153,5 +160,10 @@ public class MyProfileActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void editUserInfos(View view) {
+        Intent intent = new Intent(this, EditUserActivity.class);
+        startActivity(intent);
     }
 }

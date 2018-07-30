@@ -36,6 +36,8 @@ public class SplashActivity extends AppCompatActivity {
     Context mContext;
     private RequestQueue queue;
     DBHelper helper;
+    boolean checkPiadine = false;
+    boolean checkIngredienti = false;
 
     final String urlGetPiadine = "http://piadinapp.altervista.org/get_all_piadine.php";
     final String urlGetIngredienti = "http://piadinapp.altervista.org/get_all_ingredients.php";
@@ -53,7 +55,7 @@ public class SplashActivity extends AppCompatActivity {
 
         startActivity(new Intent(SplashActivity.this, MainActivity.class));
         finish();
-
+       
         /*// Find the progress bar
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         // Start your loading
@@ -113,8 +115,7 @@ public class SplashActivity extends AppCompatActivity {
                                     helper.insertPiadina(piadinaInterna);
                                 }
                                 Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");
-
-                                helper.printPiadineTable();
+                                checkPiadine = true;
 
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
@@ -179,15 +180,13 @@ public class SplashActivity extends AppCompatActivity {
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
                                     String allergeniIngrediente = ingrediente.getString("allergeni");
                                     Log.d("ALLERGENI", allergeniIngrediente);
-                                    //ArrayList<String> allergeni = editAllergeni(allergeniIngrediente);
 
-                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente,
-                                            allergeniIngrediente, serverTimeStamp);
+                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente, serverTimeStamp);
                                     helper.insertIngrediente(ingredienteInterno);
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
+                                checkIngredienti = true;
 
-                                helper.printIngredientiTable();
 
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
