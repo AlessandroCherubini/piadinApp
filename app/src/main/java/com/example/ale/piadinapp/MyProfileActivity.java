@@ -119,7 +119,9 @@ public class MyProfileActivity extends AppCompatActivity
                                         public void run() {
                                             // termina la sessione dell'utente.
                                             session.logoutUser();
+                                            finish();
                                             progressDialog.dismiss();
+
                                         }
                                     }, 2000);
                             break;

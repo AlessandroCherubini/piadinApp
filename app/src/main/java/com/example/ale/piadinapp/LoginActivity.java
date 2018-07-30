@@ -162,6 +162,8 @@ public class LoginActivity extends AppCompatActivity {
 
         User utente = helper.getUserByEmail(_emailText.getText().toString());
         Log.d("UTENTE/CREDENTIANLS", utente.nickname + " " + utente.email);
+
+        helper.printLoginsTable();
         helper.close();
 
         session.setLoggedIn(true);
@@ -223,31 +225,41 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d("UTENTE/DENTRO", success.toString());
                             JSONObject obj = success.getJSONObject(0);
                             String username = obj.getString("name");
+                            String passwordEsterna = obj.getString("password");
                             Log.d("UTENTE/NomeEsterno", username);
 
                             Log.d("UTENTE/DBESTERNO", "Ho cercato nel dB esterno l'utente");
 
                             if(!username.isEmpty()){
                                 // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
-                                User newUser = new User(0, username, password, email);
-                                helper.insertUser(newUser);
-                                Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
-                                // Procediamo con il login!
-                                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                                        R.style.AppTheme_Dark_Dialog);
-                                progressDialog.setIndeterminate(true);
-                                progressDialog.setMessage("Autenticazione in corso...");
-                                progressDialog.show();
+                                // se la password trovata è identica a quella immessa, allora proseguo.
+                                if(passwordEsterna.equals(password)) {
 
-                                new android.os.Handler().postDelayed(
-                                        new Runnable() {
-                                            public void run() {
-                                                // On complete call either onLoginSuccess or onLoginFailed
-                                                onLoginSuccess();
-                                                // onLoginFailed();
-                                                progressDialog.dismiss();
-                                            }
-                                        }, 3000);
+                                    User newUser = new User(0, username, password, email);
+                                    helper.insertUser(newUser);
+                                    Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
+                                    // Procediamo con il login!
+                                    final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                                            R.style.AppTheme_Dark_Dialog);
+                                    progressDialog.setIndeterminate(true);
+                                    progressDialog.setMessage("Autenticazione in corso...");
+                                    progressDialog.show();
+
+                                    new android.os.Handler().postDelayed(
+                                            new Runnable() {
+                                                public void run() {
+                                                    // On complete call either onLoginSuccess or onLoginFailed
+                                                    onLoginSuccess();
+                                                    // onLoginFailed();
+                                                    progressDialog.dismiss();
+                                                }
+                                            }, 3000);
+                                }else{
+                                    Toast.makeText(getBaseContext(), "Password errata!", Toast.LENGTH_SHORT).show();
+                                    _passwordText.setError("Password errata. Riprova!");
+                                    _loginButton.setEnabled(true);
+                                    return;
+                                }
                             }else{
                                 Toast.makeText(getBaseContext(), "Utente inesistente: ti devi prima registrare!", Toast.LENGTH_LONG).show();
                                 _emailText.setError("Utente inesistente");

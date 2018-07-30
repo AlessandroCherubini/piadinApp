@@ -1,17 +1,21 @@
 package com.example.ale.piadinapp.classi;
 
+import java.util.ArrayList;
+
 public class Ingrediente {
 
     private long idIngrediente;
     private String name;
     private double price;
+    private String listaAllergeni;
     private long lastUpdated;
 
 
-    public Ingrediente(long idIngrediente, String name, double price, long lastUpdated){
+    public Ingrediente(long idIngrediente, String name, double price, String listaAllergeni, long lastUpdated){
         this.idIngrediente = idIngrediente;
         this.name = name;
         this.price = price;
+        this.listaAllergeni = listaAllergeni;
         this.lastUpdated = lastUpdated;
 
     }
@@ -45,6 +49,15 @@ public class Ingrediente {
         this.price = price;
     }
 
+
+    public String getListaAllergeni() {
+        return listaAllergeni;
+    }
+
+    public void setListaAllergeni(String listaAllergeni) {
+        this.listaAllergeni = listaAllergeni;
+    }
+
     public long getLastUpdated() {
         return lastUpdated;
     }
@@ -55,6 +68,7 @@ public class Ingrediente {
 
     @Override
     public String toString() {
+
         return name;
     }
 }

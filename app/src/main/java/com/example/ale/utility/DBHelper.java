@@ -24,12 +24,13 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_LOGINS_NAME = "username";
     public static final String COLUMN_LOGINS_PASSWORD = "password";
     public static final String COLUMN_LOGINS_EMAIL = "email";
+    //public static final String COLUMN_LOGINS_PHONE = "phone";
 
     // tabella: piadine
     public static final String TABLE_PIADINE_NAME = "piadine";
     public static final String COLUMN_PIADINE_ID = "id_piadine";
     public static final String COLUMN_PIADINE_NAME = "nome";
-    public static final String COLUMN_PIADINE_DESCRIZIONE = "descrizione";
+    public static final String COLUMN_PIADINE_INGREDIENTI = "ingredienti";
     public static final String COLUMN_PIADINE_PREZZO = "prezzo";
     public static final String COLUMN_PIADINE_TIMESTAMP = "updated_at";
 
@@ -38,6 +39,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_INGREDIENTI_ID = "id_ingrediente";
     public static final String COLUMN_INGREDIENTI_NAME = "nome";
     public static final String COLUMN_INGREDIENTI_PREZZO = "prezzo";
+    public static final String COLUMN_INGREDIENTI_ALLERGENI = "allergeni";
     public static final String COLUMN_INGREDIENTI_TIMESTAMP = "updated_at";
 
     // costruttore.
@@ -60,7 +62,7 @@ public class DBHelper extends SQLiteOpenHelper{
         String query_piadine = "CREATE TABLE " + TABLE_PIADINE_NAME
                 + "(" + COLUMN_PIADINE_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PIADINE_NAME +
-                " VARCHAR, " + COLUMN_PIADINE_DESCRIZIONE +
+                " VARCHAR, " +COLUMN_PIADINE_INGREDIENTI+
                 " TEXT, " + COLUMN_PIADINE_PREZZO +
                 " DOUBLE, " + COLUMN_PIADINE_TIMESTAMP + " LONG);";
 
@@ -68,7 +70,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 + "(" + COLUMN_INGREDIENTI_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_INGREDIENTI_NAME +
                 " VARCHAR, " + COLUMN_INGREDIENTI_PREZZO +
-                " DOUBLE, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
+                " DOUBLE, " + COLUMN_INGREDIENTI_ALLERGENI +
+                " VARCHAR, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
 
 
         // creazione tabella: users
@@ -112,8 +115,10 @@ public class DBHelper extends SQLiteOpenHelper{
             queryValues.userId = database.insert("logins", null, values);
         }catch(Exception e){
             Log.d("INSERT", e.toString());
+        }finally{
+            database.close();
         }
-        database.close();
+
         return queryValues;
     }
 
@@ -127,19 +132,24 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-/*    public User getUser (String username){
-        String query = "Select userId, password, email from logins where username ='"+username+"'";
-        User myUser = new User(0, username,"", "");
-        SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery(query, null);
-        if (cursor.moveToFirst()){
-            do {
-                myUser.userId=cursor.getLong(0);
-                myUser.password=cursor.getString(1);
-                myUser.email=cursor.getString(2);
-            } while (cursor.moveToNext());
-        }
-        return myUser;
+    public int updateUserEMail (User queryValues){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
+        values.put(COLUMN_LOGINS_EMAIL, queryValues.email);
+        queryValues.userId = database.insert("logins", null, values);
+        database.close();
+        return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
+    }
+
+/*    public int updateUserPhone (User queryValues){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
+        values.put(COLUMN_LOGINS_PHONE, queryValues.phone);
+        queryValues.userId = database.insert("logins", null, values);
+        database.close();
+        return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }*/
 
     public User getUserByEmail (String email){
@@ -170,11 +180,12 @@ public class DBHelper extends SQLiteOpenHelper{
             do {
                 long idPiadina = cursorPiadine.getLong(0);
                 String nomePiadina = cursorPiadine.getString(1);
-                String descrizionePiadina = cursorPiadine.getString(2);
+                String ingredientiPiadina = cursorPiadine.getString(2);
                 double prezzoPiadina = cursorPiadine.getDouble(3);
                 long lastUpdatePiadina = cursorPiadine.getLong(4);
 
-                Piadina piadina = new Piadina(idPiadina, nomePiadina, descrizionePiadina, prezzoPiadina, lastUpdatePiadina);
+                ArrayList<Ingrediente> ingredienti = getIngredientiFromString(ingredientiPiadina);
+                Piadina piadina = new Piadina(idPiadina, nomePiadina, ingredienti, prezzoPiadina, lastUpdatePiadina);
 
                 piadine.add(piadina);
             } while (cursorPiadine.moveToNext());
@@ -186,9 +197,10 @@ public class DBHelper extends SQLiteOpenHelper{
     public void insertPiadina (Piadina piadina){
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        String piadinaIngredienti = piadina.printIngredienti();
 
         values.put(COLUMN_PIADINE_NAME, piadina.getNome());
-        values.put(COLUMN_PIADINE_DESCRIZIONE, piadina.getDescrizione());
+        values.put(COLUMN_PIADINE_INGREDIENTI, piadinaIngredienti);
         values.put(COLUMN_PIADINE_PREZZO, piadina.getPrice());
         values.put(COLUMN_PIADINE_TIMESTAMP, piadina.getLastUpdated());
 
@@ -209,6 +221,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
         values.put(COLUMN_INGREDIENTI_NAME, ingrediente.getName());
         values.put(COLUMN_INGREDIENTI_PREZZO, ingrediente.getPrice());
+        values.put(COLUMN_INGREDIENTI_ALLERGENI, ingrediente.getListaAllergeni());
         values.put(COLUMN_INGREDIENTI_TIMESTAMP, ingrediente.getLastUpdated());
 
         try {
@@ -221,7 +234,6 @@ public class DBHelper extends SQLiteOpenHelper{
         database.close();
 
     }
-
 
     public long getInternalTimeStampPiadine(){
         long timeStamp = 0;
@@ -249,6 +261,36 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
         return timeStamp;
+    }
+
+    public Ingrediente getIngredienteByName (String nomeIngrediente) {
+        String query = "Select id_ingrediente, prezzo, allergeni, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
+        Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, "", 0);
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ingrediente.setIdIngrediente(cursor.getLong(0));
+                ingrediente.setPrice(cursor.getDouble(1));
+                ingrediente.setListaAllergeni(cursor.getString(2));
+                ingrediente.setLastUpdated(cursor.getLong(3));
+            } while (cursor.moveToNext());
+        }
+        return ingrediente;
+    }
+
+    public ArrayList<Ingrediente> getIngredientiFromString (String stringaIngredienti){
+        ArrayList<Ingrediente> listaIngredienti = new ArrayList<>();
+
+        String[] result = stringaIngredienti.split(",\\s");
+
+        for (int i=0; i < result.length; i++) {
+            Log.d("STRINGA", result[i]);
+            Ingrediente ingrediente = getIngredienteByName(result[i]);
+            listaIngredienti.add(ingrediente);
+        }
+
+        return listaIngredienti;
     }
 
     public void printPiadineTable(){
@@ -280,7 +322,25 @@ public class DBHelper extends SQLiteOpenHelper{
                 Log.d("DB/PRINT", "ID Ingrediente: " + cursor.getLong(0));
                 Log.d("DB/PRINT", "Nome Ingrediente: " + cursor.getString(1));
                 Log.d("DB/PRINT", "Prezzo Ingrediente: " + cursor.getDouble(2));
-                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(3));
+                Log.d("DB/PRINT", "Allergeni Ingrediente: " + cursor.getString(3));
+                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(4));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+    }
+
+    public void printLoginsTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_LOGINS_NAME + ";";
+        Log.d("DB/PRINT", "Stampa tabella utenti!");
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()){
+            do {
+                Log.d("DB/PRINT", "ID Utente: " + cursor.getLong(0));
+                Log.d("DB/PRINT", "Nome Utente: " + cursor.getString(1));
+                Log.d("DB/PRINT", "Password Utente: " + cursor.getString(2));
+                Log.d("DB/PRINT", "Email Utente: " + cursor.getString(3));
             } while (cursor.moveToNext());
         }
         db.close();

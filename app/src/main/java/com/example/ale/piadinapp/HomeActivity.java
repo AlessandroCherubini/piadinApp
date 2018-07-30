@@ -36,7 +36,6 @@ public class HomeActivity extends AppCompatActivity
         TabCreaPiadina.OnFragmentInteractionListener, TabLeTuePiadine.OnFragmentInteractionListener {
 
     SessionManager session;
-    DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +46,8 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         session = new SessionManager(this);
+        /*DBHelper helper = new DBHelper(this);
+        helper.printIngredientiTable();*/
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));
@@ -173,8 +174,9 @@ public class HomeActivity extends AppCompatActivity
                                             public void run() {
                                                 // termina la sessione dell'utente.
                                                 session.logoutUser();
-                                                progressDialog.dismiss();
                                                 finish();
+                                                progressDialog.dismiss();
+
                                             }
                                         }, 2000);
                                 break;

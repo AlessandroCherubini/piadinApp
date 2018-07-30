@@ -48,9 +48,10 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
 
         //binding the data with the viewholder views
         holder.textViewTitle.setText(piadina.getNome());
-        holder.textViewIngredients.setText(piadina.getDescrizione());
+        holder.textViewIngredients.setText(piadina.printIngredienti());
         //holder.textViewRating.setText(String.valueOf(piadina.getRating()));
         holder.textViewPrice.setText(String.valueOf(piadina.getPrice()));
+        piadina.printDettagliIngredienti();
 
     }
 
