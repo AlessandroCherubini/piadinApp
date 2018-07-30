@@ -1,4 +1,5 @@
 package com.example.ale.piadinapp;
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.*;
 
 import android.app.ProgressDialog;
@@ -118,9 +119,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         User newUser = new User(0, name, password, email);
         dbHelper.insertUser(newUser);
-        User user = dbHelper.getUser(name);
-        Log.d("UTENTE CREATO", user.toString());
-        insertUserDB(name, password, email);
+
+        insertUserInExternalDB(name, password, email);
         dbHelper.close();
 
         // sessione per l'utente.
@@ -129,6 +129,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+
+        // redirect alla Home Activity
+        startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 
@@ -174,7 +177,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    public void insertUserDB(final String nickname, final String password, final String email){
+    public void insertUserInExternalDB(final String nickname, final String password, final String email){
         Map<String, String> params = new HashMap();
         params.put("nickname", nickname);
         params.put("password", password);
@@ -187,8 +190,7 @@ public class SignUpActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("JSON2", response.toString());
-                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Registrato! Benvenuto!", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
 

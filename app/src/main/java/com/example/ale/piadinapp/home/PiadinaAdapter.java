@@ -1,23 +1,19 @@
-package com.example.ale.piadinapp;
+package com.example.ale.piadinapp.home;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+
+import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.classi.Piadina;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-
-/**
- * Created by Belal on 10/18/2017.
- */
-
 
 public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaViewHolder> {
 
@@ -52,11 +48,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
 
         //binding the data with the viewholder views
         holder.textViewTitle.setText(piadina.getNome());
-        String formattedString = piadina.ingredienti.toString()
-                .replace("[", "")  //remove the right bracket
-                .replace("]", "")  //remove the left bracket
-                .trim();
-        holder.textViewIngredients.setText(formattedString);
+        holder.textViewIngredients.setText(piadina.getDescrizione());
         //holder.textViewRating.setText(String.valueOf(piadina.getRating()));
         holder.textViewPrice.setText(String.valueOf(piadina.getPrice()));
 

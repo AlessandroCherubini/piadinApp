@@ -4,7 +4,13 @@
     <string name="main_title">GianGusto</string>
     <string name="login">Login</string>
     <string name="signup">Registrazione</string>
+
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_home">GianGusto - Ciliverghe</string>
+    <string name="title_activity_badge">Tessera</string>
+    <string name="title_activity_my_profile">Profilo</string>
+    <string name="title_activity_my_orders">Ordini</string>
+    <string name="title_activity_my_order">Ordini</string>
 
     <!-- Strings related to registration -->
     <string name="link_registrazione">Non hai un account? Creane uno!</string>
@@ -18,7 +24,7 @@
     <string name="registrazione_btn">Registra l\'account</string>
     <string name="login_swap">Hai già un account? Login!</string>
 
-    <string name="title_activity_home">HomeActivity</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -29,15 +35,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string name="title_activity_my_orders">MyOrders</string>
-    <string name="title_activity_my_order">MyOrder</string>
 
     <string name="profilo">Il mio Profilo</string>
     <string name="ordini">I miei Ordini</string>
     <string name="tessera">Tessera</string>
     <string name="logout">Logout</string>
-    <string name="title_activity_badge">Badge</string>
-    <string name="title_activity_my_profile">MyProfileActivity</string>
+
+    <string name="euro">€</string>
+
 
 
 </resources>

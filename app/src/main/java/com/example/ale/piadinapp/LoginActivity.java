@@ -2,6 +2,7 @@ package com.example.ale.piadinapp;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.*;
 import android.app.ProgressDialog;
 import android.os.Bundle;

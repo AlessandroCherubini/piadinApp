@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primaryDarkColor"
                 android:hint="@string/email" />
         </android.support.design.widget.TextInputLayout>
 
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primaryDarkColor"
                 android:hint="@string/password"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -53,15 +53,15 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:background="@color/primary_dark"
-            android:textColor="@color/accent"
+            android:background="@color/primaryDarkColor"
+            android:textColor="@color/primaryTextColor"
             android:text="@string/login"/>
 
         <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:textColor="@color/primary_dark"
+            android:textColor="@color/primaryDarkColor"
             android:text="@string/link_registrazione"
             android:gravity="center"
             android:textSize="16dip"/>

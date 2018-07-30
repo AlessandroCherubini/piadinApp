@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp;
+package com.example.ale.piadinapp.classi;
 
 public class User {
     public long userId;
