@@ -41,12 +41,10 @@
 
 
             <TextView
-                android:id="@+id/textViewPrice"
+                android:id="@+id/textViewPrezzo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="39dp"
-                android:layout_marginRight="5dp"
                 android:layout_toEndOf="@+id/textViewIngredients"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
@@ -56,11 +54,9 @@
                 android:id="@+id/textViewPrice2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="120dp"
-                android:layout_marginRight="5dp"
-                android:layout_toEndOf="@+id/textViewPrice"
+                android:layout_marginEnd="49dp"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
                 android:text="@string/euro" />

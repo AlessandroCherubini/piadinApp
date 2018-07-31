@@ -4,17 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".HomeActivity">
+    tools:context=".home.CustomizePiadinaActivity">
 
     <RelativeLayout
         android:layout_width="387dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="1.0">
 
         <TextView
             android:id="@+id/formato"
@@ -22,9 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="17dp"
             android:layout_marginTop="88dp"
-            android:layout_marginEnd="8dp"
             android:text="@string/formato"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.036"
@@ -36,12 +36,12 @@
             android:id="@+id/rg1"
             android:layout_width="337dp"
             android:layout_height="54dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="7dp"
             android:layout_marginStart="17dp"
             android:layout_marginTop="108dp"
-            android:layout_marginEnd="7dp"
             android:orientation="horizontal"
             android:padding="15dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:paddingRight="10dp"
+                android:onClick="onRadioButtonClicked"
                 android:text="@string/normale" />
 
             <RadioButton
@@ -62,25 +63,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-                android:text="@string/rotolo" />
+                android:text="@string/rotolo"
+                android:onClick="onRadioButtonClicked"/>
 
             <RadioButton
                 android:id="@+id/rb_baby"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-                android:text="@string/baby" />
+                android:text="@string/baby"
+                android:onClick="onRadioButtonClicked"/>
         </RadioGroup>
 
         <TextView
             android:id="@+id/nome_piadina"
             android:layout_width="128dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="51dp"
             android:layout_marginStart="11dp"
             android:layout_marginTop="58dp"
-            android:layout_marginEnd="51dp"
             android:layout_toEndOf="@+id/prefisso_piadina"
             android:fontFamily="@font/museo_slab"
             android:text="@string/personalizza_piadina"
@@ -110,8 +113,8 @@
             android:id="@+id/impasto"
             android:layout_width="wrap_content"
             android:layout_height="18dp"
-            android:layout_below="@+id/rg1"
             android:layout_alignParentStart="true"
+            android:layout_below="@+id/rg1"
             android:layout_marginStart="17dp"
             android:layout_marginTop="0dp"
             android:text="@string/impasto"
@@ -124,10 +127,9 @@
             android:id="@+id/impasto2"
             android:layout_width="wrap_content"
             android:layout_height="18dp"
-            android:layout_below="@+id/rg1"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="73dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/formato"
+            android:layout_marginTop="252dp"
             android:text="@string/ingredienti"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -139,12 +141,12 @@
             android:id="@+id/rg2"
             android:layout_width="335dp"
             android:layout_height="59dp"
-            android:layout_below="@+id/impasto"
-            android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/impasto"
+            android:layout_marginEnd="9dp"
             android:layout_marginStart="15dp"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="9dp"
             android:orientation="horizontal"
             android:padding="15dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -158,6 +160,7 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:paddingRight="10dp"
+                android:onClick="onRadioButtonClicked"
                 android:text="@string/impasto_normale" />
 
             <RadioButton
@@ -166,92 +169,54 @@
                 android:layout_height="wrap_content"
                 android:layout_alignEnd="@+id/rg2"
                 android:paddingRight="10dp"
+                android:onClick="onRadioButtonClicked"
                 android:text="@string/integrale" />
 
         </RadioGroup>
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="89dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
+            android:id="@+id/scroll_ingredienti"
+            android:layout_width="338dp"
+            android:layout_height="145dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="257dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="165dp">
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="141dp">
 
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ingredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="91dp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawableRight="@drawable/ic_remove_black_24dp"
-                    android:drawablePadding="30dp"
-                    android:text="Prosciutto Cotto" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawableRight="@drawable/ic_remove_black_24dp"
-                    android:drawablePadding="30dp"
-                    android:text="Mozzarella" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawableRight="@drawable/ic_remove_black_24dp"
-                    android:drawablePadding="30dp"
-                    android:text="Gamberetti" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawableRight="@drawable/ic_remove_black_24dp"
-                    android:drawablePadding="30dp"
-                    android:text="Lattuga" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawableRight="@drawable/ic_remove_black_24dp"
-                    android:drawablePadding="30dp"
-                    android:text="Salsa Rosa" />
-                <!-- TextView and other stuff -->
-
-            </LinearLayout>
         </ScrollView>
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_above="@+id/button"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="76dp"
-            android:layout_marginBottom="54dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="83dp"
             android:background="@color/primaryColor"
             android:drawableLeft="@android:drawable/ic_menu_add"
             android:fontFamily="@font/museo_slab"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
-            android:text="Altri Ingredienti"
+            android:text="AGGIUNGI ALTRI INGREDIENTI"
             android:textColor="@color/primaryTextColor" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
             android:background="@color/primaryDarkColor"
             android:drawableLeft="@drawable/ic_add_shopping_cart_black_24dp"
             android:drawablePadding="20dp"
@@ -266,14 +231,14 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="106dp"
+            android:id="@+id/prezzoTotalePiadina"
+            android:layout_width="76dp"
             android:layout_height="38dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="-4dp"
-            android:layout_marginEnd="55dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginBottom="15dp"
+            android:layout_marginEnd="11dp"
+            android:layout_marginStart="-4dp"
             android:layout_toEndOf="@+id/button"
             android:text="totale:" />
 
@@ -281,10 +246,10 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="11dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginBottom="33dp"
+            android:layout_marginEnd="11dp"
             android:text="€" />
 
     </RelativeLayout>

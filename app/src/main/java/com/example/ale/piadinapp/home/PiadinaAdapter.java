@@ -50,7 +50,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
         holder.textViewTitle.setText(piadina.getNome());
         holder.textViewIngredients.setText(piadina.printIngredienti());
         //holder.textViewRating.setText(String.valueOf(piadina.getRating()));
-        holder.textViewPrice.setText(String.valueOf(piadina.getPrice()));
+        holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
         piadina.printDettagliIngredienti();
 
     }
@@ -64,7 +64,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
 
     class PiadinaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView textViewTitle, textViewIngredients, textViewRating, textViewPrice;
+        TextView textViewTitle, textViewIngredients, textViewRating, textViewPrezzo;
         ImageButton addButton;
         private WeakReference<ClickListener> listenerRef;
 
@@ -73,7 +73,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
 
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewIngredients = itemView.findViewById(R.id.textViewIngredients);
-            textViewPrice = itemView.findViewById(R.id.textViewPrice);
+            textViewPrezzo = itemView.findViewById(R.id.textViewPrezzo);
             addButton = itemView.findViewById(R.id.addButton);
             listenerRef = new WeakReference<>(listener);
 
