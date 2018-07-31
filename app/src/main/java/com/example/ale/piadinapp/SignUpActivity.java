@@ -25,6 +25,8 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -119,9 +121,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         User newUser = new User(0, name, password, email);
         dbHelper.insertUser(newUser);
+        dbHelper.close();
 
         insertUserInExternalDB(name, password, email);
-        dbHelper.close();
 
         // sessione per l'utente.
         session.setLoggedIn(true);
@@ -129,9 +131,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-
-        // redirect alla Home Activity
-        startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 
@@ -152,6 +151,13 @@ public class SignUpActivity extends AppCompatActivity {
             _nameText.setError(null);
         }
 
+        if (name.isEmpty() || name.length() > 25) {
+            _nameText.setError("Il nickname deve essere al massimo di 25 caratteri");
+            valid = false;
+        } else {
+            _nameText.setError(null);
+        }
+
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("Inserisci un indirizzo email valido");
             valid = false;
@@ -167,7 +173,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         if (reEnterPassword.isEmpty() || reEnterPassword.length() < 4 || reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
-            _reEnterPasswordText.setError("Password sbagliata. Re-inserisci la password digitata sopra.");
+            _reEnterPasswordText.setError("Password sbagliata. Re-inserisci la password digitata sopra");
             valid = false;
         } else {
             _reEnterPasswordText.setError(null);
@@ -179,6 +185,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void insertUserInExternalDB(final String nickname, final String password, final String email){
         Map<String, String> params = new HashMap();
+        //nickname = nickname.replaceAll("%20"," ");
         params.put("nickname", nickname);
         params.put("password", password);
         params.put("email", email);
@@ -190,7 +197,37 @@ public class SignUpActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Registrato! Benvenuto!", Toast.LENGTH_SHORT).show();
+                        Log.d("JSON", response.toString());
+                        try{
+                            String success = response.getString("success");
+                            Log.d("JSON", "success: " + success);
+                            if(success.equals("1")){
+                                // sessione per l'utente.
+                                session.setLoggedIn(true);
+                                session.createLoginSession(name, email);
+
+                                _signupButton.setEnabled(true);
+                                setResult(RESULT_OK, null);
+
+                                // redirect alla Home Activity
+                                Toast.makeText(getApplicationContext(), "Registrato! Benvenuto!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+                                finish();
+                            }
+                            else{
+                                int error = response.getInt("error");
+                                if(error == 1062){
+                                    _emailText.setError("Indirizzo email già in uso");
+                                    //valid = false;
+                                }
+                                Toast.makeText(getApplicationContext(), "Errore nella creazione dell'utente.", Toast.LENGTH_SHORT).show();
+                                _signupButton.setEnabled(true);
+                            }
+                        }catch(JSONException e){
+                            e.fillInStackTrace();
+                        }
+
+
                     }
                 }, new Response.ErrorListener() {
 

@@ -41,11 +41,13 @@ public class MainActivity extends AppCompatActivity {
     public void loginActivity(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void registerActivity(View view){
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
+
     }
 /*
     private void logout(){

@@ -27,12 +27,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class SplashActivity extends AppCompatActivity {
 
     //String urlVersione = "http://piadinapp.altervista.org/get_db_version.php";
     Context mContext;
     private RequestQueue queue;
     DBHelper helper;
+    boolean checkPiadine = false;
+    boolean checkIngredienti = false;
 
     final String urlGetPiadine = "http://piadinapp.altervista.org/get_all_piadine.php";
     final String urlGetIngredienti = "http://piadinapp.altervista.org/get_all_ingredients.php";
@@ -50,7 +55,7 @@ public class SplashActivity extends AppCompatActivity {
 
         startActivity(new Intent(SplashActivity.this, MainActivity.class));
         finish();
-
+       
         /*// Find the progress bar
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         // Start your loading
@@ -104,12 +109,13 @@ public class SplashActivity extends AppCompatActivity {
                                     String descrizionePiadina = piadina.getString("descrizione");
                                     Double prezzoPiadina = piadina.getDouble("prezzo");
 
-                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, descrizionePiadina, prezzoPiadina, serverTimeStamp);
+                                    ArrayList<Ingrediente> ingredientiPiadina = helper.getIngredientiFromString(descrizionePiadina);
+
+                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, ingredientiPiadina, prezzoPiadina, serverTimeStamp);
                                     helper.insertPiadina(piadinaInterna);
                                 }
                                 Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");
-
-                                helper.printPiadineTable();
+                                checkPiadine = true;
 
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
@@ -172,13 +178,15 @@ public class SplashActivity extends AppCompatActivity {
                                     long idIngrediente = ingrediente.getLong("id_ingrediente");
                                     String nomeIngrediente = ingrediente.getString("nome");
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
+                                    String allergeniIngrediente = ingrediente.getString("allergeni");
+                                    Log.d("ALLERGENI", allergeniIngrediente);
 
-                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, serverTimeStamp);
+                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente, serverTimeStamp);
                                     helper.insertIngrediente(ingredienteInterno);
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
+                                checkIngredienti = true;
 
-                                helper.printIngredientiTable();
 
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
