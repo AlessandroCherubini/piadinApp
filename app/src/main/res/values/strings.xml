@@ -49,7 +49,7 @@
     <string name="formato">Che formato desideri?</string>
     <string name="impasto">Che impasto preferisci?</string>
     <string name="normale">Piadina</string>
-    <string name="rotolo">Rotolo\u00A0\u00A0 +1€</string>
+    <string name="rotolo">Rotolo\u00A0\u00A0 +2€</string>
     <string name="baby">Baby\u00A0\u00A0 -1€</string>
     <string name="impasto_normale">Normale</string>
     <string name="integrale">Integrale\u00A0\u00A0 +0,30€</string>
