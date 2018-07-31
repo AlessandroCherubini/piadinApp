@@ -65,7 +65,14 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+
         }
+
+    }
+    public void removeItem(int id){
+        mData.remove(id);
+        notifyItemRemoved(id);
+        notifyItemRangeChanged(id,mData.size());
     }
 
     // convenience method for getting data at click position

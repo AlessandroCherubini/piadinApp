@@ -38,10 +38,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     public final static Double IMPASTO_INTEGRALE = 0.30;
     public final static Double FORMATO_BABY = -1.0;
-    public final static Double FORMATO_ROTOLO = 1.0;
+    public final static Double FORMATO_ROTOLO = 2.0;
 
-    static double impasto=0;
-    static double formato=0;
+
     static double totale=0;
 
 
@@ -88,7 +87,16 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+
+        Double prezzoIngrediente = adapter.getItem(position).getPrice();
+        TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+        Double prezzoCorrente = Double.valueOf(removeLastChar(prezzoPiadina.getText().toString()));
+        Double nuovoPrezzo = prezzoCorrente-prezzoIngrediente;
+        String newPrice = nuovoPrezzo.toString();
+        prezzoPiadina.setText(newPrice);
+        adapter.removeItem(position);
+
+        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -103,8 +111,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
 
         TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-
-        String prezzoCorrente = removeLastChar(prezzoPiadina.getText().toString());
+        //String prezzoCorrente = removeLastChar(prezzoPiadina.getText().toString());
 
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
@@ -117,75 +124,85 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         boolean  checked = ((RadioButton) v).isChecked();
 
         //now check which radio button is selected
-        //android switch statement
-        switch(v.getId()){
+        if (rb1.isChecked() && rb4.isChecked()){
 
-            case R.id.rb_normale:
-                if(checked)
+            rb1.setTypeface(null, Typeface.BOLD_ITALIC);
+            rb4.setTypeface(null, Typeface.BOLD_ITALIC);
+            //set the other two radio buttons text style to default
+            rb2.setTypeface(null, Typeface.NORMAL);
+            rb5.setTypeface(null, Typeface.NORMAL);
+            rb3.setTypeface(null, Typeface.NORMAL);
 
-                    rb1.setTypeface(null, Typeface.BOLD_ITALIC);
-                //set the other two radio buttons text style to default
-                rb2.setTypeface(null, Typeface.NORMAL);
-                // reqire to import Typeface class
-                rb3.setTypeface(null, Typeface.NORMAL);
+            totale=prezzoPiadinaBase;
+            prezzoPiadina.setText(totale+"€");
 
-                totale = impasto + formato + prezzoPiadinaBase;
-                prezzoPiadina.setText(totale+"€");
-
-                break;
-
-            case R.id.rb_rotolo:
-                if(checked)
-
-                    rb2.setTypeface(null, Typeface.BOLD_ITALIC);
-                //set the other two radio buttons text style to default
-                rb1.setTypeface(null, Typeface.NORMAL);
-                rb3.setTypeface(null, Typeface.NORMAL);
-
-                totale = impasto + FORMATO_ROTOLO + prezzoPiadinaBase;
-                prezzoPiadina.setText(totale+"€");
-
-                break;
-
-            case R.id.rb_baby:
-                if(checked)
-
-                    rb3.setTypeface(null, Typeface.BOLD_ITALIC);
-                //set the other two radio buttons text style to default
-                rb1.setTypeface(null, Typeface.NORMAL);
-                rb2.setTypeface(null, Typeface.NORMAL);
-
-                totale = impasto + FORMATO_BABY + prezzoPiadinaBase;
-                prezzoPiadina.setText(totale+"€");
-
-                break;
-
-            case R.id.rb_impasto_normale:
-                if(checked)
-
-                    rb4.setTypeface(null, Typeface.BOLD_ITALIC);
-                //set the other two radio buttons text style to default
-                rb5.setTypeface(null, Typeface.NORMAL);
-
-
-                totalep = Double.parseDouble(prezzoCorrente)-IMPASTO_INTEGRALE;
-                prezzoPiadina.setText(totale+"€");
-
-                break;
-
-            case R.id.rb_integrale:
-                if(checked)
-
-                    rb5.setTypeface(null, Typeface.BOLD_ITALIC);
-                //set the other two radio buttons text style to default
-                rb4.setTypeface(null, Typeface.NORMAL);
-
-                totale=Double.parseDouble(prezzoCorrente)+IMPASTO_INTEGRALE;
-
-                prezzoPiadina.setText(totale+"€");
-
-                break;
         }
+        else if (rb2.isChecked() && rb4.isChecked()){
+
+        rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+        rb4.setTypeface(null, Typeface.BOLD_ITALIC);
+        //set the other two radio buttons text style to default
+        rb1.setTypeface(null, Typeface.NORMAL);
+        rb5.setTypeface(null, Typeface.NORMAL);
+        rb3.setTypeface(null, Typeface.NORMAL);
+
+        totale=prezzoPiadinaBase+FORMATO_ROTOLO;
+        prezzoPiadina.setText(totale+"€");
+        }
+        else if (rb3.isChecked() && rb4.isChecked()){
+
+            rb3.setTypeface(null, Typeface.BOLD_ITALIC);
+            rb4.setTypeface(null, Typeface.BOLD_ITALIC);
+            //set the other two radio buttons text style to default
+            rb1.setTypeface(null, Typeface.NORMAL);
+            rb5.setTypeface(null, Typeface.NORMAL);
+            rb2.setTypeface(null, Typeface.NORMAL);
+
+            totale=prezzoPiadinaBase+FORMATO_BABY;
+            prezzoPiadina.setText(totale+"€");
+        }
+
+        else if (rb1.isChecked() && rb5.isChecked()){
+
+            rb1.setTypeface(null, Typeface.BOLD_ITALIC);
+            rb5.setTypeface(null, Typeface.BOLD_ITALIC);
+            //set the other two radio buttons text style to default
+            rb3.setTypeface(null, Typeface.NORMAL);
+            rb4.setTypeface(null, Typeface.NORMAL);
+            rb2.setTypeface(null, Typeface.NORMAL);
+
+            totale=prezzoPiadinaBase+IMPASTO_INTEGRALE;
+            prezzoPiadina.setText(totale+"€");
+        }
+
+        else if (rb2.isChecked() && rb5.isChecked()){
+
+            rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+            rb5.setTypeface(null, Typeface.BOLD_ITALIC);
+            //set the other two radio buttons text style to default
+            rb1.setTypeface(null, Typeface.NORMAL);
+            rb4.setTypeface(null, Typeface.NORMAL);
+            rb3.setTypeface(null, Typeface.NORMAL);
+
+            totale=prezzoPiadinaBase+FORMATO_ROTOLO+IMPASTO_INTEGRALE;
+            prezzoPiadina.setText(totale+"€");
+        }
+
+        else if (rb3.isChecked() && rb5.isChecked()){
+
+            rb3.setTypeface(null, Typeface.BOLD_ITALIC);
+            rb5.setTypeface(null, Typeface.BOLD_ITALIC);
+
+            rb1.setTypeface(null, Typeface.NORMAL);
+
+            rb2.setTypeface(null, Typeface.NORMAL);
+            rb4.setTypeface(null, Typeface.NORMAL);
+
+            totale=prezzoPiadinaBase+FORMATO_BABY+IMPASTO_INTEGRALE;
+            prezzoPiadina.setText(totale+"€");
+        }
+
+
     }
 
     private static String removeLastChar(String str) {
