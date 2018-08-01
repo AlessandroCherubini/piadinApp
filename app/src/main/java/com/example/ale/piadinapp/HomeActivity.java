@@ -5,13 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,12 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
 import com.example.ale.piadinapp.home.TabMenu;
-import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -189,7 +183,10 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.where) {
+
+                Intent intent = new Intent(this, WeAreHereActivity.class);
+                startActivity(intent);
 
         } else if (id == R.id.ordini) {
 

@@ -3,8 +3,13 @@ package com.example.ale.piadinapp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,25 +19,59 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ale.piadinapp.R;
 import com.example.ale.utility.SessionManager;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 
-public class BadgeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class WeAreHereActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_badge);
+        setContentView(R.layout.activity_we_are_here);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         session = new SessionManager(this);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Create a Uri from an intent string. Use the result to create an Intent.
+                
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=GianGusto+Piadineria,+Via+dei+Pioppi,+18,+25080+Molinetto+BS");
+
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+
+                    startActivity(mapIntent);
+                }
+                else{Toast toast = Toast.makeText(getApplicationContext(), "Maps non installato", Toast.LENGTH_LONG);
+                    toast.show();}
+
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -53,6 +92,13 @@ public class BadgeActivity extends AppCompatActivity
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
     }
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(45.49625, 10.3528))
+                .title("Marker"));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.49625, 10.3528), 12.0f));
+    }
 
     @Override
     public void onBackPressed() {
@@ -67,7 +113,7 @@ public class BadgeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.badge, menu);
+        getMenuInflater().inflate(R.menu.we_are_here, menu);
         return true;
     }
 
@@ -100,6 +146,9 @@ public class BadgeActivity extends AppCompatActivity
 
         } else if (id == R.id.tessera) {
 
+            Intent intent = new Intent(this, BadgeActivity.class);
+            startActivity(intent);
+            finish();
 
         } else if (id == R.id.logout) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -109,7 +158,7 @@ public class BadgeActivity extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             //Yes button clicked
 
-                            final ProgressDialog progressDialog = new ProgressDialog(BadgeActivity.this,
+                            final ProgressDialog progressDialog = new ProgressDialog(WeAreHereActivity.this,
                                     R.style.AppTheme_Dark_Dialog);
                             progressDialog.setIndeterminate(true);
                             progressDialog.setMessage("Logout in corso...");
@@ -122,7 +171,6 @@ public class BadgeActivity extends AppCompatActivity
                                             session.logoutUser();
                                             finish();
                                             progressDialog.dismiss();
-
                                         }
                                     }, 2000);
                             break;
@@ -143,10 +191,6 @@ public class BadgeActivity extends AppCompatActivity
 
         } else if (id == R.id.where) {
 
-            Intent intent = new Intent(this, WeAreHereActivity.class);
-            startActivity(intent);
-            finish();
-
 
         } else if (id == R.id.ordini) {
 
@@ -154,10 +198,12 @@ public class BadgeActivity extends AppCompatActivity
             startActivity(intent);
             finish();
 
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

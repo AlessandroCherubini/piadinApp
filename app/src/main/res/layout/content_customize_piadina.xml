@@ -193,7 +193,7 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/buttonAddIngredients"
             android:layout_width="359dp"
             android:layout_height="30dp"
             android:layout_alignParentBottom="true"
@@ -210,7 +210,7 @@
             android:textColor="@color/primaryTextColor" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/addKart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -241,7 +241,7 @@
             android:layout_marginBottom="15dp"
             android:layout_marginEnd="11dp"
             android:layout_marginStart="-4dp"
-            android:layout_toEndOf="@+id/button"
+            android:layout_toEndOf="@+id/addKart"
             android:text="totale:" />
 
         <TextView
