@@ -7,8 +7,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
+        android:layout_height="30dp"
         app:cardBackgroundColor="@android:color/transparent">
 
         <RelativeLayout
@@ -17,14 +16,17 @@
 
             <TextView
                 android:id="@+id/ingredient"
-                android:layout_width="258dp"
-                android:layout_height="wrap_content"
+                android:layout_width="189dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="15dp"
+                android:layout_marginTop="0dp"
                 android:fontFamily="@font/museo_slab"
+                android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:text="Descrizione"
+                android:layout_centerVertical="true"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#000000" />
 
@@ -33,12 +35,26 @@
                 android:id="@+id/textViewPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginEnd="66dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="145dp"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
+                android:paddingTop="5dp"
                 android:text="5.9" />
+
+            <ImageButton
+                android:id="@+id/allergeniButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="87dp"
+                android:layout_marginBottom="3dp"
+                android:elevation="4dp"
+                android:paddingTop="5dp"
+                android:src="@drawable/ic_info_black_24dp" />
 
             <ImageButton
                 android:id="@+id/removeButton"
@@ -46,7 +62,7 @@
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="11dp"
+                android:layout_marginEnd="29dp"
                 android:background="@drawable/button_selector"
                 android:elevation="4dp"
                 android:src="@drawable/ic_remove_black_24dp" />

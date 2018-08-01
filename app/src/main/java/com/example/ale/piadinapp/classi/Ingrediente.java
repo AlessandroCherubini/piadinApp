@@ -8,14 +8,16 @@ public class Ingrediente {
     private String name;
     private double price;
     private String listaAllergeni;
+    private String categoria;
     private long lastUpdated;
 
 
-    public Ingrediente(long idIngrediente, String name, double price, String listaAllergeni, long lastUpdated){
+    public Ingrediente(long idIngrediente, String name, double price, String listaAllergeni, String categoria, long lastUpdated){
         this.idIngrediente = idIngrediente;
         this.name = name;
         this.price = price;
         this.listaAllergeni = listaAllergeni;
+        this.categoria = categoria;
         this.lastUpdated = lastUpdated;
 
     }
@@ -49,13 +51,20 @@ public class Ingrediente {
         this.price = price;
     }
 
-
     public String getListaAllergeni() {
         return listaAllergeni;
     }
 
     public void setListaAllergeni(String listaAllergeni) {
         this.listaAllergeni = listaAllergeni;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public long getLastUpdated() {

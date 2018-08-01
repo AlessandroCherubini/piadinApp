@@ -6,7 +6,9 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:checked="true"
+            android:checkable="false"
+            android:checked="false"
+            android:enabled="true"
             android:icon="@drawable/ic_person_24dp"
             android:title="@string/profilo" />
         <item
@@ -32,8 +34,10 @@
                 android:title="Share" />
             <item
                 android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:checkable="true"
+                android:checked="true"
+                android:icon="@drawable/ic_map_black_24dp"
+                android:title="@string/dove_siamo" />
         </menu>
     </item>
 

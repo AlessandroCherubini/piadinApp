@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- Internet Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <!-- Geolocation Permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application

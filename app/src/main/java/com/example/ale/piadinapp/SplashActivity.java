@@ -2,9 +2,12 @@ package com.example.ale.piadinapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -22,6 +25,8 @@ import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.VolleyCallback;
+import com.example.ale.utility.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,14 +35,12 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity{
 
-    //String urlVersione = "http://piadinapp.altervista.org/get_db_version.php";
-    Context mContext;
-    private RequestQueue queue;
     DBHelper helper;
-    boolean checkPiadine = false;
-    boolean checkIngredienti = false;
+
+    VolleyCallback piadineCallBack;
+    VolleyCallback ingredientiCallBack;
 
     final String urlGetPiadine = "http://piadinapp.altervista.org/get_all_piadine.php";
     final String urlGetIngredienti = "http://piadinapp.altervista.org/get_all_ingredients.php";
@@ -47,36 +50,29 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        queue = Volley.newRequestQueue(this);
         helper = new DBHelper(this);
 
+        piadineCallBack = new VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                ingredientiCallBack = new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        //progressBar.setIndeterminate(false);
+                        //progressBar.setVisibility(View.GONE);
+                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                        finish();
+                    }
+                };
+
+                checkUpdateIngredienti();
+
+            }
+        };
+
         checkUpdatePiadine();
-        checkUpdateIngredienti();
-
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-        finish();
-       
-        /*// Find the progress bar
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        // Start your loading
-        new LoadingTask(progressBar, this).execute("");*/
 
     }
-
-    /*@Override
-    public void onTaskFinished() {
-        completeSplash();
-    }
-
-    private void completeSplash(){
-        startApp();
-        finish(); // Don't forget to finish this Splash Activity so the user can't return to it!
-    }
-
-    private void startApp() {
-        // redirect alla pagina principale
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-    }*/
 
     public void checkUpdatePiadine() {
         Log.d("DB", "Controllo il timestamp della tabella piadine sul DB esterno");
@@ -115,11 +111,14 @@ public class SplashActivity extends AppCompatActivity {
                                     helper.insertPiadina(piadinaInterna);
                                 }
                                 Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");
-                                checkPiadine = true;
+                                //checkPiadine = true;
 
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
+
                             }
+
+                            piadineCallBack.onSuccess("Ok");
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(SplashActivity.this, "Errore nella richiesta", Toast.LENGTH_SHORT).show();
@@ -131,9 +130,9 @@ public class SplashActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
                 if (error instanceof TimeoutError) {
-                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Connessione troppo lenta: non sono riuscito a scaricare i dati", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Nessuna connessione ad Internet!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {
                     Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof ServerError) {
@@ -146,7 +145,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        queue.add(jsObjRequest);
+        VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
     }
 
     public void checkUpdateIngredienti() {
@@ -179,18 +178,21 @@ public class SplashActivity extends AppCompatActivity {
                                     String nomeIngrediente = ingrediente.getString("nome");
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
                                     String allergeniIngrediente = ingrediente.getString("allergeni");
+                                    String categoriaIngrediente = ingrediente.getString("categoria");
                                     Log.d("ALLERGENI", allergeniIngrediente);
 
-                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente, serverTimeStamp);
+                                    Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente,
+                                            categoriaIngrediente, serverTimeStamp);
                                     helper.insertIngrediente(ingredienteInterno);
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
-                                checkIngredienti = true;
-
-
+                                //checkIngredienti = true;
+                                helper.printIngredientiTable();
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
                             }
+
+                            ingredientiCallBack.onSuccess("Ok");
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(SplashActivity.this, "Errore nella richiesta", Toast.LENGTH_SHORT).show();
@@ -202,9 +204,9 @@ public class SplashActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
                 if (error instanceof TimeoutError) {
-                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Connessione troppo lenta: non sono riuscito a scaricare i dati", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Nessuna connessione ad Internet!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {
                     Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof ServerError) {
@@ -217,7 +219,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        queue.add(jsObjRequest);
+        VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+
     }
 
 }

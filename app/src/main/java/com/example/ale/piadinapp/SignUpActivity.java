@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,13 +42,13 @@ public class SignUpActivity extends AppCompatActivity {
     @BindView(R.id.input_name) EditText _nameText;
     //@BindView(R.id.input_address) EditText _addressText;
     @BindView(R.id.input_email) EditText _emailText;
-    //@BindView(R.id.input_mobile) EditText _mobileText;
+    @BindView(R.id.input_mobile) EditText _mobileText;
     @BindView(R.id.input_password) EditText _passwordText;
     @BindView(R.id.input_reEnterPassword) EditText _reEnterPasswordText;
     @BindView(R.id.btn_signup) Button _signupButton;
     @BindView(R.id.link_login) TextView _loginLink;
 
-    String name, email, password, reEnterPassword;
+    String name, email, password, reEnterPassword, mobile;
     final String urlCrea = "http://piadinapp.altervista.org/create_user.php";
     private RequestQueue queue;
     SessionManager session;
@@ -85,7 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
         name = _nameText.getText().toString();
         //String address = _addressText.getText().toString();
         email = _emailText.getText().toString();
-        //String mobile = _mobileText.getText().toString();
+        mobile = _mobileText.getText().toString();
         password = _passwordText.getText().toString();
         reEnterPassword = _reEnterPasswordText.getText().toString();
 
@@ -119,15 +120,15 @@ public class SignUpActivity extends AppCompatActivity {
 
         DBHelper dbHelper = new DBHelper(this);
 
-        User newUser = new User(0, name, password, email);
+        User newUser = new User(0, name, password, email, mobile);
         dbHelper.insertUser(newUser);
         dbHelper.close();
 
-        insertUserInExternalDB(name, password, email);
+        insertUserInExternalDB(name, password, email, mobile);
 
         // sessione per l'utente.
         session.setLoggedIn(true);
-        session.createLoginSession(name, password);
+        session.createLoginSession(name, password, mobile);
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -142,7 +143,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     public boolean validate() {
         boolean valid = true;
-
 
         if (name.isEmpty() || name.length() < 3) {
             _nameText.setError("Il nickname deve contenere almeno 3 caratteri");
@@ -165,6 +165,13 @@ public class SignUpActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
+        if (mobile.isEmpty() || !Patterns.PHONE.matcher(mobile).matches()){
+            _emailText.setError("Inserisci un numero di telefono valido");
+            valid = false;
+        }else{
+            _mobileText.setError(null);
+        }
+        
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             _passwordText.setError("Deve contenere dai 4 ai 10 caratteri alfanumerici");
             valid = false;
@@ -183,12 +190,14 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    public void insertUserInExternalDB(final String nickname, final String password, final String email){
+    public void insertUserInExternalDB(final String nickname, final String password, final String email, final String phone){
         Map<String, String> params = new HashMap();
         //nickname = nickname.replaceAll("%20"," ");
         params.put("nickname", nickname);
         params.put("password", password);
         params.put("email", email);
+        params.put("phone", phone);
+        Log.d("PHONE", phone);
 
         JSONObject parameters = new JSONObject(params);
         Log.d("JSON", parameters.toString());
@@ -204,7 +213,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if(success.equals("1")){
                                 // sessione per l'utente.
                                 session.setLoggedIn(true);
-                                session.createLoginSession(name, email);
+                                session.createLoginSession(name, email, phone);
 
                                 _signupButton.setEnabled(true);
                                 setResult(RESULT_OK, null);
@@ -250,6 +259,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        queue.add(jsObjRequest);
+        VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
     }
 }

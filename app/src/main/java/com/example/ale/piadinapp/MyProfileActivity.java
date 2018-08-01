@@ -58,6 +58,9 @@ public class MyProfileActivity extends AppCompatActivity
 
         TextView nameText = findViewById(R.id.profile_username);
         nameText.setText(utente.get("name"));
+
+        TextView phoneText = findViewById(R.id.profile_phone);
+        phoneText.setText(utente.get("phone"));
     }
 
     @Override
@@ -161,7 +164,7 @@ public class MyProfileActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

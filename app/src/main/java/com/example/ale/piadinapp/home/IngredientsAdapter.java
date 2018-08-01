@@ -38,12 +38,13 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         Ingrediente ingrediente = mData.get(position);
         holder.myTextView.setText(ingrediente.getName());
         Double prezzo = new Double(ingrediente.getPrice());
-        holder.textPrice.setText(prezzo.toString()+""+"€");
+        holder.textPrice.setText(prezzo.toString() + " €");
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
+
         return mData.size();
     }
 
@@ -52,12 +53,15 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
         ImageButton removeButton;
+        ImageButton allergeniButton;
         TextView textPrice;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.ingredient);
+            allergeniButton = itemView.findViewById(R.id.allergeniButton);
             removeButton = itemView.findViewById(R.id.removeButton);
+            allergeniButton.setOnClickListener(this);
             removeButton.setOnClickListener(this);
             textPrice=itemView.findViewById(R.id.textViewPrice);
         }

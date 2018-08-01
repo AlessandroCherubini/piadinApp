@@ -45,6 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="11dp"
                 android:layout_toEndOf="@+id/textViewIngredients"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
@@ -52,11 +53,14 @@
 
             <TextView
                 android:id="@+id/textViewPrice2"
-                android:layout_width="wrap_content"
+                android:layout_width="19dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="49dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="41dp"
+                android:layout_toEndOf="@+id/textViewPrezzo"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
                 android:text="@string/euro" />

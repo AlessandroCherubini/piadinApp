@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:fontFamily">@font/museo_slab</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -35,5 +36,10 @@
         <item name="android:progressTint">@color/primaryDarkColor</item>
         <item name="android:minWidth">200dp</item>
     </style>
-
+    <!-- lo stile per cambiare le icone della barra in alto, per il carrello -->
+    <style name="MyActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_shopping_cart_black_24dp</item>
+        <item name="android:background">?android:attr/actionBarItemBackground</item>
+        <item name="android:contentDescription">"Lala"</item>
+    </style>
 </resources>
