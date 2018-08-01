@@ -79,17 +79,17 @@ public class Piadina {
         }
 
         String stringaFinale = stringaIngredienti.substring(0, stringaIngredienti.length() - 2);
-        Log.d("STRINGA", stringaFinale);
 
         return stringaFinale;
     }
 
     public void printDettagliIngredienti(){
         for(int i = 0; i < ingredienti.size(); i++){
-            Log.d("DETTAGLI", " " + ingredienti.get(i).getIdIngrediente());
-            Log.d("DETTAGLI", ingredienti.get(i).getName());
-            Log.d("DETTAGLI", " " + ingredienti.get(i).getPrice());
-            Log.d("DETTAGLI", " " + ingredienti.get(i).getLastUpdated());
+            Log.d("DETTAGLI", "ID ingrediente " + ingredienti.get(i).getIdIngrediente());
+            Log.d("DETTAGLI", "Nome ingrediente " + ingredienti.get(i).getName());
+            Log.d("DETTAGLI", "Prezzo ingrediente " + ingredienti.get(i).getPrice());
+            Log.d("DETTAGLI", "Categoria ingrediente " + ingredienti.get(i).getCategoria());
+            Log.d("DETTAGLI", "Aggiornamento ingrediente " + ingredienti.get(i).getLastUpdated());
         }
 
     }

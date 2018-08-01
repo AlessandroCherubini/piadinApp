@@ -1,11 +1,14 @@
 package com.example.ale.piadinapp.home;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
@@ -60,7 +64,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         double prezzoPiadinaBase = chosenPiadina.getPrice();
 
         TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-        prezzoPiadina.setText(prezzoPiadinaBase+"€");
+        prezzoPiadina.setText(prezzoPiadinaBase + "€");
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
         nomePiadina.setText(chosenPiadina.getNome());
@@ -86,15 +90,67 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onItemClick(View view, final int position) {
+        switch(view.getId()){
 
-        Double prezzoIngrediente = adapter.getItem(position).getPrice();
-        TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-        Double prezzoCorrente = Double.valueOf(removeLastChar(prezzoPiadina.getText().toString()));
-        Double nuovoPrezzo = prezzoCorrente-prezzoIngrediente;
-        String newPrice = nuovoPrezzo.toString();
-        prezzoPiadina.setText(newPrice);
-        adapter.removeItem(position);
+            case R.id.allergeniButton:
+
+                DialogInterface.OnClickListener allergeniClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_NEUTRAL:
+
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builderAllergenti = new AlertDialog.Builder(this);
+                builderAllergenti.setTitle("Allergeni relativi a " + adapter.getItem(position).getName());
+                builderAllergenti.setIcon(R.drawable.ic_info_black_24dp);
+                builderAllergenti.setMessage(adapter.getItem(position).getListaAllergeni()).
+                        setNeutralButton("Ok", allergeniClickListener).show();
+
+
+                break;
+            case R.id.removeButton:
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //Yes button clicked
+
+                                Double prezzoIngrediente = adapter.getItem(position).getPrice();
+                                TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+                                Double prezzoCorrente = Double.valueOf(removeLastChar(prezzoPiadina.getText().toString()));
+                                Double nuovoPrezzo = prezzoCorrente-prezzoIngrediente;
+                                String newPrice = nuovoPrezzo.toString();
+                                prezzoPiadina.setText(newPrice);
+                                adapter.removeItem(position);
+                                Toast.makeText(CustomizePiadinaActivity.this, "Ingrediente rimosso", Toast.LENGTH_LONG).show();
+
+                                if(adapter.getItemCount() == 0){
+
+                                }
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                // Non si fa niente!
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Vuoi rimuovere " + adapter.getItem(position).getName() + " ?").setPositiveButton("Sì", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+                break;
+
+        }
+
 
         //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
@@ -106,11 +162,11 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         helper = new DBHelper(this);
         Intent intent = getIntent();
         int position = intent.getIntExtra("indexPiadina",0);
-        chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+        chosenPiadina = helper.getPiadinaByPosition((long)position + 1);
         double prezzoPiadinaBase = chosenPiadina.getPrice();
 
 
-        TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+        TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
         //String prezzoCorrente = removeLastChar(prezzoPiadina.getText().toString());
 
 
@@ -133,8 +189,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
-            totale=prezzoPiadinaBase;
-            prezzoPiadina.setText(totale+"€");
+            totale = prezzoPiadinaBase;
+            prezzoPiadina.setText(totale + " €");
 
         }
         else if (rb2.isChecked() && rb4.isChecked()){
@@ -158,7 +214,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb2.setTypeface(null, Typeface.NORMAL);
 
-            totale=prezzoPiadinaBase+FORMATO_BABY;
+            totale = prezzoPiadinaBase + FORMATO_BABY;
             prezzoPiadina.setText(totale+"€");
         }
 
@@ -171,8 +227,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb4.setTypeface(null, Typeface.NORMAL);
             rb2.setTypeface(null, Typeface.NORMAL);
 
-            totale=prezzoPiadinaBase+IMPASTO_INTEGRALE;
-            prezzoPiadina.setText(totale+"€");
+            totale = prezzoPiadinaBase + IMPASTO_INTEGRALE;
+            prezzoPiadina.setText(totale + " €");
         }
 
         else if (rb2.isChecked() && rb5.isChecked()){
@@ -184,8 +240,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb4.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
-            totale=prezzoPiadinaBase+FORMATO_ROTOLO+IMPASTO_INTEGRALE;
-            prezzoPiadina.setText(totale+"€");
+            totale = prezzoPiadinaBase + FORMATO_ROTOLO+IMPASTO_INTEGRALE;
+            prezzoPiadina.setText(totale + " €");
         }
 
         else if (rb3.isChecked() && rb5.isChecked()){
@@ -198,14 +254,15 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb2.setTypeface(null, Typeface.NORMAL);
             rb4.setTypeface(null, Typeface.NORMAL);
 
-            totale=prezzoPiadinaBase+FORMATO_BABY+IMPASTO_INTEGRALE;
-            prezzoPiadina.setText(totale+"€");
+            totale = prezzoPiadinaBase + FORMATO_BABY+IMPASTO_INTEGRALE;
+            prezzoPiadina.setText(totale + " €");
         }
 
 
     }
 
     private static String removeLastChar(String str) {
+
         return str.substring(0, str.length() - 1);
     }
 
