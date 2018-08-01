@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_LOGINS_NAME = "username";
     public static final String COLUMN_LOGINS_PASSWORD = "password";
     public static final String COLUMN_LOGINS_EMAIL = "email";
-    //public static final String COLUMN_LOGINS_PHONE = "phone";
+    public static final String COLUMN_LOGINS_PHONE = "phone";
 
     // tabella: piadine
     public static final String TABLE_PIADINE_NAME = "piadine";
@@ -40,6 +40,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_INGREDIENTI_NAME = "nome";
     public static final String COLUMN_INGREDIENTI_PREZZO = "prezzo";
     public static final String COLUMN_INGREDIENTI_ALLERGENI = "allergeni";
+    public static final String COLUMN_INGREDIENTI_CATEGORIA = "categoria";
     public static final String COLUMN_INGREDIENTI_TIMESTAMP = "updated_at";
 
     // costruttore.
@@ -57,7 +58,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 + "(" + COLUMN_LOGINS_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_LOGINS_NAME +
                 " TEXT, " + COLUMN_LOGINS_PASSWORD +
-                " TEXT, " + COLUMN_LOGINS_EMAIL + " TEXT);";
+                " TEXT, " + COLUMN_LOGINS_EMAIL +
+                " TEXT, " + COLUMN_LOGINS_PHONE + " TEXT);";
 
         String query_piadine = "CREATE TABLE " + TABLE_PIADINE_NAME
                 + "(" + COLUMN_PIADINE_ID +
@@ -71,6 +73,7 @@ public class DBHelper extends SQLiteOpenHelper{
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_INGREDIENTI_NAME +
                 " VARCHAR, " + COLUMN_INGREDIENTI_PREZZO +
                 " DOUBLE, " + COLUMN_INGREDIENTI_ALLERGENI +
+                " VARCHAR, " + COLUMN_INGREDIENTI_CATEGORIA +
                 " VARCHAR, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
 
 
@@ -111,6 +114,7 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put("username", queryValues.nickname);
         values.put("password", queryValues.password);
         values.put("email", queryValues.email);
+        values.put("phone", queryValues.phone);
         try {
             queryValues.userId = database.insert("logins", null, values);
         }catch(Exception e){
@@ -142,7 +146,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-/*    public int updateUserPhone (User queryValues){
+    public int updateUserPhone (User queryValues){
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
@@ -150,18 +154,19 @@ public class DBHelper extends SQLiteOpenHelper{
         queryValues.userId = database.insert("logins", null, values);
         database.close();
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
-    }*/
+    }
 
     public User getUserByEmail (String email){
-        String query = "Select userId, username, password from logins where email ='"+email+"'";
-        User myUser = new User(0, "","", email);
+        String query = "Select userId, username, password, phone from logins where email ='"+email+"'";
+        User myUser = new User(0, "","", email, "");
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()){
             do {
-                myUser.userId=cursor.getLong(0);
+                myUser.userId = cursor.getLong(0);
                 myUser.nickname = cursor.getString(1);
-                myUser.password=cursor.getString(2);
+                myUser.password = cursor.getString(2);
+                myUser.phone = cursor.getString(3);
                 //myUser.email = email;
             } while (cursor.moveToNext());
         }
@@ -241,6 +246,7 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put(COLUMN_INGREDIENTI_NAME, ingrediente.getName());
         values.put(COLUMN_INGREDIENTI_PREZZO, ingrediente.getPrice());
         values.put(COLUMN_INGREDIENTI_ALLERGENI, ingrediente.getListaAllergeni());
+        values.put(COLUMN_INGREDIENTI_CATEGORIA, ingrediente.getCategoria());
         values.put(COLUMN_INGREDIENTI_TIMESTAMP, ingrediente.getLastUpdated());
 
         try {
@@ -276,15 +282,15 @@ public class DBHelper extends SQLiteOpenHelper{
         Cursor cursorPiadine = db.rawQuery(sql, null);
 
         if(cursorPiadine.moveToFirst()){
-            timeStamp = cursorPiadine.getLong(4);
+            timeStamp = cursorPiadine.getLong(5);
         }
 
         return timeStamp;
     }
 
     public Ingrediente getIngredienteByName (String nomeIngrediente) {
-        String query = "Select id_ingrediente, prezzo, allergeni, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
-        Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, "", 0);
+        String query = "Select id_ingrediente, prezzo, allergeni, categoria, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
+        Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, "", "", 0);
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()) {
@@ -292,7 +298,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 ingrediente.setIdIngrediente(cursor.getLong(0));
                 ingrediente.setPrice(cursor.getDouble(1));
                 ingrediente.setListaAllergeni(cursor.getString(2));
-                ingrediente.setLastUpdated(cursor.getLong(3));
+                ingrediente.setCategoria(cursor.getString(3));
+                ingrediente.setLastUpdated(cursor.getLong(4));
             } while (cursor.moveToNext());
         }
         return ingrediente;
@@ -342,7 +349,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 Log.d("DB/PRINT", "Nome Ingrediente: " + cursor.getString(1));
                 Log.d("DB/PRINT", "Prezzo Ingrediente: " + cursor.getDouble(2));
                 Log.d("DB/PRINT", "Allergeni Ingrediente: " + cursor.getString(3));
-                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(4));
+                Log.d("DB/PRINT", "Categoria Ingrediente: " + cursor.getString(4));
+                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(5));
             } while (cursor.moveToNext());
         }
         db.close();
