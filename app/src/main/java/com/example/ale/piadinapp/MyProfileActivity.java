@@ -150,7 +150,11 @@ public class MyProfileActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.where) {
+
+            Intent intent = new Intent(this, WeAreHereActivity.class);
+            startActivity(intent);
+            finish();
 
         } else if (id == R.id.ordini) {
 
