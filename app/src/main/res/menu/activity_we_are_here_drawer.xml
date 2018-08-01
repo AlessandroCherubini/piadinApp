@@ -6,6 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
+            android:checked="true"
             android:icon="@drawable/ic_person_24dp"
             android:title="@string/profilo" />
         <item
@@ -30,9 +31,9 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
             <item
-                android:id="@+id/where"
+                android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Dove siamo" />
+                android:title="Send" />
         </menu>
     </item>
 

@@ -15,6 +15,7 @@ import android.text.Layout;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
@@ -83,6 +84,17 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         rb1.setTypeface(null, Typeface.BOLD_ITALIC);
         rb4.setTypeface(null, Typeface.BOLD_ITALIC);
 
+        final Button button = findViewById(R.id.addKart);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+
+                Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
+                toast.show();
+                finish();
+            }
+        });
+
     }
 
     @Override
@@ -93,7 +105,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         Double prezzoCorrente = Double.valueOf(removeLastChar(prezzoPiadina.getText().toString()));
         Double nuovoPrezzo = prezzoCorrente-prezzoIngrediente;
         String newPrice = nuovoPrezzo.toString();
-        prezzoPiadina.setText(newPrice);
+        prezzoPiadina.setText(newPrice+"€");
         adapter.removeItem(position);
 
         //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();

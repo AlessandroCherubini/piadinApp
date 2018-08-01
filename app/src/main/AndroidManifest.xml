@@ -10,6 +10,8 @@
     <!-- Internet Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
         android:name=".classi.PiadinApp"
         android:allowBackup="true"
@@ -27,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/login"
@@ -87,7 +89,25 @@
         <activity
             android:name=".EditUserActivity"
             android:label="@string/title_activity_my_profile"
-            android:parentActivityName=".MyProfileActivity"></activity>
+            android:parentActivityName=".MyProfileActivity" />
+        <activity
+            android:name=".WeAreHereActivity"
+            android:label="@string/title_activity_we_are_here"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.HomeActivity" />
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo"/>
+
     </application>
 
 </manifest>
