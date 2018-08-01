@@ -33,6 +33,7 @@ public class HomeActivity extends AppCompatActivity
 
     SessionManager session;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +94,7 @@ public class HomeActivity extends AppCompatActivity
 
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
     }
 
     @Override
@@ -109,6 +111,14 @@ public class HomeActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
+        MenuItem itemCart = menu.findItem(R.id.action_cart);
+/*        Drawable icon = itemCart.getIcon();
+
+        Bitmap bitmapIcon = getBitmapFromVectorDrawable(this, R.id.action_cart);
+        BitmapDrawable iconBitmap = new BitmapDrawable(getResources(), bitmapIcon);
+        LayerDrawable iconLayer = new LayerDrawable(new Drawable [] { iconBitmap });
+
+        setBadgeCount(this, iconLayer, "9");*/
         return true;
     }
 
@@ -202,4 +212,35 @@ public class HomeActivity extends AppCompatActivity
 
      public void onFragmentInteraction(Uri uri){}
 
+/*    public static void setBadgeCount(Context context, LayerDrawable icon, String count) {
+
+        BadgeDrawable badge;
+
+        // Reuse drawable if possible
+        Drawable reuse = icon.findDrawableByLayerId(R.id.ic_badge);
+        if (reuse != null && reuse instanceof BadgeDrawable) {
+            badge = (BadgeDrawable) reuse;
+        } else {
+            badge = new BadgeDrawable(context);
+        }
+
+        badge.setCount(count);
+        icon.mutate();
+        icon.setDrawableByLayerId(R.id.ic_badge, badge);
+    }*/
+
+/*    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }*/
 }

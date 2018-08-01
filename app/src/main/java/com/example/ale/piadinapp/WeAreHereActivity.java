@@ -144,6 +144,13 @@ public class WeAreHereActivity extends AppCompatActivity
             startActivity(intent);
             finish();
 
+        } else if (id == R.id.ordini) {
+
+            Intent intent = new Intent(this, MyOrderActivity.class);
+            startActivity(intent);
+            finish();
+
+
         } else if (id == R.id.tessera) {
 
             Intent intent = new Intent(this, BadgeActivity.class);
@@ -190,14 +197,6 @@ public class WeAreHereActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.where) {
-
-
-        } else if (id == R.id.ordini) {
-
-            Intent intent = new Intent(this, MyOrderActivity.class);
-            startActivity(intent);
-            finish();
-
 
         }
 
