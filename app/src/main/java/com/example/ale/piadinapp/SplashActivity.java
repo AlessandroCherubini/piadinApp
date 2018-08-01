@@ -41,7 +41,6 @@ public class SplashActivity extends AppCompatActivity{
 
     VolleyCallback piadineCallBack;
     VolleyCallback ingredientiCallBack;
-    //ProgressBar progressBar;
 
     final String urlGetPiadine = "http://piadinapp.altervista.org/get_all_piadine.php";
     final String urlGetIngredienti = "http://piadinapp.altervista.org/get_all_ingredients.php";
@@ -52,13 +51,6 @@ public class SplashActivity extends AppCompatActivity{
         setContentView(R.layout.activity_splash);
 
         helper = new DBHelper(this);
-
-        /*progressBar = findViewById(R.id.progress_bar);
-        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(View.VISIBLE);
-        Drawable draw = getDrawable(R.drawable.custom_progressbar);
-        // set the drawable as progress drawable
-        progressBar.setProgressDrawable(draw);*/
 
         piadineCallBack = new VolleyCallback() {
             @Override

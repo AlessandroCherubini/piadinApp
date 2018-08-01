@@ -45,8 +45,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public final static Double FORMATO_BABY = -1.0;
     public final static Double FORMATO_ROTOLO = 2.0;
 
-
-    static double totale=0;
+    static double totale = 0;
 
 
     @Override
@@ -91,8 +90,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         final Button button = findViewById(R.id.addKart);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
                 toast.show();
                 finish();

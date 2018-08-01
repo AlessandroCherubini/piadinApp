@@ -12,6 +12,7 @@
     <string name="title_activity_my_orders">Ordini</string>
     <string name="title_activity_my_order">Ordini</string>
     <string name="title_activity_customize_piadina">Personalizza la Piadina</string>
+    <string name="title_activity_we_are_here">Dove Siamo</string>
 
     <!-- Strings related to registration -->
     <string name="link_registrazione">Non hai un account? Creane uno!</string>
@@ -43,6 +44,7 @@
     <string name="ordini">I miei Ordini</string>
     <string name="tessera">Tessera</string>
     <string name="logout">Logout</string>
+    <string name="dove_siamo">Dove Siamo</string>
 
     <string name="euro">€</string>
     <string name="prefisso_personalizza">Piadina selezionata:</string>
@@ -60,7 +62,7 @@
     <string name="change_password">Cambia password</string>
     <string name="username_label">Nome account</string>
     <string name="email_label">Email account</string>
-    <string name="title_activity_we_are_here">WeAreHereActivity</string>
+
 
 
 </resources>
