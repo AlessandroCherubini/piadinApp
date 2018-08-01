@@ -58,6 +58,9 @@ public class MyProfileActivity extends AppCompatActivity
 
         TextView nameText = findViewById(R.id.profile_username);
         nameText.setText(utente.get("name"));
+
+        TextView phoneText = findViewById(R.id.profile_phone);
+        phoneText.setText(utente.get("phone"));
     }
 
     @Override

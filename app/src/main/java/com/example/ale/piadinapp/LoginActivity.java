@@ -167,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
         helper.close();
 
         session.setLoggedIn(true);
-        session.createLoginSession(utente.nickname, utente.email);
+        session.createLoginSession(utente.nickname, utente.email, utente.phone);
 
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
@@ -226,6 +226,8 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject obj = success.getJSONObject(0);
                             String username = obj.getString("name");
                             String passwordEsterna = obj.getString("password");
+                            String phoneEsterno = obj.getString("phone");
+
                             Log.d("UTENTE/NomeEsterno", username);
 
                             Log.d("UTENTE/DBESTERNO", "Ho cercato nel dB esterno l'utente");
@@ -235,7 +237,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // se la password trovata è identica a quella immessa, allora proseguo.
                                 if(passwordEsterna.equals(password)) {
 
-                                    User newUser = new User(0, username, password, email);
+                                    User newUser = new User(0, username, password, email, phoneEsterno);
                                     helper.insertUser(newUser);
                                     Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
                                     // Procediamo con il login!

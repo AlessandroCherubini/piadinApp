@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_LOGINS_NAME = "username";
     public static final String COLUMN_LOGINS_PASSWORD = "password";
     public static final String COLUMN_LOGINS_EMAIL = "email";
-    //public static final String COLUMN_LOGINS_PHONE = "phone";
+    public static final String COLUMN_LOGINS_PHONE = "phone";
 
     // tabella: piadine
     public static final String TABLE_PIADINE_NAME = "piadine";
@@ -58,7 +58,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 + "(" + COLUMN_LOGINS_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_LOGINS_NAME +
                 " TEXT, " + COLUMN_LOGINS_PASSWORD +
-                " TEXT, " + COLUMN_LOGINS_EMAIL + " TEXT);";
+                " TEXT, " + COLUMN_LOGINS_EMAIL +
+                " TEXT, " + COLUMN_LOGINS_PHONE + " TEXT);";
 
         String query_piadine = "CREATE TABLE " + TABLE_PIADINE_NAME
                 + "(" + COLUMN_PIADINE_ID +
@@ -113,6 +114,7 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put("username", queryValues.nickname);
         values.put("password", queryValues.password);
         values.put("email", queryValues.email);
+        values.put("phone", queryValues.phone);
         try {
             queryValues.userId = database.insert("logins", null, values);
         }catch(Exception e){
@@ -144,7 +146,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-/*    public int updateUserPhone (User queryValues){
+    public int updateUserPhone (User queryValues){
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
@@ -152,18 +154,19 @@ public class DBHelper extends SQLiteOpenHelper{
         queryValues.userId = database.insert("logins", null, values);
         database.close();
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
-    }*/
+    }
 
     public User getUserByEmail (String email){
-        String query = "Select userId, username, password from logins where email ='"+email+"'";
-        User myUser = new User(0, "","", email);
+        String query = "Select userId, username, password, phone from logins where email ='"+email+"'";
+        User myUser = new User(0, "","", email, "");
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()){
             do {
-                myUser.userId=cursor.getLong(0);
+                myUser.userId = cursor.getLong(0);
                 myUser.nickname = cursor.getString(1);
-                myUser.password=cursor.getString(2);
+                myUser.password = cursor.getString(2);
+                myUser.phone = cursor.getString(3);
                 //myUser.email = email;
             } while (cursor.moveToNext());
         }
