@@ -46,6 +46,7 @@ public class HomeActivity extends AppCompatActivity
         /*DBHelper helper = new DBHelper(this);
         helper.printIngredientiTable();*/
 
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));
         tabLayout.addTab(tabLayout.newTab().setText("Crea Piadina"));
@@ -191,9 +192,14 @@ public class HomeActivity extends AppCompatActivity
                 builder.setMessage("Vuoi veramente uscire da questo account?").setPositiveButton("Sì", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.call) {
 
-        } else if (id == R.id.where) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:030 212 2931"));
+                startActivity(intent);
+
+
+            } else if (id == R.id.where) {
 
                 Intent intent = new Intent(this, WeAreHereActivity.class);
                 startActivity(intent);
