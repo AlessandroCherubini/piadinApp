@@ -195,7 +195,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.call) {
 
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:030 212 2931"));
+                intent.setData(Uri.parse("tel:0302122931"));
                 startActivity(intent);
 
 
