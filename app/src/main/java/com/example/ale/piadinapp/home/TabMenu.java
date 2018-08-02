@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -108,9 +110,13 @@ public class TabMenu extends Fragment{
         super.onActivityCreated(savedInstanceState);
 
 
-        recyclerView = (RecyclerView)getView().findViewById(R.id.recyclerViewMenu);
+        recyclerView = getView().findViewById(R.id.recyclerViewMenu);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.piadina_divider));
+        recyclerView.addItemDecoration(itemDecorator);
 
         //initializing the productlist
 

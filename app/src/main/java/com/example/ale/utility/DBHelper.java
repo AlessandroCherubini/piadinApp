@@ -319,6 +319,31 @@ public class DBHelper extends SQLiteOpenHelper{
         return listaIngredienti;
     }
 
+    // Metodo per le ottenere gli Ingredienti dal database Interno.
+    public ArrayList<Ingrediente> getIngredienti() {
+        ArrayList<Ingrediente> ingredienti = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_INGREDIENTI_NAME + " ORDER BY " + COLUMN_INGREDIENTI_ID + " ASC;";
+        Cursor cursorIngredienti = db.rawQuery(sql, null);
+        if (cursorIngredienti.moveToFirst()){
+            do {
+                long idIngrediente = cursorIngredienti.getLong(0);
+                String nomeIngrediente = cursorIngredienti.getString(1);
+                double prezzoIngrediente  = cursorIngredienti.getDouble(2);
+                String allergeniIngrediente = cursorIngredienti.getString(3);
+                String categoriaIngrediente = cursorIngredienti.getString(4);
+                long lastUpdateIngrediente = cursorIngredienti.getLong(5);
+
+                Ingrediente ingrediente = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente,
+                        categoriaIngrediente, lastUpdateIngrediente);
+
+                ingredienti.add(ingrediente);
+            } while (cursorIngredienti.moveToNext());
+        }
+        return ingredienti;
+    }
+
     public void printPiadineTable(){
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_PIADINE_NAME + ";";
