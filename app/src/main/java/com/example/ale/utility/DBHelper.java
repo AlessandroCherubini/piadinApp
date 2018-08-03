@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -342,6 +343,23 @@ public class DBHelper extends SQLiteOpenHelper{
             } while (cursorIngredienti.moveToNext());
         }
         return ingredienti;
+    }
+
+    public ArrayList<String> getNomiIngredienti(){
+        ArrayList<String> nomi = new ArrayList<>();
+        nomi.add("Aggiungi Ingrediente");
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT nome FROM " + TABLE_INGREDIENTI_NAME + " ORDER BY " + COLUMN_INGREDIENTI_ID + " ASC;";
+        Cursor cursorIngredienti = db.rawQuery(sql, null);
+        if (cursorIngredienti.moveToFirst()) {
+            do {
+                String nomeIngrediente = cursorIngredienti.getString(0);
+                nomi.add(nomeIngrediente);
+            } while (cursorIngredienti.moveToNext());
+        }
+
+        return nomi;
     }
 
     public void printPiadineTable(){

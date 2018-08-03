@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/secondaryTextColor">
+    android:background="@android:color/transparent">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp">
+        android:layout_margin="0dp"
+        android:background="@android:color/transparent">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingBottom="10dp">
@@ -28,7 +30,6 @@
                 android:fontFamily="@font/museo_slab"
                 android:text="Descrizione"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="#000000"
                 android:textSize="16sp" />
 
             <TextView
@@ -49,12 +50,10 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="22dp"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="22dp"
+                android:layout_marginEnd="65dp"
                 android:layout_marginBottom="3dp"
-                android:layout_toStartOf="@+id/removeButton"
-                android:layout_toEndOf="@+id/textViewPrice"
                 android:elevation="4dp"
                 android:gravity="center"
                 android:src="@drawable/ic_info_black_24dp" />

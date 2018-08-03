@@ -69,6 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:fontFamily="@font/museo_slab"
                 android:text="@string/formato"
                 android:textAlignment="inherit"
                 android:textSize="18sp" />
@@ -113,6 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:fontFamily="@font/museo_slab"
                 android:text="@string/impasto"
                 android:textAlignment="inherit"
                 android:textSize="18sp" />
@@ -181,7 +183,7 @@
 
             </ScrollView>
 
-            <Button
+<!--            <Button
                 android:id="@+id/buttonAddIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="33dp"
@@ -194,7 +196,18 @@
                 android:drawableLeft="@android:drawable/ic_menu_add"
                 android:fontFamily="@font/museo_slab"
                 android:text="AGGIUNGI ALTRI INGREDIENTI"
-                android:textColor="@color/primaryTextColor" />
+                android:textColor="@color/primaryTextColor" />-->
+            <Spinner
+                android:id="@+id/spinner_ingredienti"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="15dp">
+
+            </Spinner>
+
         </LinearLayout>
     </ScrollView>
 
