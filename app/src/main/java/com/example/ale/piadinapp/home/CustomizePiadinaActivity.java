@@ -38,6 +38,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,6 +53,7 @@ import android.widget.Toast;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.CustomAdapter;
@@ -73,7 +75,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     CategorieIngredientiAdapter categorieAdapter;
     DBHelper helper;
     ArrayList<Ingrediente> ingredientiPiadina;
-    ArrayList<Ingrediente> listaIngredienti;
+    ArrayList<Ingrediente> listaIngredienti= new ArrayList<Ingrediente>();
+    Carteasy cs = new Carteasy();
 
 
     public final static Double IMPASTO_INTEGRALE = 0.30;
@@ -368,11 +371,26 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         else if (rb5.isChecked()){impasto = "Integrale";}
         else {impasto=null;}
 
+        final TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+        prezzo = Double.parseDouble(removeLastChar(prezzoPiadina.getText().toString()));
 
-        /*Carteasy cs = new Carteasy();
-        cs.add("Piadina 1", "formato", formato);
-        cs.add("Piadina 1", "impasto", impasto);
-        cs.commit(getApplicationContext());*/
+        int i;
+
+        for(i=0; i<adapter.getItemCount();i++){
+
+            listaIngredienti.add(adapter.getItem(i));
+        }
+
+
+
+        CartItem item1 = new CartItem("cheru",formato, impasto,prezzo,listaIngredienti);
+
+        /*cs.add("Piadina 8", "formato", formato);
+        cs.add("Piadina 8","impasto",impasto);
+        cs.add("Piadina 8","prezzo",prezzo);
+        cs.add("Piadina 8","ingredienti", listaIngredienti);*/
+        cs.add("Piadina 10","Piadina",item1);
+        cs.commit(getApplicationContext());
 
 
     }
