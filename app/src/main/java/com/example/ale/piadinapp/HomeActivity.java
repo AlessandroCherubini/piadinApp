@@ -16,8 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.home.CartActivity;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
@@ -74,6 +77,7 @@ public class HomeActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
+
         });
 
 
@@ -95,6 +99,8 @@ public class HomeActivity extends AppCompatActivity
 
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
+
 
     }
 
@@ -131,8 +137,10 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_cart) {
+
+            Intent intent = new Intent(HomeActivity.this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

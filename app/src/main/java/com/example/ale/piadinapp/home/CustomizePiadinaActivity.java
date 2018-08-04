@@ -28,6 +28,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
@@ -95,6 +96,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
                 toast.show();
+                aggiungiAlCarrello();
                 finish();
             }
         });
@@ -269,6 +271,36 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             totale = prezzoPiadinaBase + FORMATO_BABY+IMPASTO_INTEGRALE;
             prezzoPiadina.setText(totale + " €");
         }
+
+
+    }
+
+    private void aggiungiAlCarrello(){
+
+        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
+        RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
+        RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
+        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
+        RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
+
+        String impasto;
+        String formato;
+        ArrayList<Ingrediente> ingredienti;
+        double prezzo;
+        if (rb1.isChecked()) { formato = "Normale";}
+        else if (rb2.isChecked()){formato="Rotolo";}
+        else if(rb3.isChecked()){formato= "Baby";}
+        else {formato = null;}
+
+        if (rb4.isChecked()){impasto= "Normale";}
+        else if (rb5.isChecked()){impasto = "Integrale";}
+        else {impasto=null;}
+
+
+        /*Carteasy cs = new Carteasy();
+        cs.add("Piadina 1", "formato", formato);
+        cs.add("Piadina 1", "impasto", impasto);
+        cs.commit(getApplicationContext());*/
 
 
     }
