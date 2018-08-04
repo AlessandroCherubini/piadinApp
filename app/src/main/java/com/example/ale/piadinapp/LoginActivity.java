@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
     DBHelper helper;
     final String getUserURL = "http://piadinapp.altervista.org/get_user.php";
     String userExternalName = "";
-    //boolean wait = true;
     SessionManager session;
 
     @Override
@@ -134,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.d("UTENTE/INESISTENTE", "Utente inesistente nel dB interno!");
             // cerco nel dB esterno: se esiste allora lo aggiungo nel DB interno e loggo.
             addUserIfInExternalDBExists(email);
+            _loginButton.setEnabled(true);
         }
 
     }
