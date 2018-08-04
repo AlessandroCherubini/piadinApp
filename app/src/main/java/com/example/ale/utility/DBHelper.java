@@ -1,5 +1,6 @@
 package com.example.ale.utility;
 import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.piadinapp.classi.Ordine;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.classi.User;
 
@@ -43,6 +44,15 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_INGREDIENTI_ALLERGENI = "allergeni";
     public static final String COLUMN_INGREDIENTI_CATEGORIA = "categoria";
     public static final String COLUMN_INGREDIENTI_TIMESTAMP = "updated_at";
+
+    // tabella: ordini
+    public static final String TABLE_ORDINI_NAME = "ordini";
+    public static final String COLUMN_ORDINI_ID = "id_ordine";
+    public static final String COLUMN_ORDINI_TIMESTAMP = "timestamp_ordine";
+    public static final String COLUMN_ORDINI_PIADINE = "piadine";
+    public static final String COLUMN_ORDINI_NOTA = "nota_ordine";
+    public static final String COLUMN_ORDINI_PREZZO = "prezzo";
+    public static final String COLUMN_ORDINI_TIMESTAMP_UPDATE = "updated_at";
 
     // costruttore.
     public DBHelper(Context context) {
@@ -222,7 +232,8 @@ public class DBHelper extends SQLiteOpenHelper{
     public void insertPiadina (Piadina piadina){
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        String piadinaIngredienti = piadina.printIngredienti();
+        String piadinaIngredienti = piadina.
+                printIngredienti();
 
         values.put(COLUMN_PIADINE_NAME, piadina.getNome());
         values.put(COLUMN_PIADINE_INGREDIENTI, piadinaIngredienti);
@@ -390,6 +401,34 @@ public class DBHelper extends SQLiteOpenHelper{
 
         return ingredienti;
     }
+
+    public void insertOrdini(){
+
+    }
+
+/*    public void insertOrdine (Ordine ordine){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getTimestampOrdine());
+        values.put(COLUMN_ORDINI_PIADINE, ordine.getCartItems());
+        values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
+        values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
+        values.put(COLUMN_ORDINI_TIMESTAMP_UPDATE, ordine.getLastUpdated());
+
+        try {
+            long id = database.insert(TABLE_ORDINI_NAME, null, values);
+            ordine.setIdOrdine(id);
+            Log.d("DB/INSERT", "Ordine aggiunto al db interno!");
+        }catch(Exception e){
+            Log.d("DB/INSERT", e.toString());
+        }
+        database.close();
+
+    }*/
+
+
+
 
     public void printPiadineTable(){
         SQLiteDatabase db = this.getReadableDatabase();
