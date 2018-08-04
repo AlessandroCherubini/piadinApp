@@ -1,51 +1,83 @@
 package com.example.ale.piadinapp.home;
 
-import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.util.Log;
-import android.view.MotionEvent;
+import android.view.Display;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.utility.CustomAdapter;
 import com.example.ale.utility.DBHelper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class CustomizePiadinaActivity extends AppCompatActivity
-        implements TabMenu.OnFragmentInteractionListener, IngredientsAdapter.ItemClickListener {
+        implements TabMenu.OnFragmentInteractionListener, IngredientsAdapter.ItemClickListener{
 
     Piadina chosenPiadina;
     IngredientsAdapter adapter;
+    CategorieIngredientiAdapter categorieAdapter;
     DBHelper helper;
-    ArrayList<Ingrediente> ingredienti;
+    ArrayList<Ingrediente> ingredientiPiadina;
+    ArrayList<Ingrediente> listaIngredienti;
+
 
     public final static Double IMPASTO_INTEGRALE = 0.30;
     public final static Double FORMATO_BABY = -1.0;
     public final static Double FORMATO_ROTOLO = 2.0;
 
-    static double totale = 0;
+    static double totalePiadina = 0;
+    static double totaleImpastoEFormato = 0;
+    static double totaleIngredienti = 0;
+    public Context mContext;
 
 
     @Override
@@ -54,36 +86,29 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         setContentView(R.layout.activity_customize_piadina);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mContext = CustomizePiadinaActivity.this;
 
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
+
         Intent intent = getIntent();
         int position = intent.getIntExtra("indexPiadina",0);
         chosenPiadina = helper.getPiadinaByPosition((long)position+1);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        double prezzoPiadinaBase = chosenPiadina.getPrice();
 
-        TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-        prezzoPiadina.setText(prezzoPiadinaBase + "€");
+        totaleImpastoEFormato = chosenPiadina.getPrice();
+        totalePiadina = totaleImpastoEFormato;
+
+        final TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+        prezzoPiadina.setText(totalePiadina + " €");
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
         nomePiadina.setText(chosenPiadina.getNome());
         nomePiadina.setTypeface(null, Typeface.BOLD);
 
-        ingredienti = chosenPiadina.getIngredienti();
-
-
-        // set up the RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.ingredients);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new IngredientsAdapter(this,ingredienti);
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
-
+        // Radio Button
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
-
-
         rb1.setTypeface(null, Typeface.BOLD_ITALIC);
         rb4.setTypeface(null, Typeface.BOLD_ITALIC);
 
@@ -96,6 +121,48 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             }
         });
 
+        // RecyclerView per gli ingredienti persenti nella Piadina.
+        ingredientiPiadina = chosenPiadina.getIngredienti();
+
+        final RecyclerView recyclerView = findViewById(R.id.ingredients);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new IngredientsAdapter(this, ingredientiPiadina);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(CustomizePiadinaActivity.this, DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(CustomizePiadinaActivity.this, R.drawable.piadina_divider));
+        recyclerView.addItemDecoration(itemDecorator);
+
+        // Recycle View delle categorie degli ingredienti
+        ArrayList<String> categorieIngredienti = helper.getCategorieIngredienti();
+        final RecyclerView recyclerViewCategorie = findViewById(R.id.categorie_ingredienti);
+        recyclerViewCategorie.setLayoutManager(new LinearLayoutManager(this));
+        categorieAdapter = new CategorieIngredientiAdapter(this, categorieIngredienti);
+
+        categorieAdapter.setClickListener(new CategorieIngredientiAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(CustomizePiadinaActivity.this,"Cliccato: " + categorieAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+
+                // Aprire e chiudere la lista degli ingredienti della singola categoria
+                RecyclerView recIng = view.findViewById(R.id.recycler_ingredienti);
+                switch(recIng.getVisibility()){
+                    case View.GONE:
+                        recIng.setVisibility(View.VISIBLE);
+                        break;
+                    case View.VISIBLE:
+                        recIng.setVisibility(View.GONE);
+                        break;
+                    }
+                }
+        });
+
+        recyclerViewCategorie.setAdapter(categorieAdapter);
+
+        DividerItemDecoration itemDecoratorCategorie = new DividerItemDecoration(CustomizePiadinaActivity.this, DividerItemDecoration.VERTICAL);
+        itemDecoratorCategorie.setDrawable(ContextCompat.getDrawable(CustomizePiadinaActivity.this, R.drawable.piadina_divider));
+        recyclerViewCategorie.addItemDecoration(itemDecoratorCategorie);
     }
 
     @Override
@@ -129,18 +196,16 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
                                 //Yes button clicked
-
                                 Double prezzoIngrediente = adapter.getItem(position).getPrice();
+                                totalePiadina = totalePiadina - prezzoIngrediente;
                                 TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-                                Double prezzoCorrente = Double.valueOf(removeLastChar(prezzoPiadina.getText().toString()));
-                                Double nuovoPrezzo = prezzoCorrente-prezzoIngrediente;
-                                String newPrice = nuovoPrezzo.toString();
-                                prezzoPiadina.setText(newPrice);
+                                prezzoPiadina.setText(totalePiadina + " €");
+                                totaleIngredienti = totaleIngredienti - prezzoIngrediente;
                                 adapter.removeItem(position);
-                                Toast.makeText(CustomizePiadinaActivity.this, "Ingrediente rimosso", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CustomizePiadinaActivity.this, "Ingrediente rimosso", Toast.LENGTH_SHORT).show();
 
                                 if(adapter.getItemCount() == 0){
-
+                                    Toast.makeText(CustomizePiadinaActivity.this, "La piadina è vuota!", Toast.LENGTH_SHORT).show();
                                 }
                                 break;
 
@@ -165,8 +230,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     }
 
 
-    public void onRadioButtonClicked(View v)
-    {
+    public void onRadioButtonClicked(View v) {
 
         helper = new DBHelper(this);
         Intent intent = getIntent();
@@ -198,8 +262,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
-            totale = prezzoPiadinaBase;
-            prezzoPiadina.setText(totale + " €");
+            totaleImpastoEFormato = prezzoPiadinaBase;
+            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+            prezzoPiadina.setText(totalePiadina + " €");
 
         }
         else if (rb2.isChecked() && rb4.isChecked()){
@@ -211,8 +276,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         rb5.setTypeface(null, Typeface.NORMAL);
         rb3.setTypeface(null, Typeface.NORMAL);
 
-        totale=prezzoPiadinaBase+FORMATO_ROTOLO;
-        prezzoPiadina.setText(totale+"€");
+        totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO;
+        totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+        prezzoPiadina.setText(totalePiadina+ " €");
         }
         else if (rb3.isChecked() && rb4.isChecked()){
 
@@ -223,8 +289,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb2.setTypeface(null, Typeface.NORMAL);
 
-            totale = prezzoPiadinaBase + FORMATO_BABY;
-            prezzoPiadina.setText(totale+"€");
+            totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY;
+            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+            prezzoPiadina.setText(totalePiadina+ " €");
         }
 
         else if (rb1.isChecked() && rb5.isChecked()){
@@ -236,8 +303,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb4.setTypeface(null, Typeface.NORMAL);
             rb2.setTypeface(null, Typeface.NORMAL);
 
-            totale = prezzoPiadinaBase + IMPASTO_INTEGRALE;
-            prezzoPiadina.setText(totale + " €");
+            totaleImpastoEFormato = prezzoPiadinaBase + IMPASTO_INTEGRALE;
+            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+            prezzoPiadina.setText(totalePiadina+ " €");
         }
 
         else if (rb2.isChecked() && rb5.isChecked()){
@@ -249,8 +317,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb4.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
-            totale = prezzoPiadinaBase + FORMATO_ROTOLO+IMPASTO_INTEGRALE;
-            prezzoPiadina.setText(totale + " €");
+            totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO + IMPASTO_INTEGRALE;
+            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+            prezzoPiadina.setText(totalePiadina+ " €");
         }
 
         else if (rb3.isChecked() && rb5.isChecked()){
@@ -263,8 +332,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb2.setTypeface(null, Typeface.NORMAL);
             rb4.setTypeface(null, Typeface.NORMAL);
 
-            totale = prezzoPiadinaBase + FORMATO_BABY+IMPASTO_INTEGRALE;
-            prezzoPiadina.setText(totale + " €");
+            totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY + IMPASTO_INTEGRALE;
+            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+            prezzoPiadina.setText(totalePiadina+ " €");
         }
 
 
@@ -277,6 +347,14 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
 
     public void onFragmentInteraction(Uri uri){}
+
+    public Context getmContext() {
+        return mContext;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
 
 
 }

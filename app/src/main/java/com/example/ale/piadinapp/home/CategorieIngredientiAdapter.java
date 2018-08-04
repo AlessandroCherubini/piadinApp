@@ -1,27 +1,33 @@
 package com.example.ale.piadinapp.home;
 
 import android.content.Context;
-import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.utility.DBHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
+public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieIngredientiAdapter.ViewHolder> {
 
-    private List<Ingrediente> mData;
+    private List<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    Context mContext;
+    AddIngredientAdapter addIngredientiAdapter;
+    private DBHelper helper;
 
     // data is passed into the constructor
-    IngredientsAdapter(Context context, List<Ingrediente> data) {
+    CategorieIngredientiAdapter(Context context, List<String> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -29,17 +35,32 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.layout_ingrediente, parent, false);
+        View view = mInflater.inflate(R.layout.layout_categorie, parent, false);
+        mContext = parent.getContext();
+        helper = new DBHelper(mContext);
         return new ViewHolder(view);
+
     }
 
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Ingrediente ingrediente = mData.get(position);
-        holder.myTextView.setText(ingrediente.getName());
-        Double prezzo = new Double(ingrediente.getPrice());
-        holder.textPrice.setText(prezzo.toString() + " €");
+        String categoria = mData.get(position);
+        holder.myTextView.setText(categoria);
+
+        ArrayList<Ingrediente> ingredienti = helper.getIngredientiByCategoria(categoria);
+        holder.reclycleIngredienti.setLayoutManager(new LinearLayoutManager(mContext));
+
+        addIngredientiAdapter = new AddIngredientAdapter(mContext, ingredienti);
+/*        addIngredientiAdapter.setClickListener(new AddIngredientAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+        });*/
+        holder.reclycleIngredienti.setAdapter(addIngredientiAdapter);
+
+
     }
 
     // total number of rows
@@ -53,18 +74,18 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
-        ImageButton removeButton;
-        ImageButton allergeniButton;
-        TextView textPrice;
+        ImageButton showButton;
+        RecyclerView reclycleIngredienti;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.ingredient);
-            allergeniButton = itemView.findViewById(R.id.allergeniButton);
-            removeButton = itemView.findViewById(R.id.removeButton);
-            allergeniButton.setOnClickListener(this);
-            removeButton.setOnClickListener(this);
-            textPrice=itemView.findViewById(R.id.textViewPrice);
+            myTextView = itemView.findViewById(R.id.categoria);
+            showButton = itemView.findViewById(R.id.dropDownButton);
+            // tutto l'elemento dell'adapter attiva il listener; se metto il pulsante show crasha!
+            itemView.setOnClickListener(this);
+
+            reclycleIngredienti = itemView.findViewById(R.id.recycler_ingredienti);
+
         }
 
         @Override
@@ -74,6 +95,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         }
 
     }
+
     public void removeItem(int id){
         mData.remove(id);
         notifyItemRemoved(id);
@@ -81,7 +103,8 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
     // convenience method for getting data at click position
-    Ingrediente getItem(int id) {
+    String getItem(int id) {
+
         return mData.get(id);
     }
 
@@ -93,5 +116,6 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+
     }
 }

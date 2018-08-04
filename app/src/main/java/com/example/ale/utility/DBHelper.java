@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -302,6 +303,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 ingrediente.setLastUpdated(cursor.getLong(4));
             } while (cursor.moveToNext());
         }
+
+        database.close();
         return ingrediente;
     }
 
@@ -317,6 +320,75 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
         return listaIngredienti;
+    }
+
+    // Metodo per le ottenere gli Ingredienti dal database Interno.
+    public ArrayList<Ingrediente> getIngredienti() {
+        ArrayList<Ingrediente> ingredienti = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_INGREDIENTI_NAME + " ORDER BY " + COLUMN_INGREDIENTI_ID + " ASC;";
+        Cursor cursorIngredienti = db.rawQuery(sql, null);
+        if (cursorIngredienti.moveToFirst()){
+            do {
+                long idIngrediente = cursorIngredienti.getLong(0);
+                String nomeIngrediente = cursorIngredienti.getString(1);
+                double prezzoIngrediente  = cursorIngredienti.getDouble(2);
+                String allergeniIngrediente = cursorIngredienti.getString(3);
+                String categoriaIngrediente = cursorIngredienti.getString(4);
+                long lastUpdateIngrediente = cursorIngredienti.getLong(5);
+
+                Ingrediente ingrediente = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente,
+                        categoriaIngrediente, lastUpdateIngrediente);
+
+                ingredienti.add(ingrediente);
+            } while (cursorIngredienti.moveToNext());
+        }
+        db.close();
+
+        return ingredienti;
+    }
+    public ArrayList<String> getCategorieIngredienti(){
+        ArrayList<String> categorie = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT categoria FROM " + TABLE_INGREDIENTI_NAME + " ORDER BY " + COLUMN_INGREDIENTI_ID + " ASC;";
+        Cursor cursorIngredienti = db.rawQuery(sql, null);
+        if(cursorIngredienti.moveToFirst()){
+            do{
+                String categoria = cursorIngredienti.getString(0);
+                if(!categorie.contains(categoria)){
+                    categorie.add(categoria);
+                }
+            }while (cursorIngredienti.moveToNext());
+        }
+        db.close();
+
+        return categorie;
+    }
+
+    public ArrayList<Ingrediente> getIngredientiByCategoria(String categoriaIngrediente){
+        ArrayList<Ingrediente> ingredienti = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "Select id_ingrediente, nome, prezzo, allergeni, updated_at from ingredienti where categoria ='"+categoriaIngrediente+"'";
+        Cursor cursorIngredienti = db.rawQuery(sql, null);
+        if (cursorIngredienti.moveToFirst()) {
+            do {
+                long idIngrediente = cursorIngredienti.getLong(0);
+                String nomeIngrediente = cursorIngredienti.getString(1);
+                double prezzoIngrediente  = cursorIngredienti.getDouble(2);
+                String allergeniIngrediente = cursorIngredienti.getString(3);
+                long lastUpdateIngrediente = cursorIngredienti.getLong(4);
+
+                Ingrediente ingrediente = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente,
+                        allergeniIngrediente, categoriaIngrediente, lastUpdateIngrediente);
+                ingredienti.add(ingrediente);
+            } while (cursorIngredienti.moveToNext());
+        }
+        db.close();
+
+        return ingredienti;
     }
 
     public void printPiadineTable(){

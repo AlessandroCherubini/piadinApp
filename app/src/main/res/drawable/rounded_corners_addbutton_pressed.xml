@@ -3,10 +3,6 @@
         <shape android:shape="rectangle">
             <solid android:color="@color/secondaryDarkColor"/>
             <corners android:radius="10dp" />
-            <stroke
-                android:width="2dp"
-                android:color="@color/secondaryLightColor"
-                />
         </shape>
     </item>
 </selector>
