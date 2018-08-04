@@ -57,6 +57,7 @@
     <string name="impasto_normale">Normale</string>
     <string name="integrale">Integrale\u00A0\u00A0 +0,30€</string>
     <string name="ingredienti">Ingredienti:</string>
+    <string name="add_ingredienti">Aggiungi Ingredienti:</string>
     <string name="aggiungi_carrello">Aggiungi al carrello</string>
     <!-- Pagina Il mio Profilo -->
     <string name="change_password">Cambia password</string>

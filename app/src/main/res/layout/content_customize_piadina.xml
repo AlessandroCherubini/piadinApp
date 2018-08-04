@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true">
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -154,9 +155,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="40dp"
                 android:text="@string/ingredienti"
                 android:textAlignment="center"
                 android:textSize="24sp"
@@ -168,6 +169,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginBottom="25dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="15dp">
 
@@ -183,6 +185,20 @@
 
             </ScrollView>
 
+            <include layout="@layout/item_divider"></include>
+
+            <TextView
+                android:id="@+id/add_ingredienti"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="40dp"
+                android:text="@string/add_ingredienti"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 <!--            <Button
                 android:id="@+id/buttonAddIngredients"
                 android:layout_width="match_parent"
@@ -197,16 +213,24 @@
                 android:fontFamily="@font/museo_slab"
                 android:text="AGGIUNGI ALTRI INGREDIENTI"
                 android:textColor="@color/primaryTextColor" />-->
-            <Spinner
-                android:id="@+id/spinner_ingredienti"
+<!--            <Spinner
+                android:id="@+id/spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="25dp"
                 android:layout_marginBottom="15dp">
-
-            </Spinner>
+            </Spinner>-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/categorie_ingredienti"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_weight="1"
+                tools:itemCount="4" />
 
         </LinearLayout>
     </ScrollView>

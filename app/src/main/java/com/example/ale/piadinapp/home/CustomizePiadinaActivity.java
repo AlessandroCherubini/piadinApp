@@ -1,11 +1,33 @@
 package com.example.ale.piadinapp.home;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +35,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +51,12 @@ import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.CustomAdapter;
 import com.example.ale.utility.DBHelper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class CustomizePiadinaActivity extends AppCompatActivity
@@ -34,17 +64,20 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     Piadina chosenPiadina;
     IngredientsAdapter adapter;
+    CategorieIngredientiAdapter categorieAdapter;
     DBHelper helper;
-    ArrayList<Ingrediente> ingredienti;
-    Color spinnerColor = new Color ();
+    ArrayList<Ingrediente> ingredientiPiadina;
+    ArrayList<Ingrediente> listaIngredienti;
+
 
     public final static Double IMPASTO_INTEGRALE = 0.30;
     public final static Double FORMATO_BABY = -1.0;
     public final static Double FORMATO_ROTOLO = 2.0;
 
     static double totalePiadina = 0;
-    static double totaleImpastoEFormato;
+    static double totaleImpastoEFormato = 0;
     static double totaleIngredienti = 0;
+    public Context mContext;
 
 
     @Override
@@ -53,9 +86,11 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         setContentView(R.layout.activity_customize_piadina);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mContext = CustomizePiadinaActivity.this;
 
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
+
         Intent intent = getIntent();
         int position = intent.getIntExtra("indexPiadina",0);
         chosenPiadina = helper.getPiadinaByPosition((long)position+1);
@@ -65,30 +100,15 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         totalePiadina = totaleImpastoEFormato;
 
         final TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-        prezzoPiadina.setText(totalePiadina+ " €");
+        prezzoPiadina.setText(totalePiadina + " €");
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
         nomePiadina.setText(chosenPiadina.getNome());
         nomePiadina.setTypeface(null, Typeface.BOLD);
 
-        ingredienti = chosenPiadina.getIngredienti();
-
-
-        // set up the RecyclerView
-        final RecyclerView recyclerView = findViewById(R.id.ingredients);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new IngredientsAdapter(this,ingredienti);
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
-
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(CustomizePiadinaActivity.this, DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(ContextCompat.getDrawable(CustomizePiadinaActivity.this, R.drawable.piadina_divider));
-        recyclerView.addItemDecoration(itemDecorator);
-
+        // Radio Button
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
-
-
         rb1.setTypeface(null, Typeface.BOLD_ITALIC);
         rb4.setTypeface(null, Typeface.BOLD_ITALIC);
 
@@ -101,35 +121,48 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             }
         });
 
-        ArrayList<String> nomiIngredienti = helper.getNomiIngredienti();
+        // RecyclerView per gli ingredienti persenti nella Piadina.
+        ingredientiPiadina = chosenPiadina.getIngredienti();
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_ingredienti);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        CustomAdapter dataAdapter = new CustomAdapter(this, android.R.layout.simple_spinner_item, nomiIngredienti,
-                0);
+        final RecyclerView recyclerView = findViewById(R.id.ingredients);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new IngredientsAdapter(this, ingredientiPiadina);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
 
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(dataAdapter);
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(CustomizePiadinaActivity.this, DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(CustomizePiadinaActivity.this, R.drawable.piadina_divider));
+        recyclerView.addItemDecoration(itemDecorator);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position != 0){
-                    Object item = parent.getItemAtPosition(position);
-                    Ingrediente ingredienteDaAggiungere = helper.getIngredienteByName(item.toString());
-                    ingredienti.add(ingredienteDaAggiungere);
-                    adapter.notifyItemInserted(ingredienti.size() - 1);
-                    double prezzoIngrediente = ingredienteDaAggiungere.getPrice();
-                    totalePiadina = totalePiadina + prezzoIngrediente;
-                    totaleIngredienti = totaleIngredienti + prezzoIngrediente;
-                    prezzoPiadina.setText(totalePiadina + " €");
+        // Recycle View delle categorie degli ingredienti
+        ArrayList<String> categorieIngredienti = helper.getCategorieIngredienti();
+        final RecyclerView recyclerViewCategorie = findViewById(R.id.categorie_ingredienti);
+        recyclerViewCategorie.setLayoutManager(new LinearLayoutManager(this));
+        categorieAdapter = new CategorieIngredientiAdapter(this, categorieIngredienti);
 
-                    parent.setSelection(0);
+        categorieAdapter.setClickListener(new CategorieIngredientiAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(CustomizePiadinaActivity.this,"Cliccato: " + categorieAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+
+                // Aprire e chiudere la lista degli ingredienti della singola categoria
+                RecyclerView recIng = view.findViewById(R.id.recycler_ingredienti);
+                switch(recIng.getVisibility()){
+                    case View.GONE:
+                        recIng.setVisibility(View.VISIBLE);
+                        break;
+                    case View.VISIBLE:
+                        recIng.setVisibility(View.GONE);
+                        break;
+                    }
                 }
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
         });
+
+        recyclerViewCategorie.setAdapter(categorieAdapter);
+
+        DividerItemDecoration itemDecoratorCategorie = new DividerItemDecoration(CustomizePiadinaActivity.this, DividerItemDecoration.VERTICAL);
+        itemDecoratorCategorie.setDrawable(ContextCompat.getDrawable(CustomizePiadinaActivity.this, R.drawable.piadina_divider));
+        recyclerViewCategorie.addItemDecoration(itemDecoratorCategorie);
     }
 
     @Override
@@ -314,6 +347,14 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
 
     public void onFragmentInteraction(Uri uri){}
+
+    public Context getmContext() {
+        return mContext;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
 
 
 }
