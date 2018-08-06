@@ -8,4 +8,47 @@
     tools:context=".BadgeActivity"
     tools:showIn="@layout/app_bar_badge">
 
+    <ImageView
+        android:id="@+id/qrCodeImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginEnd="168dp"
+        android:layout_marginStart="168dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/qr_image_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/timbriTitleLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="199dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/timbri_progress_description"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:id="@+id/timbriProgressBar"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="144dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:rcBackgroundColor="@color/primaryColor"
+        app:rcBackgroundPadding="5dp"
+        app:rcMax="10"
+        app:rcProgress="5"
+        app:rcProgressColor="@color/secondaryLightColor"
+        app:rcRadius="20dp"
+        app:rcReverse="false"
+        app:rcSecondaryProgress="0"
+        app:rcSecondaryProgressColor="@color/primaryColor">
+
+    </com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar>
+
 </android.support.constraint.ConstraintLayout>

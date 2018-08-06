@@ -3,6 +3,7 @@ package com.example.ale.piadinapp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
@@ -11,11 +12,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.ale.utility.SessionManager;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
 
@@ -52,6 +58,23 @@ public class BadgeActivity extends AppCompatActivity
 
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
+        //Recupero email dell'utente
+        String userEmail = utente.get("email");
+        //Creazione dell'immagine del QR code
+        try {
+            BarcodeEncoder qrEncoder = new BarcodeEncoder();
+            Bitmap qrImage = qrEncoder.encodeBitmap(userEmail, BarcodeFormat.QR_CODE,200,200);
+            ImageView qrImageView = findViewById(R.id.qrCodeImageView);
+            qrImageView.setImageBitmap(qrImage);
+        } catch (Exception e) {
+            Log.d("Create QR code image",e.getMessage());
+        }
+
+        //Riempimento ProgressBar dei timbri
+        RoundCornerProgressBar timbriProgress = findViewById(R.id.timbriProgressBar);
+        timbriProgress.setMax(10); //todo inserire una costante per il max numero di piadine prima di quella omaggio
+        timbriProgress.setProgress(5); //todo recupero numero timbri corrente da DB
     }
 
     @Override
