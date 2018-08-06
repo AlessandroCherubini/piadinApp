@@ -57,6 +57,10 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
 
 
     }
+    public CartItem getItem(int id){
+
+        return itemList.get(id);
+    }
 
     public void removeItem(int id){
         itemList.remove(id);
@@ -102,6 +106,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
             listenerRef.get().onPositionClicked(getAdapterPosition());
         }
     }
+
 
 
 }

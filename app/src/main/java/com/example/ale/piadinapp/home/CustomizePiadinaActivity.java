@@ -355,7 +355,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     private void aggiungiAlCarrello(){
 
-        //cs.persistData(getApplicationContext(),true);
+        cs.persistData(getApplicationContext(),true);
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
@@ -394,7 +394,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         data = cs.ViewAll(getApplicationContext());
 
         String id;
-        if (data==null)
+        if (data==null || data.size()==0)
         {
             id = "Piadina "+1;
         }
@@ -414,6 +414,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         cs.add(id,"impasto",impasto);
         cs.add(id,"prezzo",prezzo);
         cs.add(id,"ingredienti", ingredients);
+        cs.add(id,"identifier",id);
         cs.commit(getApplicationContext());
 
 

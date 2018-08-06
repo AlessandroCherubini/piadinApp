@@ -9,6 +9,7 @@ public class CartItem {
     private String impasto;
     private ArrayList<Ingrediente> ingredienti;
     private double prezzo;
+    private String identifier;
 
 
     public String getNome() {
@@ -70,6 +71,24 @@ public class CartItem {
         this.impasto=impasto;
         this.prezzo=prezzo;
         this.ingredienti=ingredienti;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti, String identifier ) {
+
+        this.nome = nome;
+        this.formato=formato;
+        this.impasto=impasto;
+        this.prezzo=prezzo;
+        this.ingredienti=ingredienti;
+        this.identifier=identifier;
     }
 
 
