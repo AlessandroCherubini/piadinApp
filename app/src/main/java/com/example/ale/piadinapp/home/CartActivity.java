@@ -1,10 +1,13 @@
 package com.example.ale.piadinapp.home;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,14 +15,23 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.support.v7.app.AlertDialog;
 
 import com.carteasy.v1.lib.Carteasy;
+import com.example.ale.piadinapp.MainActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
@@ -28,8 +40,9 @@ public class CartActivity extends AppCompatActivity {
     CartItemAdapter adapter;
     ArrayList<CartItem> Items = new ArrayList<CartItem>();
     ArrayList<Ingrediente> ingredienti = new ArrayList<Ingrediente>();
-    String nome;
     Carteasy cs = new Carteasy();
+    Map<Integer, Map> data;
+
 
 
     @Override
@@ -38,24 +51,52 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        //cs.persistData(getApplicationContext(),true);
 
-       /* String formato= cs.getString("Piadina 8", "formato", getApplicationContext());
-        String impasto =cs.getString("Piadina 8", "impasto", getApplicationContext());
-        //ingredienti = cs.get("Piadina 1", "ingredienti", getApplicationContext());
-        Double prezzo= cs.getDouble("Piadina 8", "prezzo", getApplicationContext());
-        //nome = cs.getString("Piadina 1", "nome",getApplicationContext());
+        // ricevo l'elemento inserito nel carrello
 
-        Ingrediente pollo;
-        ingredienti.add(pollo = new Ingrediente ("pollo"));
+        data = cs.ViewAll(getApplicationContext());
+        String id;
+        if (data==null)
+        {
+            Toast toast = Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else {
+            int k = 0;
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
 
-        CartItem item1 = new CartItem("cheru",formato, impasto,prezzo,ingredienti);*/
-        CartItem item1 = (CartItem)cs.get("Piadina 10", "Piadina",getApplicationContext());
-        Items.add(item1);
+                int numero = k+1;
+                id="Piadina "+numero;
+                String formato= cs.getString(id, "formato", getApplicationContext());
+                String impasto =cs.getString(id, "impasto", getApplicationContext());
+                String ingredients = cs.getString(id, "ingredienti", getApplicationContext());
+//                Double prezzo= cs.getDouble(id, "prezzo", getApplicationContext());
+                String nome = cs.getString(id, "nome",getApplicationContext());
+
+                //ricostruisco gli ingredienti e l'stanza della classe CartItem
+
+                String strippedIngredients= ingredients.replaceAll("\\[", "").replaceAll("\\]","");
+                List<String> ings = Arrays.asList(strippedIngredients.split(","));
+
+                ingredienti = new ArrayList<>();
+                ingredienti.clear();
+
+                for(String ing : ings)
+                {
+
+                    ingredienti.add(new Ingrediente(ing));}
+
+                CartItem item = new CartItem(nome,formato, impasto,5.0,ingredienti);
+                Items.add(item);
+
+                k++;
+
+            }
+        }
 
 
 
@@ -79,19 +120,7 @@ public class CartActivity extends AppCompatActivity {
 
 
 
-        /*Carteasy cs = new Carteasy();
-        String formato = cs.getString("Piadina 1","formato",getApplicationContext());
-        String impasto= cs.getString("Piadina 1","impasto",getApplicationContext());
 
-        Map<Integer, Map> data;
-        data = cs.ViewAll(getApplicationContext());
-        int i=0;
-        for (Map.Entry<Integer, Map> entry : data.entrySet()) {
-            i++;
-        }
-
-    
-*/
 
 
 

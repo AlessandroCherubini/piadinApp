@@ -66,6 +66,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CustomizePiadinaActivity extends AppCompatActivity
         implements TabMenu.OnFragmentInteractionListener, IngredientsAdapter.ItemClickListener{
@@ -77,6 +78,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     ArrayList<Ingrediente> ingredientiPiadina;
     ArrayList<Ingrediente> listaIngredienti= new ArrayList<Ingrediente>();
     Carteasy cs = new Carteasy();
+    Map<Integer, Map> data;
+
 
 
     public final static Double IMPASTO_INTEGRALE = 0.30;
@@ -352,6 +355,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     private void aggiungiAlCarrello(){
 
+        //cs.persistData(getApplicationContext(),true);
+
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
         RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
@@ -382,14 +387,33 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         }
 
 
+        String ingredients = listaIngredienti.toString();
+        TextView name = (TextView) findViewById(R.id.nome_piadina);
+        String nome = name.getText().toString();
 
-        CartItem item1 = new CartItem("cheru",formato, impasto,prezzo,listaIngredienti);
+        data = cs.ViewAll(getApplicationContext());
 
-        /*cs.add("Piadina 8", "formato", formato);
-        cs.add("Piadina 8","impasto",impasto);
-        cs.add("Piadina 8","prezzo",prezzo);
-        cs.add("Piadina 8","ingredienti", listaIngredienti);*/
-        cs.add("Piadina 10","Piadina",item1);
+        String id;
+        if (data==null)
+        {
+            id = "Piadina "+1;
+        }
+        else {
+            int k = 0;
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+                k++;
+            }
+
+            int numero = k+1;
+            id = "Piadina "+numero;
+        }
+
+
+        cs.add(id,"nome",nome);
+        cs.add(id, "formato", formato);
+        cs.add(id,"impasto",impasto);
+        cs.add(id,"prezzo",prezzo);
+        cs.add(id,"ingredienti", ingredients);
         cs.commit(getApplicationContext());
 
 

@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.carteasy.v1.lib:carteasy:0.0.3'
+    implementation 'com.google.code.gson:gson:2.8.0'
 }

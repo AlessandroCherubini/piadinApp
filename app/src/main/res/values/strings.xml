@@ -65,5 +65,11 @@
     <string name="email_label">Email account</string>
     <string name="title_activity_cart">CartActivity</string>
 
+    <string name="form">Formato:\u00A0</string>
+    <string name="imp">Impasto:\u00A0</string>
+    <string name="ings">Ingredienti:\u00A0</string>
+
+
+
 
 </resources>
