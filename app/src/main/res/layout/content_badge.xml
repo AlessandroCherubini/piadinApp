@@ -20,17 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/timbriTitleLbl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="199dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/timbri_progress_description"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
         android:id="@+id/timbriProgressBar"
         android:layout_width="330dp"

@@ -18,10 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
 import com.example.ale.piadinapp.home.TabMenu;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -45,6 +47,8 @@ public class HomeActivity extends AppCompatActivity
         session = new SessionManager(this);
         /*DBHelper helper = new DBHelper(this);
         helper.printIngredientiTable();*/
+        DBHelper helper = new DBHelper(this);
+        User jim = helper.getUserByEmail("s.fontana011@studenti.unibs.it");
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));

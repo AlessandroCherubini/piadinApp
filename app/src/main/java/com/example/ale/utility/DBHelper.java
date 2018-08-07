@@ -1,6 +1,7 @@
 package com.example.ale.utility;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.classi.User;
 
 import android.content.ContentValues;
@@ -44,6 +45,19 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_INGREDIENTI_CATEGORIA = "categoria";
     public static final String COLUMN_INGREDIENTI_TIMESTAMP = "updated_at";
 
+    //tabella: timbri
+    public static final String TABLE_TIMBRI_NAME             = "timbri";
+    public static final String COLUMN_TIMBRI_ID              = "id_timbro";
+    public static final String COLUMN_TIMBRI_EMAIL           = "email";
+    public static final String COLUMN_TIMBRI_NUMERO_TIMBRI   = "numero_timbri";
+    public static final String COLUMN_TIMBRI_OMAGGI_RICEVUTI = "omaggi_ricevuti";
+    public static final String COLUMN_TIMBRI_TIMESTAMP       = "updated_at";
+
+    public static final int COLUMN_TIMBRI_ID_INDEX              = 0;
+    public static final int COLUMN_TIMBRI_EMAIL_INDEX           = 1;
+    public static final int COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX   = 2;
+    public static final int COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX = 3;
+
     // costruttore.
     public DBHelper(Context context) {
 
@@ -77,6 +91,14 @@ public class DBHelper extends SQLiteOpenHelper{
                 " VARCHAR, " + COLUMN_INGREDIENTI_CATEGORIA +
                 " VARCHAR, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
 
+        String query_timbri = "CREATE TABLE " + TABLE_TIMBRI_NAME
+                + "("
+                + COLUMN_TIMBRI_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_TIMBRI_EMAIL + " TEXT, "
+                + COLUMN_TIMBRI_NUMERO_TIMBRI + " INTEGER, "
+                + COLUMN_TIMBRI_OMAGGI_RICEVUTI + " INTEGER, "
+                + COLUMN_TIMBRI_TIMESTAMP + " LONG);";
+
 
         // creazione tabella: users
         sqLiteDatabase.execSQL(query_logins);
@@ -84,6 +106,8 @@ public class DBHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(query_piadine);
         // creazione tabella: ingredienti
         sqLiteDatabase.execSQL(query_ingredienti);
+        //Crezione tabella: timbri
+        sqLiteDatabase.execSQL(query_timbri);
 
     }
 
@@ -109,7 +133,9 @@ public class DBHelper extends SQLiteOpenHelper{
         System.out.println("DOWNGRADE DB oldVersion="+oldVersion+" - newVersion="+newVersion);
     }
 
-    public User insertUser (User queryValues){
+    //**** TABELLA USER ********************************************************
+    public User insertUser (User queryValues)
+    {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("username", queryValues.nickname);
@@ -127,7 +153,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return queryValues;
     }
 
-    public int updateUserPassword (User queryValues){
+    public int updateUserPassword (User queryValues)
+    {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("username", queryValues.nickname);
@@ -137,7 +164,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-    public int updateUserEMail (User queryValues){
+    public int updateUserEMail (User queryValues)
+    {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
@@ -147,7 +175,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-    public int updateUserPhone (User queryValues){
+    public int updateUserPhone (User queryValues)
+    {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
@@ -157,7 +186,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
     }
 
-    public User getUserByEmail (String email){
+    public User getUserByEmail (String email)
+    {
         String query = "Select userId, username, password, phone from logins where email ='"+email+"'";
         User myUser = new User(0, "","", email, "");
         SQLiteDatabase database = this.getReadableDatabase();
@@ -174,9 +204,29 @@ public class DBHelper extends SQLiteOpenHelper{
         return myUser;
     }
 
+    public void printLoginsTable()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_LOGINS_NAME + ";";
+        Log.d("DB/PRINT", "Stampa tabella utenti!");
 
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()){
+            do {
+                Log.d("DB/PRINT", "ID Utente: " + cursor.getLong(0));
+                Log.d("DB/PRINT", "Nome Utente: " + cursor.getString(1));
+                Log.d("DB/PRINT", "Password Utente: " + cursor.getString(2));
+                Log.d("DB/PRINT", "Email Utente: " + cursor.getString(3));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //**** TABELLA PIADINE *****************************************************
     // Metodo per le ottenere le Piadine dal database Interno.
-    public ArrayList<Piadina> getPiadine() {
+    public ArrayList<Piadina> getPiadine()
+    {
         ArrayList<Piadina> piadine = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -199,7 +249,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return piadine;
     }
 
-    public Piadina getPiadinaByPosition (long position){
+    public Piadina getPiadinaByPosition (long position)
+    {
         ArrayList<Ingrediente> ingredienti = new ArrayList<>();
         String query = "Select nome, ingredienti, prezzo, updated_at from piadine where id_piadine='"+position+"'";
         Piadina myPiadina= new Piadina(position, "",null,0,0);
@@ -218,8 +269,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return myPiadina;
     }
 
-
-    public void insertPiadina (Piadina piadina){
+    public void insertPiadina (Piadina piadina)
+    {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         String piadinaIngredienti = piadina.printIngredienti();
@@ -240,7 +291,44 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }
 
-    public void insertIngrediente (Ingrediente ingrediente){
+    public long getInternalTimeStampPiadine()
+    {
+        long timeStamp = 0;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_PIADINE_NAME + ";";
+        Cursor cursorPiadine = db.rawQuery(sql, null);
+
+        if(cursorPiadine.moveToFirst()){
+            timeStamp = cursorPiadine.getLong(4);
+        }
+
+        return timeStamp;
+    }
+
+    public void printPiadineTable()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_PIADINE_NAME + ";";
+        Log.d("DB/PRINT", "Stampa tabella piadine!");
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()){
+            do {
+                Log.d("DB/PRINT", "ID Piadina: " + cursor.getLong(0));
+                Log.d("DB/PRINT", "Nome Piadina: " + cursor.getString(1));
+                Log.d("DB/PRINT", "Descrizione Piaidna: " + cursor.getString(2));
+                Log.d("DB/PRINT", "Prezzo Piadina: " + cursor.getDouble(3));
+                Log.d("DB/PRINT", "Timestamp Piadina: " + cursor.getLong(4));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //**** TABELLA INGREDIENTI**************************************************
+    public void insertIngrediente (Ingrediente ingrediente)
+    {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -261,21 +349,8 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }
 
-    public long getInternalTimeStampPiadine(){
-        long timeStamp = 0;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + TABLE_PIADINE_NAME + ";";
-        Cursor cursorPiadine = db.rawQuery(sql, null);
-
-        if(cursorPiadine.moveToFirst()){
-            timeStamp = cursorPiadine.getLong(4);
-        }
-
-        return timeStamp;
-    }
-
-    public long getInternalTimeStampIngredienti(){
+    public long getInternalTimeStampIngredienti()
+    {
         long timeStamp = 0;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -289,7 +364,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return timeStamp;
     }
 
-    public Ingrediente getIngredienteByName (String nomeIngrediente) {
+    public Ingrediente getIngredienteByName (String nomeIngrediente)
+    {
         String query = "Select id_ingrediente, prezzo, allergeni, categoria, updated_at from ingredienti where nome ='"+nomeIngrediente+"'";
         Ingrediente ingrediente = new Ingrediente(0, nomeIngrediente, 0.0, "", "", 0);
         SQLiteDatabase database = this.getReadableDatabase();
@@ -308,7 +384,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return ingrediente;
     }
 
-    public ArrayList<Ingrediente> getIngredientiFromString (String stringaIngredienti){
+    public ArrayList<Ingrediente> getIngredientiFromString (String stringaIngredienti)
+    {
         ArrayList<Ingrediente> listaIngredienti = new ArrayList<>();
 
         String[] result = stringaIngredienti.split(",\\s");
@@ -323,7 +400,8 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
     // Metodo per le ottenere gli Ingredienti dal database Interno.
-    public ArrayList<Ingrediente> getIngredienti() {
+    public ArrayList<Ingrediente> getIngredienti()
+    {
         ArrayList<Ingrediente> ingredienti = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -348,7 +426,9 @@ public class DBHelper extends SQLiteOpenHelper{
 
         return ingredienti;
     }
-    public ArrayList<String> getCategorieIngredienti(){
+
+    public ArrayList<String> getCategorieIngredienti()
+    {
         ArrayList<String> categorie = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -367,7 +447,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return categorie;
     }
 
-    public ArrayList<Ingrediente> getIngredientiByCategoria(String categoriaIngrediente){
+    public ArrayList<Ingrediente> getIngredientiByCategoria(String categoriaIngrediente)
+    {
         ArrayList<Ingrediente> ingredienti = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -391,25 +472,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return ingredienti;
     }
 
-    public void printPiadineTable(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + TABLE_PIADINE_NAME + ";";
-        Log.d("DB/PRINT", "Stampa tabella piadine!");
-
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()){
-            do {
-                Log.d("DB/PRINT", "ID Piadina: " + cursor.getLong(0));
-                Log.d("DB/PRINT", "Nome Piadina: " + cursor.getString(1));
-                Log.d("DB/PRINT", "Descrizione Piaidna: " + cursor.getString(2));
-                Log.d("DB/PRINT", "Prezzo Piadina: " + cursor.getDouble(3));
-                Log.d("DB/PRINT", "Timestamp Piadina: " + cursor.getLong(4));
-            } while (cursor.moveToNext());
-        }
-        db.close();
-    }
-
-    public void printIngredientiTable(){
+    public void printIngredientiTable()
+    {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_INGREDIENTI_NAME + ";";
         Log.d("DB/PRINT", "Stampa tabella ingredienti!");
@@ -427,21 +491,68 @@ public class DBHelper extends SQLiteOpenHelper{
         }
         db.close();
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public void printLoginsTable(){
+    //**** TABELLA TIMBRI ******************************************************
+    public Timbro insertTimbro(Timbro queryValues)
+    {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TIMBRI_EMAIL,queryValues.userEmail);
+        values.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
+        values.put(COLUMN_TIMBRI_OMAGGI_RICEVUTI,queryValues.numberOmaggi);
+        try {
+            queryValues.timbroId = database.insert(TABLE_TIMBRI_NAME,null,values);
+        } catch (Exception e) {
+            Log.d("INSERT",e.toString());
+        } finally {
+            database.close();
+        }
+
+        return queryValues;
+    }
+
+    public boolean updateTimbriNumber(Timbro queryValues)
+    {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
+        //queryValues.timbroId = database.insert(TABLE_TIMBRI_NAME,null,values);
+        int rowModifiedNumber = database.update(TABLE_TIMBRI_NAME,
+                                                values,
+                                                COLUMN_TIMBRI_ID + " = ?",
+                                                new String[] {String.valueOf(queryValues.timbroId)});
+
+        if(rowModifiedNumber == 0) {
+            Log.d("Update Timbri Number","No Row affected");
+            return false;
+        }
+
+        Log.d("Update Timbri Number","Rows affected: " + Integer.toString(rowModifiedNumber));
+        return true;
+    }
+
+    //todo update omaggi
+
+    //todo get timbri by email
+
+    public void printTimbriTable()
+    {
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + TABLE_LOGINS_NAME + ";";
-        Log.d("DB/PRINT", "Stampa tabella utenti!");
+        String sql = "SELECT * FROM " + TABLE_TIMBRI_NAME + ";";
+        Log.d("DB/PRINT","Stampa tabella timbri!");
 
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()){
+        Cursor cursor = db.rawQuery(sql,null);
+        if(cursor.moveToFirst()) {
             do {
-                Log.d("DB/PRINT", "ID Utente: " + cursor.getLong(0));
-                Log.d("DB/PRINT", "Nome Utente: " + cursor.getString(1));
-                Log.d("DB/PRINT", "Password Utente: " + cursor.getString(2));
-                Log.d("DB/PRINT", "Email Utente: " + cursor.getString(3));
+                Log.d("DB/PRINT", "ID Timbro: " + cursor.getLong(COLUMN_TIMBRI_ID_INDEX));
+                Log.d("DB/PRINT", "ID Email Utente: " + cursor.getLong(COLUMN_TIMBRI_EMAIL_INDEX));
+                Log.d("DB/PRINT", "ID Numero Timbri: " + cursor.getLong(COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX));
+                Log.d("DB/PRINT", "ID Numero Omaggi: " + cursor.getLong(COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX));
             } while (cursor.moveToNext());
         }
+
         db.close();
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
