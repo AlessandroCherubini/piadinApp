@@ -355,7 +355,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     private void aggiungiAlCarrello(){
 
-        cs.persistData(getApplicationContext(),true);
+        //cs.persistData(getApplicationContext(),true);
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);

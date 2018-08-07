@@ -53,15 +53,27 @@ public class CartActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView tvTot= (TextView)findViewById(R.id.tv_total);
-
-        cs.persistData(getApplicationContext(),true);
-
-        // ricevo l'elemento inserito nel carrello
+        Button clearCart = (Button)findViewById((R.id.clear_cart));
 
         data = cs.ViewAll(getApplicationContext());
 
+
+        clearCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                svuotaCarrello();
+                recreate();
+            }
+        });
+
+        //cs.persistData(getApplicationContext(),true);
+
+        // ricevo l'elemento inserito nel carrello
+
+
+
         String id;
-        if (data == null) {
+        if (data == null || data.size()==0) {
             Toast toast = Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_LONG);
             toast.show();
         } else {
@@ -142,6 +154,35 @@ public class CartActivity extends AppCompatActivity{
         String totale = "Totale: " + String.valueOf(tot);
         TextView tvTot= (TextView)findViewById(R.id.tv_total);
         tvTot.setText(totale);
+    }
+
+    public void svuotaCarrello (){
+
+        if (data==null || data.size()==0)
+        {
+
+            Toast toast = Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        else
+        {
+
+            int numeroItem=adapter.getItemCount();
+            for (int i =0; i<numeroItem;i++)
+            {
+                int numPiadina = i+1;
+                cs.RemoveId("Piadina "+numPiadina,getApplicationContext());
+                adapter.removeItem(0);
+
+            }
+            Items.clear();
+            data=null;
+        }
+
+
+
+
     }
 
 }
