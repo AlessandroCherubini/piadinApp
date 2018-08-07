@@ -47,8 +47,6 @@ public class HomeActivity extends AppCompatActivity
         session = new SessionManager(this);
         /*DBHelper helper = new DBHelper(this);
         helper.printIngredientiTable();*/
-        DBHelper helper = new DBHelper(this);
-        User jim = helper.getUserByEmail("s.fontana011@studenti.unibs.it");
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));

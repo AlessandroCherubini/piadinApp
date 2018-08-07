@@ -33,6 +33,9 @@ public class SessionManager {
 
     public static final String KEY_PHONE = "phone";
 
+    public static final String KEY_TIMBRI = "timbri";
+    public static final String KEY_OMAGGI = "omaggi";
+
     //public static final String KEY_DB = "db_version";
 
     // Constructor
@@ -44,7 +47,7 @@ public class SessionManager {
     /**
      * Create login session
      * */
-    public void createLoginSession(String name, String email, String phone){
+    public void createLoginSession(String name, String email, String phone, int timbri, int omaggi){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -55,6 +58,10 @@ public class SessionManager {
         editor.putString(KEY_EMAIL, email);
 
         editor.putString(KEY_PHONE, phone);
+
+        //Store fidelity card infos
+        editor.putInt(KEY_TIMBRI,timbri);
+        editor.putInt(KEY_OMAGGI,omaggi);
 
         // commit changes
         editor.commit();
@@ -92,6 +99,10 @@ public class SessionManager {
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
         // user phone number
         user.put(KEY_PHONE, pref.getString(KEY_PHONE, null));
+        //User timbri
+        user.put(KEY_TIMBRI,Integer.toString(pref.getInt(KEY_TIMBRI,0)));
+        //User omaggi
+        user.put(KEY_OMAGGI,Integer.toString(pref.getInt(KEY_OMAGGI,0)));
 
         // return user
         return user;

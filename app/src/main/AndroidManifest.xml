@@ -10,7 +10,7 @@
     <!-- Internet Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Geolocation Permission -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".classi.PiadinApp"
@@ -103,11 +103,19 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo"/>
+            android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo" />
 
+        <activity
+            android:name=".QRReaderActivity"
+            android:label="@string/title_activity_qrreader"
+            android:parentActivityName=".BadgeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.BadgeActivity" />
+        </activity>
     </application>
 
 </manifest>

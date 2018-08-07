@@ -66,9 +66,13 @@
 
     <!-- Pagina Tessera -->
     <string name="qr_image_description">QR code image</string>
-    <string name="timbri_progress_description">Progresso piadina omaggio:</string>
-    <string name="timbri_progress_value">5/10</string>
-
+    <string name="numero_timbri_str">Numero di timbri: 0/10</string>
+    <string name="omaggi_ricevuti_str">Piadine omaggio guadagnate: 0</string>
+    <string name="read_qr_btn_str">Read QR code</string>
+    <!-- Pagina QR scanner -->
+    <string name="title_activity_qrreader">QRReaderActivity</string>
+    <string name="scan_btn_str">Scan</string>
+    <string name="result_str">No result</string>
 
 
 </resources>

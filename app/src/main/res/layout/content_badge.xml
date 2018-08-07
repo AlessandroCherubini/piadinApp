@@ -20,24 +20,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-        android:id="@+id/timbriProgressBar"
-        android:layout_width="330dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="144dp"
+    <TextView
+        android:id="@+id/timbriTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="19dp"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:rcBackgroundColor="@color/primaryColor"
-        app:rcBackgroundPadding="5dp"
-        app:rcMax="10"
-        app:rcProgress="5"
-        app:rcProgressColor="@color/secondaryLightColor"
-        app:rcRadius="20dp"
-        app:rcReverse="false"
-        app:rcSecondaryProgress="0"
-        app:rcSecondaryProgressColor="@color/primaryColor">
+        android:text="@string/numero_timbri_str"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/omaggiTextView"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    </com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar>
+    <TextView
+        android:id="@+id/omaggiTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="185dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/omaggi_ricevuti_str"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/readQRBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginStart="132dp"
+        android:text="@string/read_qr_btn_str"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

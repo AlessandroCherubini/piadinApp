@@ -36,6 +36,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * todo: Rivedere la funzione session.createLoginSession in questa activity per la questione dei timbri.
+ * todo: Per adesso inserisco 0 e 0 per i timbri in quanto viene creato un nuovo utente ma non so se va bene.
+ * todo: Firmato: Jimmy
+ */
+
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
@@ -128,7 +134,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         // sessione per l'utente.
         session.setLoggedIn(true);
-        session.createLoginSession(name, password, mobile);
+        session.createLoginSession(name, password, mobile,0,0);
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -213,7 +219,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if(success.equals("1")){
                                 // sessione per l'utente.
                                 session.setLoggedIn(true);
-                                session.createLoginSession(name, email, phone);
+                                session.createLoginSession(name, email, phone,0,0);
 
                                 _signupButton.setEnabled(true);
                                 setResult(RESULT_OK, null);

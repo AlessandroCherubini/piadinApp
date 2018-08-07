@@ -150,6 +150,10 @@ public class DBHelper extends SQLiteOpenHelper{
             database.close();
         }
 
+        //Inserimento nuova riga nella tabella Timbri relativa al nuovo utente
+        Timbro newTimbro = new Timbro(0,queryValues.email,0,0);
+        insertTimbro(newTimbro);
+
         return queryValues;
     }
 
@@ -517,11 +521,12 @@ public class DBHelper extends SQLiteOpenHelper{
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
-        //queryValues.timbroId = database.insert(TABLE_TIMBRI_NAME,null,values);
         int rowModifiedNumber = database.update(TABLE_TIMBRI_NAME,
                                                 values,
                                                 COLUMN_TIMBRI_ID + " = ?",
                                                 new String[] {String.valueOf(queryValues.timbroId)});
+
+        database.close();
 
         if(rowModifiedNumber == 0) {
             Log.d("Update Timbri Number","No Row affected");
@@ -532,9 +537,42 @@ public class DBHelper extends SQLiteOpenHelper{
         return true;
     }
 
-    //todo update omaggi
+    public boolean updateTimbriTableOmaggiNumber(Timbro queryValues)
+    {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TIMBRI_OMAGGI_RICEVUTI,queryValues.numberOmaggi);
+        int rowModifiedNumber = database.update(TABLE_TIMBRI_NAME,
+                                                values,
+                                                COLUMN_TIMBRI_ID + " = ?",
+                                                new String[] {String.valueOf(queryValues.timbroId)});
 
-    //todo get timbri by email
+        if(rowModifiedNumber == 0) {
+            Log.d("Update Omaggi Number","No Row affected");
+            return false;
+        }
+
+        Log.d("Update Omaggi Number","Row affected: " + Integer.toString(rowModifiedNumber));
+        return true;
+    }
+
+    public Timbro getTimbroByEmail(String email)
+    {
+        String query = "SELECT * FROM " + TABLE_TIMBRI_NAME + " WHERE " + COLUMN_TIMBRI_EMAIL +
+                       " ='" + email + "'";
+        Timbro myTimbro = new Timbro(0,email,0,0);
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(query,null);
+        if(cursor.moveToFirst()) {
+            do {
+                myTimbro.timbroId = cursor.getLong(COLUMN_TIMBRI_ID_INDEX);
+                myTimbro.numberTimbri = cursor.getInt(COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX);
+                myTimbro.numberOmaggi = cursor.getInt(COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX);
+            } while (cursor.moveToNext());
+        }
+
+        return myTimbro;
+    }
 
     public void printTimbriTable()
     {
@@ -546,9 +584,9 @@ public class DBHelper extends SQLiteOpenHelper{
         if(cursor.moveToFirst()) {
             do {
                 Log.d("DB/PRINT", "ID Timbro: " + cursor.getLong(COLUMN_TIMBRI_ID_INDEX));
-                Log.d("DB/PRINT", "ID Email Utente: " + cursor.getLong(COLUMN_TIMBRI_EMAIL_INDEX));
-                Log.d("DB/PRINT", "ID Numero Timbri: " + cursor.getLong(COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX));
-                Log.d("DB/PRINT", "ID Numero Omaggi: " + cursor.getLong(COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX));
+                Log.d("DB/PRINT", "ID Email Utente: " + cursor.getString(COLUMN_TIMBRI_EMAIL_INDEX));
+                Log.d("DB/PRINT", "ID Numero Timbri: " + cursor.getInt(COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX));
+                Log.d("DB/PRINT", "ID Numero Omaggi: " + cursor.getInt(COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX));
             } while (cursor.moveToNext());
         }
 

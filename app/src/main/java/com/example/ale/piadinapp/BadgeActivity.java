@@ -15,13 +15,18 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.example.ale.piadinapp.classi.Timbro;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
@@ -50,7 +55,7 @@ public class BadgeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
-        HashMap<String, String> utente;
+        final HashMap<String, String> utente;
         utente = session.getUserDetails();
 
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
@@ -71,10 +76,39 @@ public class BadgeActivity extends AppCompatActivity
             Log.d("Create QR code image",e.getMessage());
         }
 
-        //Riempimento ProgressBar dei timbri
-        RoundCornerProgressBar timbriProgress = findViewById(R.id.timbriProgressBar);
-        timbriProgress.setMax(10); //todo inserire una costante per il max numero di piadine prima di quella omaggio
-        timbriProgress.setProgress(5); //todo recupero numero timbri corrente da DB
+        //Inserimento numero di timbri
+        TextView timbriTV = findViewById(R.id.timbriTextView);
+        timbriTV.setText(getTimbriStr(utente.get("timbri")));
+        //Inserimento numero di omaggi
+        TextView omaggiTV = findViewById(R.id.omaggiTextView);
+        omaggiTV.setText(getOmaggiStr(utente.get("omaggi")));
+
+        //Bottone per passare all'Activity per leggere il QR code
+        Button readQRBtn = findViewById(R.id.readQRBtn);
+        readQRBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                Intent intent = new Intent(getApplicationContext(),QRReaderActivity.class);
+                startActivity(intent);
+                */
+
+                /*
+                DBHelper helper = new DBHelper(getApplicationContext());
+                Timbro timbro = helper.getTimbroByEmail(result.getContents());
+                timbro.numberTimbri = 5;
+                helper.updateTimbriNumber(timbro);
+
+                SessionManager sessione = new SessionManager(this);
+                final HashMap<String, String> user;
+                user = sessione.getUserDetails();
+                sessione.createLoginSession(user.get("name"),user.get("email"),user.get("phone"),3,0);
+                */
+
+                //Start scanning QR code
+                beginScanQRCode();
+            }
+        });
     }
 
     @Override
@@ -183,4 +217,22 @@ public class BadgeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    //PRIVATE FUNCTIONS-----------------------------------------------------------
+    private String getTimbriStr(String timbriNumberStr)
+    {
+        //todo inserire costante valore max di timbri
+        return "Numero di timbri: " + timbriNumberStr + "/10";
+    }
+
+    private String getOmaggiStr(String omaggiNumberStr)
+    {
+        return "Piadine omaggio guadagnate: " + omaggiNumberStr;
+    }
+
+    private void beginScanQRCode()
+    {
+        new IntentIntegrator(this).initiateScan();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
