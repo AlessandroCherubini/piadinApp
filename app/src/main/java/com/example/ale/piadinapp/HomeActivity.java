@@ -1,11 +1,13 @@
 package com.example.ale.piadinapp;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -59,17 +61,6 @@ public class HomeActivity extends AppCompatActivity
 
         data = cs.ViewAll(getApplicationContext());
 
-        if (data==null || data.size()==0) {
-            mCartItemCount = 0;
-
-        }
-        else{
-
-            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
-
-                mCartItemCount++;
-            }
-        }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));
@@ -125,18 +116,33 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
- /*   @Override
-    protected void onResume() {
+
+    @Override
+    public void onResume() {
         super.onResume();
 
         invalidateOptionsMenu();
+
+        data = cs.ViewAll(getApplicationContext());
+        mCartItemCount=0;
+        if (data==null || data.size()==0) {
+            mCartItemCount = 0;
+
+        }
+        else{
+
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+
+                mCartItemCount++;
+            }
+        }
+
     }
 
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
 
-        getMenuInflater().inflate(R.menu.home, menu);
 
         final MenuItem menuItem = menu.findItem(R.id.action_cart);
 
@@ -145,9 +151,8 @@ public class HomeActivity extends AppCompatActivity
 
         setupBadge();
 
-
         return true;
-    }*/
+    }
 
     @Override
     public void onBackPressed() {
@@ -195,6 +200,7 @@ public class HomeActivity extends AppCompatActivity
                 }
             }
         }
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -212,6 +218,7 @@ public class HomeActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
     @SuppressWarnings("StatementWithEmptyBody")

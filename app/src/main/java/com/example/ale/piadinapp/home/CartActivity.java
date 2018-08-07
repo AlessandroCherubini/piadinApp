@@ -85,7 +85,7 @@ public class CartActivity extends AppCompatActivity{
                 String formato = cs.getString(id, "formato", getApplicationContext());
                 String impasto = cs.getString(id, "impasto", getApplicationContext());
                 String ingredients = cs.getString(id, "ingredienti", getApplicationContext());
-//                Double prezzo= cs.getDouble(id, "prezzo", getApplicationContext());
+                Double prezzo= cs.getDouble(id, "prezzo", getApplicationContext());
                 String nome = cs.getString(id, "nome", getApplicationContext());
                 String identifier =cs.getString(id,"identifier",getApplicationContext());
 
@@ -102,7 +102,7 @@ public class CartActivity extends AppCompatActivity{
                     ingredienti.add(new Ingrediente(ing));
                 }
 
-                CartItem item = new CartItem(nome, formato, impasto, 5.0, ingredienti,identifier);
+                CartItem item = new CartItem(nome, formato, impasto, prezzo, ingredienti,identifier);
                 Items.add(item);
 
                 k++;

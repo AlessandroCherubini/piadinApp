@@ -1,5 +1,6 @@
 package com.example.ale.piadinapp.home;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -53,6 +54,7 @@ import android.widget.Toast;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.WeAreHereActivity;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
