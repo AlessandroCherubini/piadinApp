@@ -91,6 +91,13 @@ public class CartItem {
         this.identifier=identifier;
     }
 
+    public Piadina  cartItemToPiadina(CartItem item) {
+
+        Piadina piadina = new Piadina(nome,ingredienti,prezzo);
+
+        return piadina;
+    }
+
 
 
 

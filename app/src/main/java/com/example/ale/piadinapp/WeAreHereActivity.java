@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.utility.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -198,6 +199,12 @@ public class WeAreHereActivity extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.where) {
+
+        }else if(id == R.id.shaker){
+
+            Intent intent = new Intent(this, ShakerActivity.class);
+            startActivity(intent);
+            finish();
 
         }
 

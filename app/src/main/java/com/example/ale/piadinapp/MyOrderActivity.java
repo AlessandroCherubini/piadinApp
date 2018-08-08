@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -147,6 +148,7 @@ public class MyOrderActivity extends AppCompatActivity
             intent.setData(Uri.parse("tel:0302122931"));
             startActivity(intent);
 
+
         } else if (id == R.id.where) {
 
             Intent intent = new Intent(this, WeAreHereActivity.class);
@@ -156,6 +158,12 @@ public class MyOrderActivity extends AppCompatActivity
 
         } else if (id == R.id.ordini) {
 
+
+        }else if(id == R.id.shaker){
+
+            Intent intent = new Intent(this, ShakerActivity.class);
+            startActivity(intent);
+            finish();
 
         }
 

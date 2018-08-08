@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -156,6 +157,12 @@ public class BadgeActivity extends AppCompatActivity
         } else if (id == R.id.ordini) {
 
             Intent intent = new Intent(this, MyOrderActivity.class);
+            startActivity(intent);
+            finish();
+
+        }else if(id == R.id.shaker){
+
+            Intent intent = new Intent(this, ShakerActivity.class);
             startActivity(intent);
             finish();
 

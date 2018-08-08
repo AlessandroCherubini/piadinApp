@@ -137,6 +137,11 @@ public class TabMenu extends Fragment{
 
             }
 
+            @Override
+            public void onCartItemClicked(int position) {
+
+            }
+
         });
         //setting adapter to recyclerview
         recyclerView.setAdapter(adapter);

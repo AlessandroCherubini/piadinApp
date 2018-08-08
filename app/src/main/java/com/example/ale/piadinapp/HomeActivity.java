@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.home.CartActivity;
 import com.example.ale.piadinapp.home.PagerAdapter;
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
 import com.example.ale.piadinapp.home.TabMenu;
@@ -290,6 +291,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.ordini) {
 
                 Intent intent = new Intent(this, MyOrderActivity.class);
+                startActivity(intent);
+
+            }else if(id == R.id.shaker){
+
+                Intent intent = new Intent(this, ShakerActivity.class);
                 startActivity(intent);
 
             }
