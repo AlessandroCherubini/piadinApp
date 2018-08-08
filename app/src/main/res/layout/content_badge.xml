@@ -8,4 +8,85 @@
     tools:context=".BadgeActivity"
     tools:showIn="@layout/app_bar_badge">
 
+    <ImageView
+        android:id="@+id/qrCodeImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginEnd="168dp"
+        android:layout_marginStart="168dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/qr_image_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/timbriTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="11dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/numero_timbri_str"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/omaggioProgressBar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/omaggiTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="136dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/omaggi_ricevuti_str"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/readQRBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginStart="132dp"
+        android:text="@string/read_qr_btn_str"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/omaggioProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="257dp"
+        android:layout_height="29dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="16dp"
+        android:max="10"
+        android:progress="0"
+        android:progressDrawable="@drawable/custom_progress_bar"
+        app:layout_constraintBottom_toTopOf="@+id/omaggiTextView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/piadaImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="176dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/standard_small" />
+
+    <TextView
+        android:id="@+id/percentageTextView"
+        android:layout_width="53dp"
+        android:layout_height="29dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="5dp"
+        android:text="@string/timbri_percentage_str"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/omaggiTextView"
+        app:layout_constraintStart_toEndOf="@+id/omaggioProgressBar" />
+
 </android.support.constraint.ConstraintLayout>
