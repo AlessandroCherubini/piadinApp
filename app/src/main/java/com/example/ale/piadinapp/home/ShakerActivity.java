@@ -151,6 +151,7 @@ public class ShakerActivity extends AppCompatActivity
                 String randomPiadinaAsAString = gson.toJson(randPiadina);
                 intent.putExtra("randomPiadina",randomPiadinaAsAString);
                 startActivity(intent);
+                finish();
             }
         });
 

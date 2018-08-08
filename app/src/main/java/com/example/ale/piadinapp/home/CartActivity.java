@@ -67,7 +67,7 @@ public class CartActivity extends AppCompatActivity{
             }
         });
 
-        //cs.persistData(getApplicationContext(),true);
+        cs.persistData(getApplicationContext(),true);
 
         // ricevo l'elemento inserito nel carrello
 
@@ -142,6 +142,7 @@ public class CartActivity extends AppCompatActivity{
                 String modificaPiadinaAsAString = gson.toJson(adapter.getItem(position));
                 intent.putExtra("modificaPiadina",modificaPiadinaAsAString);
                 startActivity(intent);
+                finish();
 
             }
         });
