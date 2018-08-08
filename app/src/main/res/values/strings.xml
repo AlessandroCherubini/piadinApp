@@ -73,6 +73,16 @@
     <string name="title_activity_shaker">ShakerActivity</string>
     <string name="shake_button">"Non sai che piadina scegliere? \n Ci pensiamo noi! \n Premi il pulsante e scuoti lo smartphone!"</string>
     <string name= "messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
+    <!-- Pagina Tessera -->
+    <string name="qr_image_description">QR code image</string>
+    <string name="numero_timbri_str">Numero di timbri: 0/10</string>
+    <string name="omaggi_ricevuti_str">Piadine omaggio guadagnate: 0</string>
+    <string name="read_qr_btn_str">Read QR code</string>
+    <!-- Pagina QR scanner -->
+    <string name="title_activity_qrreader">QRReaderActivity</string>
+    <string name="scan_btn_str">Scan</string>
+    <string name="result_str">No result</string>
+    <string name="timbri_percentage_str">0%</string>
 
 
 </resources>

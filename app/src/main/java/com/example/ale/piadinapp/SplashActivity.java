@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.VolleyCallback;

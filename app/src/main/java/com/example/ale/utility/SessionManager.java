@@ -8,6 +8,7 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import com.example.ale.piadinapp.MainActivity;
+import com.example.ale.piadinapp.classi.PiadinApp;
 
 public class SessionManager {
     // Shared Preferences
@@ -33,6 +34,9 @@ public class SessionManager {
 
     public static final String KEY_PHONE = "phone";
 
+    public static final String KEY_TIMBRI = "timbri";
+    public static final String KEY_OMAGGI = "omaggi";
+
     //public static final String KEY_DB = "db_version";
 
     // Constructor
@@ -44,7 +48,7 @@ public class SessionManager {
     /**
      * Create login session
      * */
-    public void createLoginSession(String name, String email, String phone){
+    public void createLoginSession(String name, String email, String phone, int timbri, int omaggi){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -55,6 +59,10 @@ public class SessionManager {
         editor.putString(KEY_EMAIL, email);
 
         editor.putString(KEY_PHONE, phone);
+
+        //Store fidelity card infos
+        editor.putInt(KEY_TIMBRI,timbri);
+        editor.putInt(KEY_OMAGGI,omaggi);
 
         // commit changes
         editor.commit();
@@ -97,6 +105,17 @@ public class SessionManager {
         return user;
     }
 
+    public HashMap<String,Integer> getBadgeDetails()
+    {
+        HashMap<String,Integer> badge = new HashMap<>();
+        //Timbri
+        badge.put(KEY_TIMBRI,pref.getInt(KEY_TIMBRI,-1));
+        //Omaggi
+        badge.put(KEY_OMAGGI,pref.getInt(KEY_OMAGGI,-1));
+
+        return badge;
+    }
+
     /**
      * Clear session details
      * */
@@ -135,4 +154,31 @@ public class SessionManager {
         return pref.getBoolean("loggedInmode", false);
     }
 
+    /**
+     * Update valore dei timbri.
+     * @param timbriValue int Nuovo valore dei timbri
+     */
+    public void updateTimbriValue(int timbriValue)
+    {
+        editor.putInt(KEY_TIMBRI,timbriValue);
+        editor.commit();
+    }
+
+    /**
+     * Update valore degli omaggi
+     * @param omaggiValue int Nuovo valore degli omaggi
+     */
+    public void updateOmaggiValue(int omaggiValue)
+    {
+        editor.putInt(KEY_OMAGGI,omaggiValue);
+        editor.commit();
+    }
+
+    public void updateTimbriAndOmaggiValue(int timbri,int omaggi)
+    {
+        editor.putInt(KEY_TIMBRI,timbri);
+        editor.putInt(KEY_TIMBRI,omaggi);
+
+        editor.commit();
+    }
 }

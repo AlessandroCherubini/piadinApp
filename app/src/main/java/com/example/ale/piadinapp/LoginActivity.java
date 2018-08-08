@@ -2,6 +2,7 @@ package com.example.ale.piadinapp;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.*;
 import android.app.ProgressDialog;
@@ -162,12 +163,14 @@ public class LoginActivity extends AppCompatActivity {
 
         User utente = helper.getUserByEmail(_emailText.getText().toString());
         Log.d("UTENTE/CREDENTIANLS", utente.nickname + " " + utente.email);
+        Timbro timbri = helper.getTimbroByEmail(utente.email);
+        Log.d("TIMBRI/USERDATA", timbri.toString());
 
         helper.printLoginsTable();
         helper.close();
 
         session.setLoggedIn(true);
-        session.createLoginSession(utente.nickname, utente.email, utente.phone);
+        session.createLoginSession(utente.nickname, utente.email, utente.phone,timbri.numberTimbri,timbri.numberOmaggi);
 
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();

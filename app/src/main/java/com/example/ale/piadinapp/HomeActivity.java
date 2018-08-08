@@ -25,11 +25,13 @@ import android.widget.TextView;
 
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.home.CartActivity;
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
 import com.example.ale.piadinapp.home.TabMenu;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
