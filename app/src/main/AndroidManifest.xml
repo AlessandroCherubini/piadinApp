@@ -107,15 +107,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo" />
 
-        <activity
-            android:name=".QRReaderActivity"
-            android:label="@string/title_activity_qrreader"
-            android:parentActivityName=".BadgeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.BadgeActivity" />
-        </activity>
     </application>
 
 </manifest>

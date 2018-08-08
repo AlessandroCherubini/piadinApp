@@ -107,9 +107,8 @@ public class BadgeActivity extends AppCompatActivity
         badgePB.setMax(10);//todo: inserire costante valore max di timbri
         badgePB.setProgress(timbriNum);
         //Percentage string
-        int percent = (int)(timbriNum/10.0)*100;
         TextView percentText = findViewById(R.id.percentageTextView);
-        percentText.setText(Integer.toString(percent) + "%");
+        percentText.setText(Integer.toString(timbriNum * 10) + "%");
 
 
         //Bottone per passare all'Activity per leggere il QR code
@@ -295,9 +294,8 @@ public class BadgeActivity extends AppCompatActivity
                 badgePB.setMax(10);//todo: inserire costante valore max di timbri
                 badgePB.setProgress(timbriNumber);
                 //Percentage string
-                int percent = (int)(timbriNumber/10.0)*100;
                 badgeText = findViewById(R.id.percentageTextView);
-                badgeText.setText(Integer.toString(percent) + "%");
+                badgeText.setText(Integer.toString(timbriNumber*10) + "%");
             }
         }
     }
