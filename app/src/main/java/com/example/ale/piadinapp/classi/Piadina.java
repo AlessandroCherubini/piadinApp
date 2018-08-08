@@ -1,10 +1,13 @@
 package com.example.ale.piadinapp.classi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Piadina {
+public class Piadina{
 
     private long id;
     private String nome;
@@ -21,6 +24,13 @@ public class Piadina {
         this.price = price;
         //this.rating = rating;
         this.lastUpdated = lastUpdated;
+    }
+
+    public Piadina(String nome, ArrayList<Ingrediente> ingredienti, double price) {
+        this.nome = nome;
+        this.ingredienti = ingredienti;
+        this.price = price;
+        //this.rating = rating;
     }
 
     public long getId() {

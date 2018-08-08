@@ -91,19 +91,29 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
             remButton = itemView.findViewById(R.id.remButton);
             listenerRef = new WeakReference<>(listener);
 
-            //itemView.setOnClickListener(this);
+            itemView.setOnClickListener(this);
             remButton.setOnClickListener(this);
         }
 
         public void onClick(View v) {
 
+            if (v.getId() == remButton.getId()){
+
+                listenerRef.get().onPositionClicked(getAdapterPosition());
+
+            }
+            else if (v.getId()== itemView.getId()){
+
+                listenerRef.get().onCartItemClicked(getAdapterPosition());
+
+            }
 //            if (v.getId() == addButton.getId()) {
 //                Toast.makeText(v.getContext(), "ITEM PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
 //            } else {
 //                Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
 //            }
 
-            listenerRef.get().onPositionClicked(getAdapterPosition());
+
         }
     }
 

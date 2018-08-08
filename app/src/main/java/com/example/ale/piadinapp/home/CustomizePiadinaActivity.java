@@ -60,6 +60,7 @@ import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.CustomAdapter;
 import com.example.ale.utility.DBHelper;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,6 +82,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     ArrayList<Ingrediente> listaIngredienti= new ArrayList<Ingrediente>();
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
+    CartItem cartItem;
 
 
 
@@ -94,6 +96,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public Context mContext;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +108,29 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
 
+
         Intent intent = getIntent();
-        int position = intent.getIntExtra("indexPiadina",0);
-        chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+
+        if (intent.getExtras().get("indexPiadina")!=null){
+
+            int position = intent.getIntExtra("indexPiadina",0);
+            chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+        }
+        else if (intent.getExtras().get("randomPiadina")!=null){
+            Gson gson = new Gson();
+            String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
+            chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
+        }
+        else if (intent.getExtras().get("modificaPiadina")!=null){
+            Gson gson = new Gson();
+            String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
+            cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
+            chosenPiadina = cartItem.cartItemToPiadina(cartItem);
+
+            //TODO: sistemare problemi
+
+        }
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         totaleImpastoEFormato = chosenPiadina.getPrice();

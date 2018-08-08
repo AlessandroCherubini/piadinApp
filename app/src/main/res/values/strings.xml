@@ -72,6 +72,7 @@
     <string name="ings">Ingredienti:\u00A0</string>
     <string name="title_activity_shaker">ShakerActivity</string>
     <string name="shake_button">"Non sai che piadina scegliere? \n Ci pensiamo noi! \n Premi il pulsante e scuoti lo smartphone!"</string>
+    <string name= "messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
 
 
 </resources>

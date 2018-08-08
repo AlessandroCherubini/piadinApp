@@ -42,7 +42,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="76dp"
             android:background="@color/primaryDarkColor"
-            android:text="Premi e Scuoti"
+            android:text="Cliccami"
             android:textColor="@color/primaryTextColor" />
 
         <Button
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="98dp"
+            android:layout_marginTop="118dp"
             android:visibility="gone">
 
             <RelativeLayout
@@ -127,13 +127,13 @@
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="wrap_content"
+            android:layout_width="322dp"
             android:layout_height="82dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text='Procedi con la personalizzazione della piadina per poi aggiungerla al carrello, oppure "Premi e Scuoti" nuovamente!'
+            android:text='@string/messaggio_random_piadina'
             android:textSize="18sp"
             android:visibility="gone" />
 

@@ -36,6 +36,7 @@ import com.example.ale.piadinapp.WeAreHereActivity;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
+import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
@@ -115,7 +116,7 @@ public class ShakerActivity extends AppCompatActivity
                         cv_piadina.setVisibility(View.VISIBLE);
                         btn_personalizza.setVisibility(View.VISIBLE);
                         shakeDetector.stopShakeDetector(getBaseContext());
-                        shake_button.setText("PREMI E SCUOTI");
+                        shake_button.setText("CLICCAMI");
 
                     }
                 });
@@ -140,6 +141,19 @@ public class ShakerActivity extends AppCompatActivity
 
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
+        btn_personalizza.setOnClickListener(new View.OnClickListener(){
+            @Override
+            //On click function
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),CustomizePiadinaActivity.class);
+                Gson gson = new Gson();
+                String randomPiadinaAsAString = gson.toJson(randPiadina);
+                intent.putExtra("randomPiadina",randomPiadinaAsAString);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override

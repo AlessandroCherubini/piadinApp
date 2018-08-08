@@ -2,6 +2,7 @@ package com.example.ale.piadinapp.home;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -129,6 +130,18 @@ public class CartActivity extends AppCompatActivity{
                     Toast.makeText(CartActivity.this, "Il carrello è vuoto!", Toast.LENGTH_SHORT).show();
                 }
 
+
+            }
+
+            @Override
+            public void onCartItemClicked(int position) {
+
+
+                Intent intent = new Intent(getApplicationContext(),CustomizePiadinaActivity.class);
+                Gson gson = new Gson();
+                String modificaPiadinaAsAString = gson.toJson(adapter.getItem(position));
+                intent.putExtra("modificaPiadina",modificaPiadinaAsAString);
+                startActivity(intent);
 
             }
         });
