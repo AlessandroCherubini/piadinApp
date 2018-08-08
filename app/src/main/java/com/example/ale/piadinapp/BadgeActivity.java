@@ -1,8 +1,10 @@
 package com.example.ale.piadinapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +29,7 @@ import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
@@ -76,35 +79,22 @@ public class BadgeActivity extends AppCompatActivity
             Log.d("Create QR code image",e.getMessage());
         }
 
+        //Get badge infos
+        final HashMap<String,Integer> badgeData;
+        badgeData = session.getBadgeDetails();
+
         //Inserimento numero di timbri
         TextView timbriTV = findViewById(R.id.timbriTextView);
-        timbriTV.setText(getTimbriStr(utente.get("timbri")));
+        timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
         //Inserimento numero di omaggi
         TextView omaggiTV = findViewById(R.id.omaggiTextView);
-        omaggiTV.setText(getOmaggiStr(utente.get("omaggi")));
+        omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
 
         //Bottone per passare all'Activity per leggere il QR code
         Button readQRBtn = findViewById(R.id.readQRBtn);
         readQRBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                Intent intent = new Intent(getApplicationContext(),QRReaderActivity.class);
-                startActivity(intent);
-                */
-
-                /*
-                DBHelper helper = new DBHelper(getApplicationContext());
-                Timbro timbro = helper.getTimbroByEmail(result.getContents());
-                timbro.numberTimbri = 5;
-                helper.updateTimbriNumber(timbro);
-
-                SessionManager sessione = new SessionManager(this);
-                final HashMap<String, String> user;
-                user = sessione.getUserDetails();
-                sessione.createLoginSession(user.get("name"),user.get("email"),user.get("phone"),3,0);
-                */
-
                 //Start scanning QR code
                 beginScanQRCode();
             }
@@ -218,16 +208,74 @@ public class BadgeActivity extends AppCompatActivity
         return true;
     }
 
-    //PRIVATE FUNCTIONS-----------------------------------------------------------
-    private String getTimbriStr(String timbriNumberStr)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        //todo inserire costante valore max di timbri
-        return "Numero di timbri: " + timbriNumberStr + "/10";
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+
+        if(result == null) {
+            super.onActivityResult(requestCode,resultCode,data);
+        } else {
+            if(result.getContents() == null) {
+                Log.d("READQR","Scan action cancelled");
+            } else {
+                //Update timbri and omaggi values
+                //Get shared pref
+                if(session == null) {
+                    session = new SessionManager(this);
+                }
+                final HashMap<String,Integer> badgeData;
+                badgeData = session.getBadgeDetails();
+
+                int timbriNumber = badgeData.get("timbri");
+                int omaggiNumber = badgeData.get("omaggi");
+                //todo: inserire costante valore max di timbri
+                //todo: manca inserimento numero piadine in base all'ordine
+                timbriNumber++;
+                if(timbriNumber >= 10) {
+                    omaggiNumber++;
+                    timbriNumber = timbriNumber - 10;
+                }
+
+                //Insert new values in DB
+                DBHelper helper = new DBHelper(getApplicationContext());
+                Timbro timbro = helper.getTimbroByEmail(result.getContents());
+                if(timbro == null) {
+                    Log.d("UPDATE_TIMBRI","No row found in table Timbri with mail: " + result.getContents());
+                    return;
+                }
+                timbro.numberTimbri = timbriNumber;
+                timbro.numberOmaggi = omaggiNumber;
+                helper.updateTimbriNumber(timbro);
+
+                //Insert new data in shared pref
+                //session.updateTimbriAndOmaggiValue(timbriNumber,omaggiNumber);
+                //TEST
+                SharedPreferences pref = getSharedPreferences("piadinApp", Context.MODE_PRIVATE);
+                SharedPreferences.Editor edit = pref.edit();
+                edit.putInt("timbri",timbriNumber);
+                edit.commit();
+                //TEST
+
+                //Update labels strings
+                TextView badgeText = findViewById(R.id.timbriTextView);
+                badgeText.setText(getTimbriStr(timbriNumber));
+                badgeText = findViewById(R.id.omaggiTextView);
+                badgeText.setText(getOmaggiStr(omaggiNumber));
+            }
+        }
     }
 
-    private String getOmaggiStr(String omaggiNumberStr)
+    //PRIVATE FUNCTIONS-----------------------------------------------------------
+    private String getTimbriStr(int timbriNumber)
     {
-        return "Piadine omaggio guadagnate: " + omaggiNumberStr;
+        //todo inserire costante valore max di timbri
+        return "Numero di timbri: " + Integer.toString(timbriNumber) + "/10";
+    }
+
+    private String getOmaggiStr(int omaggiNumber)
+    {
+        return "Piadine omaggio guadagnate: " + Integer.toString(omaggiNumber);
     }
 
     private void beginScanQRCode()

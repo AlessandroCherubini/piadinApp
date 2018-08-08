@@ -99,13 +99,20 @@ public class SessionManager {
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
         // user phone number
         user.put(KEY_PHONE, pref.getString(KEY_PHONE, null));
-        //User timbri
-        user.put(KEY_TIMBRI,Integer.toString(pref.getInt(KEY_TIMBRI,0)));
-        //User omaggi
-        user.put(KEY_OMAGGI,Integer.toString(pref.getInt(KEY_OMAGGI,0)));
 
         // return user
         return user;
+    }
+
+    public HashMap<String,Integer> getBadgeDetails()
+    {
+        HashMap<String,Integer> badge = new HashMap<>();
+        //Timbri
+        badge.put(KEY_TIMBRI,pref.getInt(KEY_TIMBRI,-1));
+        //Omaggi
+        badge.put(KEY_OMAGGI,pref.getInt(KEY_OMAGGI,-1));
+
+        return badge;
     }
 
     /**
@@ -146,4 +153,31 @@ public class SessionManager {
         return pref.getBoolean("loggedInmode", false);
     }
 
+    /**
+     * Update valore dei timbri.
+     * @param timbriValue int Nuovo valore dei timbri
+     */
+    public void updateTimbriValue(int timbriValue)
+    {
+        editor.putInt(KEY_TIMBRI,timbriValue);
+        editor.commit();
+    }
+
+    /**
+     * Update valore degli omaggi
+     * @param omaggiValue int Nuovo valore degli omaggi
+     */
+    public void updateOmaggiValue(int omaggiValue)
+    {
+        editor.putInt(KEY_OMAGGI,omaggiValue);
+        editor.commit();
+    }
+
+    public void updateTimbriAndOmaggiValue(int timbri,int omaggi)
+    {
+        editor.putInt(KEY_TIMBRI,timbri);
+        editor.putInt(KEY_TIMBRI,omaggi);
+
+        editor.commit();
+    }
 }
