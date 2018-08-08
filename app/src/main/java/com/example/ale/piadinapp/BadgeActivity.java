@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,15 +81,36 @@ public class BadgeActivity extends AppCompatActivity
         }
 
         //Get badge infos
+        /*
         final HashMap<String,Integer> badgeData;
         badgeData = session.getBadgeDetails();
+        */
 
         //Inserimento numero di timbri
+        /*
         TextView timbriTV = findViewById(R.id.timbriTextView);
         timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
         //Inserimento numero di omaggi
         TextView omaggiTV = findViewById(R.id.omaggiTextView);
         omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
+        */
+        SharedPreferences preferences = getSharedPreferences("piadinApp", Context.MODE_PRIVATE);
+        TextView timbriTV = findViewById(R.id.timbriTextView);
+        timbriTV.setText(getTimbriStr(preferences.getInt(SessionManager.KEY_TIMBRI,-1)));
+        //Inserimento numero di omaggi
+        TextView omaggiTV = findViewById(R.id.omaggiTextView);
+        omaggiTV.setText(getOmaggiStr(preferences.getInt(SessionManager.KEY_OMAGGI,-1)));
+
+        //Update progress bar
+        int timbriNum = preferences.getInt(SessionManager.KEY_TIMBRI,0);
+        ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
+        badgePB.setMax(10);//todo: inserire costante valore max di timbri
+        badgePB.setProgress(timbriNum);
+        //Percentage string
+        int percent = (int)(timbriNum/10.0)*100;
+        TextView percentText = findViewById(R.id.percentageTextView);
+        percentText.setText(Integer.toString(percent) + "%");
+
 
         //Bottone per passare all'Activity per leggere il QR code
         Button readQRBtn = findViewById(R.id.readQRBtn);
@@ -221,14 +243,21 @@ public class BadgeActivity extends AppCompatActivity
             } else {
                 //Update timbri and omaggi values
                 //Get shared pref
-                if(session == null) {
-                    session = new SessionManager(this);
-                }
+                /*
+                session = new SessionManager(this);
                 final HashMap<String,Integer> badgeData;
                 badgeData = session.getBadgeDetails();
 
                 int timbriNumber = badgeData.get("timbri");
                 int omaggiNumber = badgeData.get("omaggi");
+                */
+                SharedPreferences preferences = getSharedPreferences("piadinApp",Context.MODE_PRIVATE);
+                int timbriNumber = preferences.getInt(SessionManager.KEY_TIMBRI,-1);
+                int omaggiNumber = preferences.getInt(SessionManager.KEY_OMAGGI,-1);
+                if(timbriNumber < 0 || omaggiNumber < 0) {
+                    Log.d("READQR","Cannot retrieve shared preferences");
+                    return;
+                }
                 //todo: inserire costante valore max di timbri
                 //todo: manca inserimento numero piadine in base all'ordine
                 timbriNumber++;
@@ -250,18 +279,25 @@ public class BadgeActivity extends AppCompatActivity
 
                 //Insert new data in shared pref
                 //session.updateTimbriAndOmaggiValue(timbriNumber,omaggiNumber);
-                //TEST
-                SharedPreferences pref = getSharedPreferences("piadinApp", Context.MODE_PRIVATE);
-                SharedPreferences.Editor edit = pref.edit();
-                edit.putInt("timbri",timbriNumber);
-                edit.commit();
-                //TEST
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt(SessionManager.KEY_TIMBRI,timbriNumber);
+                editor.putInt(SessionManager.KEY_OMAGGI,omaggiNumber);
+                editor.commit();
 
                 //Update labels strings
                 TextView badgeText = findViewById(R.id.timbriTextView);
                 badgeText.setText(getTimbriStr(timbriNumber));
                 badgeText = findViewById(R.id.omaggiTextView);
                 badgeText.setText(getOmaggiStr(omaggiNumber));
+
+                //Update progress bar
+                ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
+                badgePB.setMax(10);//todo: inserire costante valore max di timbri
+                badgePB.setProgress(timbriNumber);
+                //Percentage string
+                int percent = (int)(timbriNumber/10.0)*100;
+                badgeText = findViewById(R.id.percentageTextView);
+                badgeText.setText(Integer.toString(percent) + "%");
             }
         }
     }

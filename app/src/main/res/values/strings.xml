@@ -73,6 +73,7 @@
     <string name="title_activity_qrreader">QRReaderActivity</string>
     <string name="scan_btn_str">Scan</string>
     <string name="result_str">No result</string>
+    <string name="timbri_percentage_str">0%</string>
 
 
 </resources>

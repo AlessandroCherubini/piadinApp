@@ -8,6 +8,7 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import com.example.ale.piadinapp.MainActivity;
+import com.example.ale.piadinapp.classi.PiadinApp;
 
 public class SessionManager {
     // Shared Preferences
