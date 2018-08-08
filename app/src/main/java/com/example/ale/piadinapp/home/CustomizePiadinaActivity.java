@@ -119,6 +119,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
         RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
 
+
+        Button button = findViewById(R.id.addKart);
         if (intent.getExtras().get("indexPiadina")!=null){
 
             int position = intent.getIntExtra("indexPiadina",0);
@@ -134,6 +136,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
             chosenPiadina = cartItem.cartItemToPiadina(cartItem);
+            button.setText("Effettua Modifica");
 
             identificatore = cartItem.getIdentifier();
 
@@ -173,7 +176,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         if (rb1.isChecked()){rb1.setTypeface(null, Typeface.BOLD_ITALIC);}
         if(rb4.isChecked()){rb4.setTypeface(null, Typeface.BOLD_ITALIC);}
 
-        final Button button = findViewById(R.id.addKart);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
@@ -295,9 +298,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public void onRadioButtonClicked(View v) {
 
         helper = new DBHelper(this);
-        Intent intent = getIntent();
-        int position = intent.getIntExtra("indexPiadina",0);
-        chosenPiadina = helper.getPiadinaByPosition((long)position + 1);
         double prezzoPiadinaBase = chosenPiadina.getPrice();
 
 
@@ -305,10 +305,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         //String prezzoCorrente = removeLastChar(prezzoPiadina.getText().toString());
 
 
-
-
-        //is the current radio button now checked?
-        boolean  checked = ((RadioButton) v).isChecked();
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
@@ -449,8 +445,13 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         {
             id = "Piadina "+1;
         }
-        else if ((cs.get(identificatore,"nome",getApplicationContext())) != null){id = identificatore; }
+        else if ((cs.get(identificatore,"nome",getApplicationContext())) != null && identificatore != null){
+
+            id = identificatore;
+
+        }
         else {
+
             int k = 0;
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
                 k++;
