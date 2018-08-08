@@ -1,11 +1,21 @@
-package com.example.ale.piadinapp;
+package com.example.ale.piadinapp.home;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
+import android.util.Log;
+import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,27 +24,103 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.ale.piadinapp.home.ShakerActivity;
+import com.example.ale.piadinapp.BadgeActivity;
+import com.example.ale.piadinapp.HomeActivity;
+import com.example.ale.piadinapp.MyOrderActivity;
+import com.example.ale.piadinapp.MyProfileActivity;
+import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.WeAreHereActivity;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
-import java.util.HashMap;
+import org.w3c.dom.Text;
 
-public class MyProfileActivity extends AppCompatActivity
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeoutException;
+
+import safety.com.br.android_shake_detector.core.ShakeCallback;
+import safety.com.br.android_shake_detector.core.ShakeDetector;
+import safety.com.br.android_shake_detector.core.ShakeOptions;
+
+public class ShakerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SessionManager session;
+    private ShakeDetector shakeDetector;
+    DBHelper helper;
+    ArrayList<Piadina> randomPiadinaList;
+    private Random randomGenerator;
+    private Piadina randPiadina;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_profile);
+        setContentView(R.layout.activity_shaker);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        helper = new DBHelper(this);
         session = new SessionManager(this);
+
+        randomPiadinaList = helper.getPiadine();
+        final ShakeOptions options = new ShakeOptions()
+                .background(true)
+                .interval(1000)
+                .shakeCount(2)
+                .sensibility(2.0f);
+
+        final TextView tv_shake = (TextView)findViewById(R.id.tv_shake);
+        final CardView cv_piadina = (CardView)findViewById(R.id.cv_piadina);
+        final Button btn_personalizza = (Button)findViewById(R.id.btn_personalizza);
+        final TextView tv_4 = (TextView)findViewById(R.id.textView4);
+        final TextView titolo = (TextView)findViewById(R.id.textViewTitle);
+        final TextView price = (TextView)findViewById(R.id.textViewPrezzo);
+        final Button shake_button = (Button) findViewById(R.id.button_shake);
+        final TextView tv_ingredienti = (TextView)findViewById(R.id.textViewIngredients);
+        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        shake_button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                shake_button.setText("SCUOTI!");
+                    shakeDetector = new ShakeDetector(options).start(getApplicationContext(), new ShakeCallback() {
+                    @Override
+                    public void onShake() {
+
+
+                        randPiadina = getRandomPiadina();
+                        String nome = randPiadina.getNome();
+                        double prezzo = randPiadina.getPrice();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibrator.vibrate(VibrationEffect.createOneShot(300,VibrationEffect.DEFAULT_AMPLITUDE));
+                        }else{
+                            //deprecated in API 26
+                            vibrator.vibrate(300);
+                        }
+                        titolo.setText(nome);
+                        price.setText(String.valueOf(prezzo));
+                        tv_ingredienti.setText(randPiadina.printIngredienti());
+                        tv_shake.setVisibility(View.GONE);
+                        tv_4.setVisibility(View.VISIBLE);
+                        cv_piadina.setVisibility(View.VISIBLE);
+                        btn_personalizza.setVisibility(View.VISIBLE);
+                        shakeDetector.stopShakeDetector(getBaseContext());
+                        shake_button.setText("PREMI E SCUOTI");
+
+                    }
+                });
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -49,20 +135,11 @@ public class MyProfileActivity extends AppCompatActivity
         HashMap<String, String> utente;
         utente = session.getUserDetails();
 
-        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
         txtProfileName.setText(utente.get("name"));
 
-        TextView txtProfileEmail = navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
-
-        TextView emailText = findViewById(R.id.profile_email);
-        emailText.setText(utente.get("email"));
-
-        TextView nameText = findViewById(R.id.profile_username);
-        nameText.setText(utente.get("name"));
-
-        TextView phoneText = findViewById(R.id.profile_phone);
-        phoneText.setText(utente.get("phone"));
     }
 
     @Override
@@ -78,7 +155,7 @@ public class MyProfileActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my_profile, menu);
+        getMenuInflater().inflate(R.menu.shaker, menu);
         return true;
     }
 
@@ -97,6 +174,14 @@ public class MyProfileActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public Piadina getRandomPiadina()
+    {
+        randomGenerator = new Random();
+        int index = randomGenerator.nextInt(randomPiadinaList.size());
+        Piadina randomPiadina = randomPiadinaList.get(index);
+        return randomPiadina;
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -105,6 +190,9 @@ public class MyProfileActivity extends AppCompatActivity
 
         if (id == R.id.profile) {
 
+            Intent intent = new Intent(this, MyProfileActivity.class);
+            startActivity(intent);
+            finish();
 
         } else if (id == R.id.tessera) {
 
@@ -120,7 +208,7 @@ public class MyProfileActivity extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             //Yes button clicked
 
-                            final ProgressDialog progressDialog = new ProgressDialog(MyProfileActivity.this,
+                            final ProgressDialog progressDialog = new ProgressDialog(ShakerActivity.this,
                                     R.style.AppTheme_Dark_Dialog);
                             progressDialog.setIndeterminate(true);
                             progressDialog.setMessage("Logout in corso...");
@@ -150,11 +238,14 @@ public class MyProfileActivity extends AppCompatActivity
             builder.setMessage("Vuoi veramente uscire da questo account?").setPositiveButton("Sì", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
 
+
         } else if (id == R.id.call) {
 
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:0302122931"));
             startActivity(intent);
+            finish();
+
 
         } else if (id == R.id.where) {
 
@@ -168,21 +259,13 @@ public class MyProfileActivity extends AppCompatActivity
             startActivity(intent);
             finish();
 
-        }else if(id == R.id.shaker){
-
-            Intent intent = new Intent(this, ShakerActivity.class);
-            startActivity(intent);
-            finish();
+        } else if(id == R.id.shaker){
 
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public void editUserInfos(View view) {
-        Intent intent = new Intent(this, EditUserActivity.class);
-        startActivity(intent);
     }
 }

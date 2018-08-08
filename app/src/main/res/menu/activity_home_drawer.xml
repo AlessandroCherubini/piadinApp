@@ -18,6 +18,11 @@
             android:title="@string/tessera" />
 
         <item
+            android:id="@+id/shaker"
+            android:icon="@drawable/ic_shaker_black_24dp"
+            android:title="@string/shaker" />
+
+        <item
             android:id="@+id/logout"
             android:icon="@drawable/ic_input_24dp"
             android:title="@string/logout" />
