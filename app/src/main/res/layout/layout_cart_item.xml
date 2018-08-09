@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/tv_nome"
+                android:layout_width="200dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/museo_slab"
+                android:textSize="16sp"
+                android:text="Nome Piadina"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/formato"
+                android:layout_width="258dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_below="@id/tv_nome"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Formato"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000" />
+            <TextView
+                android:id="@+id/tv_impasto"
+                android:layout_width="258dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_below="@id/formato"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Impasto"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/tv_ingredienti"
+                android:layout_width="258dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_below="@id/tv_impasto"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Ingredienti"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000" />
+
+
+            <TextView
+                android:id="@+id/tv_prezzo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="11dp"
+                android:textSize="15sp"
+                android:layout_toEndOf="@+id/formato"
+                android:fontFamily="@font/museo_slab"
+                android:gravity="center"
+                android:text="5.9" />
+
+            <TextView
+                android:id="@+id/textViewPrice2"
+                android:layout_width="19dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="1dp"
+                android:textSize="15sp"
+                android:layout_toEndOf="@+id/tv_prezzo"
+                android:fontFamily="@font/museo_slab"
+                android:gravity="center"
+                android:text="@string/euro" />
+
+            <ImageButton
+                android:id="@+id/remButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="11dp"
+                android:background="@drawable/button_selector"
+                android:elevation="4dp"
+                android:src="@drawable/ic_remove_black_24dp" />
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
+

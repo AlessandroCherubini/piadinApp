@@ -20,6 +20,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
+
     // data is passed into the constructor
     IngredientsAdapter(Context context, List<Ingrediente> data) {
         this.mInflater = LayoutInflater.from(context);
@@ -84,6 +85,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     Ingrediente getItem(int id) {
         return mData.get(id);
     }
+
 
     // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {

@@ -1,9 +1,12 @@
 package com.example.ale.piadinapp.home;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,9 +39,11 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -45,11 +51,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.carteasy.v1.lib.Carteasy;
+import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.WeAreHereActivity;
+import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.CustomAdapter;
 import com.example.ale.utility.DBHelper;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,6 +69,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CustomizePiadinaActivity extends AppCompatActivity
         implements TabMenu.OnFragmentInteractionListener, IngredientsAdapter.ItemClickListener{
@@ -67,7 +79,11 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     CategorieIngredientiAdapter categorieAdapter;
     DBHelper helper;
     ArrayList<Ingrediente> ingredientiPiadina;
-    ArrayList<Ingrediente> listaIngredienti;
+    ArrayList<Ingrediente> listaIngredienti= new ArrayList<Ingrediente>();
+    Carteasy cs = new Carteasy();
+    Map<Integer, Map> data;
+    CartItem cartItem;
+
 
 
     public final static Double IMPASTO_INTEGRALE = 0.30;
@@ -78,6 +94,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     static double totaleImpastoEFormato = 0;
     static double totaleIngredienti = 0;
     public Context mContext;
+
 
 
     @Override
@@ -91,9 +108,29 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
 
+
         Intent intent = getIntent();
-        int position = intent.getIntExtra("indexPiadina",0);
-        chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+
+        if (intent.getExtras().get("indexPiadina")!=null){
+
+            int position = intent.getIntExtra("indexPiadina",0);
+            chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+        }
+        else if (intent.getExtras().get("randomPiadina")!=null){
+            Gson gson = new Gson();
+            String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
+            chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
+        }
+        else if (intent.getExtras().get("modificaPiadina")!=null){
+            Gson gson = new Gson();
+            String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
+            cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
+            chosenPiadina = cartItem.cartItemToPiadina(cartItem);
+
+            //TODO: sistemare problemi
+
+        }
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         totaleImpastoEFormato = chosenPiadina.getPrice();
@@ -117,6 +154,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
                 toast.show();
+                aggiungiAlCarrello();
                 finish();
             }
         });
@@ -336,6 +374,73 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
             prezzoPiadina.setText(totalePiadina+ " €");
         }
+
+
+    }
+
+    private void aggiungiAlCarrello(){
+
+        //cs.persistData(getApplicationContext(),true);
+
+        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
+        RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
+        RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
+        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
+        RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
+
+        String impasto;
+        String formato;
+        ArrayList<Ingrediente> ingredienti;
+        double prezzo;
+        if (rb1.isChecked()) { formato = "Normale";}
+        else if (rb2.isChecked()){formato="Rotolo";}
+        else if(rb3.isChecked()){formato= "Baby";}
+        else {formato = null;}
+
+        if (rb4.isChecked()){impasto= "Normale";}
+        else if (rb5.isChecked()){impasto = "Integrale";}
+        else {impasto=null;}
+
+        final TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+        prezzo = Double.parseDouble(removeLastChar(prezzoPiadina.getText().toString()));
+
+        int i;
+
+        for(i=0; i<adapter.getItemCount();i++){
+
+            listaIngredienti.add(adapter.getItem(i));
+        }
+
+
+        String ingredients = listaIngredienti.toString();
+        TextView name = (TextView) findViewById(R.id.nome_piadina);
+        String nome = name.getText().toString();
+
+        data = cs.ViewAll(getApplicationContext());
+
+        String id;
+        if (data==null || data.size()==0)
+        {
+            id = "Piadina "+1;
+        }
+        else {
+            int k = 0;
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+                k++;
+            }
+
+            int numero = k+1;
+            id = "Piadina "+numero;
+        }
+
+
+        cs.add(id,"nome",nome);
+        cs.add(id, "formato", formato);
+        cs.add(id,"impasto",impasto);
+        cs.add(id,"prezzo",prezzo);
+        cs.add(id,"ingredienti", ingredients);
+        cs.add(id,"identifier",id);
+        cs.commit(getApplicationContext());
 
 
     }

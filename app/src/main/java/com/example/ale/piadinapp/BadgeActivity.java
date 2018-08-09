@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.utility.DBHelper;
@@ -207,7 +209,11 @@ public class BadgeActivity extends AppCompatActivity
             builder.setMessage("Vuoi veramente uscire da questo account?").setPositiveButton("Sì", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.call) {
+
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:0302122931"));
+            startActivity(intent);
 
         } else if (id == R.id.where) {
 
@@ -219,6 +225,12 @@ public class BadgeActivity extends AppCompatActivity
         } else if (id == R.id.ordini) {
 
             Intent intent = new Intent(this, MyOrderActivity.class);
+            startActivity(intent);
+            finish();
+
+        }else if(id == R.id.shaker){
+
+            Intent intent = new Intent(this, ShakerActivity.class);
             startActivity(intent);
             finish();
 

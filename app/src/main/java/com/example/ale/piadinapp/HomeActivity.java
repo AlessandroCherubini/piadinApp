@@ -1,11 +1,14 @@
 package com.example.ale.piadinapp;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
@@ -16,10 +19,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.carteasy.v1.lib.Carteasy;
+import com.example.ale.piadinapp.home.CartActivity;
 import com.example.ale.piadinapp.classi.User;
 import com.example.ale.piadinapp.home.PagerAdapter;
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.piadinapp.home.TabCreaPiadina;
 import com.example.ale.piadinapp.home.TabLeTuePiadine;
 import com.example.ale.piadinapp.home.TabMenu;
@@ -27,6 +35,7 @@ import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeActivity extends AppCompatActivity
@@ -34,6 +43,11 @@ public class HomeActivity extends AppCompatActivity
         TabCreaPiadina.OnFragmentInteractionListener, TabLeTuePiadine.OnFragmentInteractionListener {
 
     SessionManager session;
+
+    TextView textCartItemCount;
+    Carteasy cs = new Carteasy();
+    Map<Integer, Map> data;
+    int mCartItemCount;
 
 
     @Override
@@ -47,6 +61,9 @@ public class HomeActivity extends AppCompatActivity
         session = new SessionManager(this);
         /*DBHelper helper = new DBHelper(this);
         helper.printIngredientiTable();*/
+
+        data = cs.ViewAll(getApplicationContext());
+
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));
@@ -75,6 +92,7 @@ public class HomeActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
+
         });
 
 
@@ -97,6 +115,46 @@ public class HomeActivity extends AppCompatActivity
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
 
+
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        invalidateOptionsMenu();
+
+        data = cs.ViewAll(getApplicationContext());
+        mCartItemCount=0;
+        if (data==null || data.size()==0) {
+            mCartItemCount = 0;
+
+        }
+        else{
+
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+
+                mCartItemCount++;
+            }
+        }
+
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+
+
+        final MenuItem menuItem = menu.findItem(R.id.action_cart);
+
+        View actionView = MenuItemCompat.getActionView(menuItem);
+        textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+
+        setupBadge();
+
+        return true;
     }
 
     @Override
@@ -113,17 +171,40 @@ public class HomeActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
-        MenuItem itemCart = menu.findItem(R.id.action_cart);
-/*        Drawable icon = itemCart.getIcon();
 
-        Bitmap bitmapIcon = getBitmapFromVectorDrawable(this, R.id.action_cart);
-        BitmapDrawable iconBitmap = new BitmapDrawable(getResources(), bitmapIcon);
-        LayerDrawable iconLayer = new LayerDrawable(new Drawable [] { iconBitmap });
+        final MenuItem menuItem = menu.findItem(R.id.action_cart);
 
-        setBadgeCount(this, iconLayer, "9");*/
+        View actionView = MenuItemCompat.getActionView(menuItem);
+        textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+
+        setupBadge();
+
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(menuItem);
+            }
+        });
+
         return true;
     }
 
+    private void setupBadge() {
+
+        if (textCartItemCount != null) {
+            if (mCartItemCount == 0) {
+                if (textCartItemCount.getVisibility() != View.GONE) {
+                    textCartItemCount.setVisibility(View.GONE);
+                }
+            } else {
+                textCartItemCount.setText(String.valueOf(Math.min(mCartItemCount, 99)));
+                if (textCartItemCount.getVisibility() != View.VISIBLE) {
+                    textCartItemCount.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -132,12 +213,16 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_cart) {
+
+            Intent intent = new Intent(HomeActivity.this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -193,9 +278,14 @@ public class HomeActivity extends AppCompatActivity
                 builder.setMessage("Vuoi veramente uscire da questo account?").setPositiveButton("Sì", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.call) {
 
-        } else if (id == R.id.where) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:0302122931"));
+                startActivity(intent);
+
+
+            } else if (id == R.id.where) {
 
                 Intent intent = new Intent(this, WeAreHereActivity.class);
                 startActivity(intent);
@@ -203,6 +293,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.ordini) {
 
                 Intent intent = new Intent(this, MyOrderActivity.class);
+                startActivity(intent);
+
+            }else if(id == R.id.shaker){
+
+                Intent intent = new Intent(this, ShakerActivity.class);
                 startActivity(intent);
 
             }
@@ -214,35 +309,4 @@ public class HomeActivity extends AppCompatActivity
 
      public void onFragmentInteraction(Uri uri){}
 
-/*    public static void setBadgeCount(Context context, LayerDrawable icon, String count) {
-
-        BadgeDrawable badge;
-
-        // Reuse drawable if possible
-        Drawable reuse = icon.findDrawableByLayerId(R.id.ic_badge);
-        if (reuse != null && reuse instanceof BadgeDrawable) {
-            badge = (BadgeDrawable) reuse;
-        } else {
-            badge = new BadgeDrawable(context);
-        }
-
-        badge.setCount(count);
-        icon.mutate();
-        icon.setDrawableByLayerId(R.id.ic_badge, badge);
-    }*/
-
-/*    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }*/
 }

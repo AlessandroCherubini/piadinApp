@@ -43,6 +43,8 @@
     <string name="profilo">Il mio Profilo</string>
     <string name="ordini">I miei Ordini</string>
     <string name="tessera">Tessera</string>
+    <string name="shaker">Shake Me!</string>
+
     <string name="logout">Logout</string>
     <string name="dove_siamo">Dove Siamo</string>
 
@@ -63,7 +65,14 @@
     <string name="change_password">Cambia password</string>
     <string name="username_label">Nome account</string>
     <string name="email_label">Email account</string>
+    <string name="title_activity_cart">CartActivity</string>
 
+    <string name="form">Formato:\u00A0</string>
+    <string name="imp">Impasto:\u00A0</string>
+    <string name="ings">Ingredienti:\u00A0</string>
+    <string name="title_activity_shaker">ShakerActivity</string>
+    <string name="shake_button">"Non sai che piadina scegliere? \n Ci pensiamo noi! \n Premi il pulsante e scuoti lo smartphone!"</string>
+    <string name= "messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
     <!-- Pagina Tessera -->
     <string name="qr_image_description">QR code image</string>
     <string name="numero_timbri_str">Numero di timbri: 0/10</string>
