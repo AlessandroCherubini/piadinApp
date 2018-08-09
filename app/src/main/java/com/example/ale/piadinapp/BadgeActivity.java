@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,10 +24,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ale.piadinapp.home.ShakerActivity;
-import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
@@ -40,34 +39,31 @@ import java.util.HashMap;
 public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    SessionManager session;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_badge);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        session = new SessionManager(this);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
         final HashMap<String, String> utente;
-        utente = session.getUserDetails();
+        //utente = session.getUserDetails();
+        utente = SessionManager.getUserDetails(this);
 
-        TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.username_nav);
         txtProfileName.setText(utente.get("name"));
 
-        TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        TextView txtProfileEmail = navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
 
         //Recupero email dell'utente
@@ -82,31 +78,28 @@ public class BadgeActivity extends AppCompatActivity
             Log.d("Create QR code image",e.getMessage());
         }
 
-        //Get badge infos
-        /*
-        final HashMap<String,Integer> badgeData;
-        badgeData = session.getBadgeDetails();
-        */
-
-        //Inserimento numero di timbri
-        /*
         TextView timbriTV = findViewById(R.id.timbriTextView);
-        timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
-        //Inserimento numero di omaggi
         TextView omaggiTV = findViewById(R.id.omaggiTextView);
-        omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
-        */
-        SharedPreferences preferences = getSharedPreferences("piadinApp", Context.MODE_PRIVATE);
-        TextView timbriTV = findViewById(R.id.timbriTextView);
-        timbriTV.setText(getTimbriStr(preferences.getInt(SessionManager.KEY_TIMBRI,-1)));
-        //Inserimento numero di omaggi
-        TextView omaggiTV = findViewById(R.id.omaggiTextView);
-        omaggiTV.setText(getOmaggiStr(preferences.getInt(SessionManager.KEY_OMAGGI,-1)));
-
-        //Update progress bar
-        int timbriNum = preferences.getInt(SessionManager.KEY_TIMBRI,0);
         ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
         badgePB.setMax(10);//todo: inserire costante valore max di timbri
+        int timbriNum = 0;
+
+        //Get badge infos
+        final HashMap<String,Integer> badgeData;
+        badgeData = SessionManager.getBadgeDetails(this);
+        if(badgeData == null) {
+            Log.d("Shared Data Error", "Cannot get Badge shared prefs");
+            timbriTV.setText(getTimbriStr(0));
+            omaggiTV.setText(getOmaggiStr(0));
+        } else {
+            //Inserimento numero di timbri
+            timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
+            //Inserimento numero di omaggi
+            omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
+            //Update progress bar
+            timbriNum = badgeData.get("timbri");
+        }
+
         badgePB.setProgress(timbriNum);
         //Percentage string
         TextView percentText = findViewById(R.id.percentageTextView);
@@ -158,7 +151,7 @@ public class BadgeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -189,7 +182,8 @@ public class BadgeActivity extends AppCompatActivity
                                     new Runnable() {
                                         public void run() {
                                             // termina la sessione dell'utente.
-                                            session.logoutUser();
+                                            //session.logoutUser();
+                                            SessionManager.logoutUser(getApplicationContext());
                                             finish();
                                             progressDialog.dismiss();
 
@@ -236,7 +230,7 @@ public class BadgeActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -289,11 +283,9 @@ public class BadgeActivity extends AppCompatActivity
                 helper.updateTimbriNumber(timbro);
 
                 //Insert new data in shared pref
-                //session.updateTimbriAndOmaggiValue(timbriNumber,omaggiNumber);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt(SessionManager.KEY_TIMBRI,timbriNumber);
-                editor.putInt(SessionManager.KEY_OMAGGI,omaggiNumber);
-                editor.commit();
+                if(!SessionManager.updateTimbriAndOmaggiValues(this,timbriNumber,omaggiNumber)) {
+                    Log.d("Shared Pref Error","Failed to save timbri and omaggi values!");
+                }
 
                 //Update labels strings
                 TextView badgeText = findViewById(R.id.timbriTextView);

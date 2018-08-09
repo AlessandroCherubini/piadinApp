@@ -46,7 +46,7 @@ public class WeAreHereActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,13 +82,19 @@ public class WeAreHereActivity extends AppCompatActivity
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
         HashMap<String, String> utente;
-        utente = session.getUserDetails();
+        //utente = session.getUserDetails();
+        utente = SessionManager.getUserDetails(this);
 
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
-        txtProfileName.setText(utente.get("name"));
-
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
-        txtProfileEmail.setText(utente.get("email"));
+
+        if(utente == null) {
+            txtProfileName.setText("");
+            txtProfileEmail.setText("");
+        } else {
+            txtProfileName.setText(utente.get("name"));
+            txtProfileEmail.setText(utente.get("email"));
+        }
     }
     @Override
     public void onMapReady(GoogleMap map) {
@@ -173,7 +179,8 @@ public class WeAreHereActivity extends AppCompatActivity
                                     new Runnable() {
                                         public void run() {
                                             // termina la sessione dell'utente.
-                                            session.logoutUser();
+                                            //session.logoutUser();
+                                            SessionManager.logoutUser(getApplicationContext());
                                             finish();
                                             progressDialog.dismiss();
                                         }
