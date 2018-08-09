@@ -120,9 +120,6 @@ public class HomeActivity extends AppCompatActivity
             txtProfileName.setText(utente.get("name"));
             txtProfileEmail.setText(utente.get("email"));
         }
-
-
-
     }
 
 
