@@ -298,7 +298,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public void onRadioButtonClicked(View v) {
 
         helper = new DBHelper(this);
-        double prezzoPiadinaBase = chosenPiadina.getPrice();
+        double prezzoPiadinaBase = helper.getPiadinaByName(chosenPiadina.getNome()).getPrice();
+
 
 
         TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
