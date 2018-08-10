@@ -65,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
         queue = Volley.newRequestQueue(this);
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +133,17 @@ public class SignUpActivity extends AppCompatActivity {
         insertUserInExternalDB(name, password, email, mobile);
 
         // sessione per l'utente.
+        /*
         session.setLoggedIn(true);
         session.createLoginSession(name, password, mobile,0,0);
+        */
+        SessionManager.setLoggedIn(this,true);
+        SessionManager.createLoginSession(this,
+                                          name,
+                                          email,
+                                          mobile,
+                                          0,
+                                          0);
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -218,8 +227,17 @@ public class SignUpActivity extends AppCompatActivity {
                             Log.d("JSON", "success: " + success);
                             if(success.equals("1")){
                                 // sessione per l'utente.
+                                /*
                                 session.setLoggedIn(true);
                                 session.createLoginSession(name, email, phone,0,0);
+                                */
+                                SessionManager.setLoggedIn(getApplicationContext(),true);
+                                SessionManager.createLoginSession(getApplicationContext(),
+                                        name,
+                                        email,
+                                        phone,
+                                        0,
+                                        0);
 
                                 _signupButton.setEnabled(true);
                                 setResult(RESULT_OK, null);

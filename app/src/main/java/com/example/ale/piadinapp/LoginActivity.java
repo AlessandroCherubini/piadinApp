@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -169,8 +169,17 @@ public class LoginActivity extends AppCompatActivity {
         helper.printLoginsTable();
         helper.close();
 
+        /*
         session.setLoggedIn(true);
         session.createLoginSession(utente.nickname, utente.email, utente.phone,timbri.numberTimbri,timbri.numberOmaggi);
+        */
+        SessionManager.setLoggedIn(this,true);
+        SessionManager.createLoginSession(this,
+                                          utente.nickname,
+                                          utente.email,
+                                          utente.phone,
+                                          timbri.numberTimbri,
+                                          timbri.numberOmaggi);
 
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();

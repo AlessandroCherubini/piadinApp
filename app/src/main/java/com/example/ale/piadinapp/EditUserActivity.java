@@ -4,8 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toolbar;
 
 import com.example.ale.piadinapp.R;
+import com.example.ale.utility.SessionManager;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 
@@ -24,5 +28,19 @@ public class EditUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        //Get user informations
+        EditText editTextObj;
+        HashMap<String,String> userData = SessionManager.getUserDetails(this);
+        if(userData != null) {
+            //Username hint
+            editTextObj = (EditText) findViewById(R.id.username_edit);
+            editTextObj.setHint(userData.get(SessionManager.KEY_NAME));
+            //Phone hint
+            editTextObj = (EditText) findViewById(R.id.phone_edit);
+            editTextObj.setHint(userData.get(SessionManager.KEY_PHONE));
+        }
     }
 }
