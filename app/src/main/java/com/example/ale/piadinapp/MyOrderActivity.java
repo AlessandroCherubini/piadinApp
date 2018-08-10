@@ -20,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +29,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.ale.piadinapp.home.ShakerActivity;
+import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.SessionManager;
+import com.example.ale.utility.VolleySingleton;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.util.HashMap;
 
@@ -38,6 +57,7 @@ public class MyOrderActivity extends AppCompatActivity
 
     SessionManager session;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +65,6 @@ public class MyOrderActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         session = new SessionManager(this);
-        createNotificationChannel();
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -68,18 +86,7 @@ public class MyOrderActivity extends AppCompatActivity
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
 
-        Button notify = (Button) findViewById(R.id.notify);
-        notify.setOnClickListener(new View.OnClickListener() {
 
-
-
-            public void onClick(View v) {
-
-
-                    sendNotification();
-            }
-
-        });
     }
 
     @Override
@@ -201,49 +208,9 @@ public class MyOrderActivity extends AppCompatActivity
     }
 
 
-    private void createNotificationChannel(){
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "piadina_channel";
-            String description = "notifiche_paidina";
-            NotificationChannel channel = new NotificationChannel("piadina_channel", name, NotificationCompat.PRIORITY_DEFAULT);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    private void sendNotification(){
-
-        Uri gmmIntentUri = Uri.parse("google.navigation:q=GianGusto+Piadineria,+Via+dei+Pioppi,+18,+25080+Molinetto+BS");
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        PendingIntent navigatePendingIntent = PendingIntent.getActivity(
-                this, 0, mapIntent,PendingIntent.FLAG_CANCEL_CURRENT);
-
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, "channel_piadina");
-        notification.setSmallIcon(R.mipmap.ic_launcher_round);
-        notification.setContentTitle("Ritira l'ordine!");
-        notification.setContentText("Se vuoi ritirare lordine in orario devi partire a breve");
-        notification.setAutoCancel(true);
-        notification.addAction(R.drawable.ic_map_black_24dp, "Naviga", navigatePendingIntent).setAutoCancel(true);
-
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("channel_piadina",
-                    "Channel title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-        notificationManager.notify(1, notification.build());
-    }
 
 
 
 }
+
+

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class SplashActivity extends AppCompatActivity{
 
         helper = new DBHelper(this);
 
+
         piadineCallBack = new VolleyCallback() {
             @Override
             public void onSuccess(String result) {
@@ -64,9 +66,19 @@ public class SplashActivity extends AppCompatActivity{
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
+
+                    @Override
+                    public void onSuccessMap(int duration) {
+
+                    }
                 };
 
                 checkUpdateIngredienti();
+
+            }
+
+            @Override
+            public void onSuccessMap(int duration) {
 
             }
         };
