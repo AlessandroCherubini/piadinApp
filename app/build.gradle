@@ -18,6 +18,12 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -36,4 +42,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
 
+    implementation 'com.carteasy.v1.lib:carteasy:0.0.3'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.github.safetysystemtechnology:android-shake-detector:v1.2'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+    implementation 'com.akexorcist:RoundCornerProgressBar:2.0.3'
 }

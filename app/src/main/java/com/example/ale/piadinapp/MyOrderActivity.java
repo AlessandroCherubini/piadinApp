@@ -3,6 +3,7 @@ package com.example.ale.piadinapp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -140,7 +142,12 @@ public class MyOrderActivity extends AppCompatActivity
             builder.setMessage("Vuoi veramente uscire da questo account?").setPositiveButton("Sì", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.call) {
+
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:0302122931"));
+            startActivity(intent);
+
 
         } else if (id == R.id.where) {
 
@@ -151,6 +158,12 @@ public class MyOrderActivity extends AppCompatActivity
 
         } else if (id == R.id.ordini) {
 
+
+        }else if(id == R.id.shaker){
+
+            Intent intent = new Intent(this, ShakerActivity.class);
+            startActivity(intent);
+            finish();
 
         }
 

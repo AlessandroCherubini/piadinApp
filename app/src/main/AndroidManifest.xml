@@ -10,7 +10,9 @@
     <!-- Internet Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Geolocation Permission -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".classi.PiadinApp"
@@ -103,11 +105,28 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo"/>
+            android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo" />
 
+        <activity
+            android:name=".home.CartActivity"
+            android:label="@string/title_activity_cart"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".home.ShakerActivity"
+            android:label="@string/title_activity_shaker"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ale.piadinapp.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -17,6 +17,10 @@
             android:id="@+id/tessera"
             android:icon="@drawable/ic_style_24dp"
             android:title="@string/tessera" />
+        <item
+            android:id="@+id/shaker"
+            android:icon="@drawable/ic_shaker_black_24dp"
+            android:title="@string/shaker" />
 
         <item
             android:id="@+id/logout"
@@ -27,11 +31,11 @@
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/call"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Chiamaci" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/where"
                 android:icon="@drawable/ic_map_black_24dp"
                 android:title="@string/dove_siamo" />
         </menu>

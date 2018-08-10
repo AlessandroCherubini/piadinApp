@@ -1,8 +1,12 @@
 package com.example.ale.piadinapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
@@ -11,11 +15,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ale.piadinapp.home.ShakerActivity;
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.example.ale.piadinapp.classi.Timbro;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
 
@@ -33,7 +51,6 @@ public class BadgeActivity extends AppCompatActivity
 
         session = new SessionManager(this);
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -44,7 +61,7 @@ public class BadgeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
-        HashMap<String, String> utente;
+        final HashMap<String, String> utente;
         utente = session.getUserDetails();
 
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
@@ -52,6 +69,59 @@ public class BadgeActivity extends AppCompatActivity
 
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
         txtProfileEmail.setText(utente.get("email"));
+
+        //Recupero email dell'utente
+        String userEmail = utente.get("email");
+        //Creazione dell'immagine del QR code
+        try {
+            BarcodeEncoder qrEncoder = new BarcodeEncoder();
+            Bitmap qrImage = qrEncoder.encodeBitmap(userEmail, BarcodeFormat.QR_CODE,200,200);
+            ImageView qrImageView = findViewById(R.id.qrCodeImageView);
+            qrImageView.setImageBitmap(qrImage);
+        } catch (Exception e) {
+            Log.d("Create QR code image",e.getMessage());
+        }
+
+        //Get badge infos
+        /*
+        final HashMap<String,Integer> badgeData;
+        badgeData = session.getBadgeDetails();
+        */
+
+        //Inserimento numero di timbri
+        /*
+        TextView timbriTV = findViewById(R.id.timbriTextView);
+        timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
+        //Inserimento numero di omaggi
+        TextView omaggiTV = findViewById(R.id.omaggiTextView);
+        omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
+        */
+        SharedPreferences preferences = getSharedPreferences("piadinApp", Context.MODE_PRIVATE);
+        TextView timbriTV = findViewById(R.id.timbriTextView);
+        timbriTV.setText(getTimbriStr(preferences.getInt(SessionManager.KEY_TIMBRI,-1)));
+        //Inserimento numero di omaggi
+        TextView omaggiTV = findViewById(R.id.omaggiTextView);
+        omaggiTV.setText(getOmaggiStr(preferences.getInt(SessionManager.KEY_OMAGGI,-1)));
+
+        //Update progress bar
+        int timbriNum = preferences.getInt(SessionManager.KEY_TIMBRI,0);
+        ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
+        badgePB.setMax(10);//todo: inserire costante valore max di timbri
+        badgePB.setProgress(timbriNum);
+        //Percentage string
+        TextView percentText = findViewById(R.id.percentageTextView);
+        percentText.setText(Integer.toString(timbriNum * 10) + "%");
+
+
+        //Bottone per passare all'Activity per leggere il QR code
+        Button readQRBtn = findViewById(R.id.readQRBtn);
+        readQRBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Start scanning QR code
+                beginScanQRCode();
+            }
+        });
     }
 
     @Override
@@ -139,7 +209,11 @@ public class BadgeActivity extends AppCompatActivity
             builder.setMessage("Vuoi veramente uscire da questo account?").setPositiveButton("Sì", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.call) {
+
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:0302122931"));
+            startActivity(intent);
 
         } else if (id == R.id.where) {
 
@@ -154,10 +228,105 @@ public class BadgeActivity extends AppCompatActivity
             startActivity(intent);
             finish();
 
+        }else if(id == R.id.shaker){
+
+            Intent intent = new Intent(this, ShakerActivity.class);
+            startActivity(intent);
+            finish();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+
+        if(result == null) {
+            super.onActivityResult(requestCode,resultCode,data);
+        } else {
+            if(result.getContents() == null) {
+                Log.d("READQR","Scan action cancelled");
+            } else {
+                //Update timbri and omaggi values
+                //Get shared pref
+                /*
+                session = new SessionManager(this);
+                final HashMap<String,Integer> badgeData;
+                badgeData = session.getBadgeDetails();
+
+                int timbriNumber = badgeData.get("timbri");
+                int omaggiNumber = badgeData.get("omaggi");
+                */
+                SharedPreferences preferences = getSharedPreferences("piadinApp",Context.MODE_PRIVATE);
+                int timbriNumber = preferences.getInt(SessionManager.KEY_TIMBRI,-1);
+                int omaggiNumber = preferences.getInt(SessionManager.KEY_OMAGGI,-1);
+                if(timbriNumber < 0 || omaggiNumber < 0) {
+                    Log.d("READQR","Cannot retrieve shared preferences");
+                    return;
+                }
+                //todo: inserire costante valore max di timbri
+                //todo: manca inserimento numero piadine in base all'ordine
+                timbriNumber++;
+                if(timbriNumber >= 10) {
+                    omaggiNumber++;
+                    timbriNumber = timbriNumber - 10;
+                }
+
+                //Insert new values in DB
+                DBHelper helper = new DBHelper(getApplicationContext());
+                Timbro timbro = helper.getTimbroByEmail(result.getContents());
+                if(timbro == null) {
+                    Log.d("UPDATE_TIMBRI","No row found in table Timbri with mail: " + result.getContents());
+                    return;
+                }
+                timbro.numberTimbri = timbriNumber;
+                timbro.numberOmaggi = omaggiNumber;
+                helper.updateTimbriNumber(timbro);
+
+                //Insert new data in shared pref
+                //session.updateTimbriAndOmaggiValue(timbriNumber,omaggiNumber);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt(SessionManager.KEY_TIMBRI,timbriNumber);
+                editor.putInt(SessionManager.KEY_OMAGGI,omaggiNumber);
+                editor.commit();
+
+                //Update labels strings
+                TextView badgeText = findViewById(R.id.timbriTextView);
+                badgeText.setText(getTimbriStr(timbriNumber));
+                badgeText = findViewById(R.id.omaggiTextView);
+                badgeText.setText(getOmaggiStr(omaggiNumber));
+
+                //Update progress bar
+                ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
+                badgePB.setMax(10);//todo: inserire costante valore max di timbri
+                badgePB.setProgress(timbriNumber);
+                //Percentage string
+                badgeText = findViewById(R.id.percentageTextView);
+                badgeText.setText(Integer.toString(timbriNumber*10) + "%");
+            }
+        }
+    }
+
+    //PRIVATE FUNCTIONS-----------------------------------------------------------
+    private String getTimbriStr(int timbriNumber)
+    {
+        //todo inserire costante valore max di timbri
+        return "Numero di timbri: " + Integer.toString(timbriNumber) + "/10";
+    }
+
+    private String getOmaggiStr(int omaggiNumber)
+    {
+        return "Piadine omaggio guadagnate: " + Integer.toString(omaggiNumber);
+    }
+
+    private void beginScanQRCode()
+    {
+        new IntentIntegrator(this).initiateScan();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
