@@ -512,27 +512,6 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }*/
 
-
-
-
-    public void printPiadineTable(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + TABLE_INGREDIENTI_NAME + ";";
-        Log.d("DB/PRINT", "Stampa tabella ingredienti!");
-
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()){
-            do {
-                Log.d("DB/PRINT", "ID Ingrediente: " + cursor.getLong(0));
-                Log.d("DB/PRINT", "Nome Ingrediente: " + cursor.getString(1));
-                Log.d("DB/PRINT", "Prezzo Ingrediente: " + cursor.getDouble(2));
-                Log.d("DB/PRINT", "Allergeni Ingrediente: " + cursor.getString(3));
-                Log.d("DB/PRINT", "Categoria Ingrediente: " + cursor.getString(4));
-                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(5));
-            } while (cursor.moveToNext());
-        }
-        db.close();
-    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //**** TABELLA TIMBRI ******************************************************

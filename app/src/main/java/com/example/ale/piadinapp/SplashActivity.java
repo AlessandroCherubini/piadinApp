@@ -188,7 +188,7 @@ public class SplashActivity extends AppCompatActivity{
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
                                 //checkIngredienti = true;
-                                helper.printIngredientiTable();
+                                //helper.printIngredientiTable();
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
                             }
