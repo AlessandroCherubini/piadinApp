@@ -1,184 +1,232 @@
 package com.example.ale.utility;
 
-import java.util.HashMap;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import com.example.ale.piadinapp.MainActivity;
-import com.example.ale.piadinapp.classi.PiadinApp;
+
+import java.util.HashMap;
 
 public class SessionManager {
-    // Shared Preferences
-    SharedPreferences pref;
+    //Private variables
+    private static SharedPreferences preferences;
+    private static SharedPreferences.Editor editor;
+    private static final String PREFERENCES_NAME = "piadinApp"; //Shared pref filename
 
-    // Editor for Shared preferences
-    Editor editor;
-
-    // Context
-    Context _context;
-
-    // Sharedpref file name
-    private static final String PREF_NAME = "piadinApp";
-
-    // All Shared Preferences Keys
-    private static final String IS_LOGIN = "IsLoggedIn";
-
-    // User name (make variable public to access from outside)
-    public static final String KEY_NAME = "name";
-
-    // Email address (make variable public to access from outside)
-    public static final String KEY_EMAIL = "email";
-
-    public static final String KEY_PHONE = "phone";
-
+    //Shared preferences keys
+    private static final String IS_LOGIN  = "IsLoggedIn";
+    public static final String KEY_NAME   = "name"; //User name
+    public static final String KEY_EMAIL  = "email"; //Email address
+    public static final String KEY_PHONE  = "phone";
     public static final String KEY_TIMBRI = "timbri";
     public static final String KEY_OMAGGI = "omaggi";
 
-    //public static final String KEY_DB = "db_version";
+    //Private constructor (static class)
+    private SessionManager() {}
 
-    // Constructor
-    public SessionManager(Context context) {
-        this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        editor = pref.edit();
-    }
     /**
-     * Create login session
-     * */
-    public void createLoginSession(String name, String email, String phone, int timbri, int omaggi){
-        // Storing login value as TRUE
-        editor.putBoolean(IS_LOGIN, true);
+     * Create a login session on user login
+     *
+     * @param context Application context
+     * @param name Username
+     * @param email User email
+     * @param phone User phone number
+     * @param timbri Number of fidelity stamps
+     * @param omaggi Number of free piadine
+     * @return  Commit in SharedPref result
+     */
+    public static boolean createLoginSession(Context context,String name,String email,String phone,int timbri,int omaggi)
+    {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
 
-        // Storing name in pref
-        editor.putString(KEY_NAME, name);
+        editor = preferences.edit();
 
-        // Storing email in pref
-        editor.putString(KEY_EMAIL, email);
-
-        editor.putString(KEY_PHONE, phone);
-
+        //Store login value as true
+        editor.putBoolean(IS_LOGIN,true);
+        //Store name
+        editor.putString(KEY_NAME,name);
+        //Store email
+        editor.putString(KEY_EMAIL,email);
+        //Store user phone
+        editor.putString(KEY_PHONE,phone);
         //Store fidelity card infos
         editor.putInt(KEY_TIMBRI,timbri);
         editor.putInt(KEY_OMAGGI,omaggi);
 
-        // commit changes
-        editor.commit();
+        //Commit changes
+        return editor.commit();
     }
 
     /**
-     * Check login method wil check user login status
-     * If false it will redirect user to login page
-     * Else won't do anything
-     * */
-/*    public void checkLogin(){
-        // Check login status
-        if(!this.isLoggedIn()){
-            // user is not logged in redirect him to Main Activity
-            Intent i = new Intent(_context, MainActivity.class);
-            // Closing all the Activities
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            // Add new Flag to start new Activity
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            // Staring Main Activity
-            _context.startActivity(i);
-        }
-
-    }*/
-    /**
-     * Get stored session data
-     * */
-    public HashMap<String, String> getUserDetails(){
-        HashMap<String, String> user = new HashMap<String, String>();
-        // user name
-        user.put(KEY_NAME, pref.getString(KEY_NAME, null));
-        // user email id
-        user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
-        // user phone number
-        user.put(KEY_PHONE, pref.getString(KEY_PHONE, null));
-
-        // return user
-        return user;
-    }
-
-    public HashMap<String,Integer> getBadgeDetails()
+     * Get stored used session data
+     *
+     * @param context Application context
+     * @return HashMap with user data. In Shared pref is null, return null.
+     */
+    public static HashMap<String,String> getUserDetails(Context context)
     {
-        HashMap<String,Integer> badge = new HashMap<>();
-        //Timbri
-        badge.put(KEY_TIMBRI,pref.getInt(KEY_TIMBRI,-1));
-        //Omaggi
-        badge.put(KEY_OMAGGI,pref.getInt(KEY_OMAGGI,-1));
+        if(!retrieveSharedPrefs(context,false))
+            return null;
 
-        return badge;
+        HashMap<String,String> userData = new HashMap<>();
+        //Username
+        userData.put(KEY_NAME,preferences.getString(KEY_NAME,""));
+        //Email
+        userData.put(KEY_EMAIL,preferences.getString(KEY_EMAIL,""));
+        //Phone number
+        userData.put(KEY_PHONE,preferences.getString(KEY_PHONE,""));
+
+        return userData;
     }
 
     /**
-     * Clear session details
-     * */
-    public void logoutUser(){
-        // Clearing all data from Shared Preferences
+     * Get stored fidelity badge data
+     *
+     * @param context Application context
+     * @return HashMap with badge data. If get shared pref fails, return null
+     */
+    public static HashMap<String,Integer> getBadgeDetails(Context context)
+    {
+        if(!retrieveSharedPrefs(context,false))
+            return null;
+
+        HashMap<String,Integer> badgeData = new HashMap<>();
+        //Timbri
+        badgeData.put(KEY_TIMBRI,preferences.getInt(KEY_TIMBRI,-1));
+        //Omaggi
+        badgeData.put(KEY_OMAGGI,preferences.getInt(KEY_OMAGGI,-1));
+
+        return badgeData;
+    }
+
+    /**
+     * Clear session details after logout of user
+     *
+     * @param context Application context
+     * @return Clear data result
+     */
+    public static boolean logoutUser(Context context)
+    {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
+        //Clear all data from shared prefs
         editor.clear();
-        editor.commit();
+        if(!editor.commit())
+            return false;
 
-        // After logout redirect user to Loing Activity
-        Intent i = new Intent(_context, MainActivity.class);
-        // Closing all the Activities
+        //After logout return to login activity
+        Intent i = new Intent(context, MainActivity.class);
+        //Close all other activities
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        // Add new Flag to start new Activity
+        //Add new flag to start new Activity
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        // Staring Main Activity
-        _context.startActivity(i);
+        //Start main activity
+        context.startActivity(i);
+
+        return true;
     }
 
     /**
-     * Quick check for login
-     * **/
-    // Get Login State
-/*    public boolean isLoggedIn(){
-        return pref.getBoolean(IS_LOGIN, false);
-    }*/
-
-
-    public void setLoggedIn(boolean logged){
-        editor.putBoolean("loggedInmode", logged);
-        editor.commit();
-    }
-
-    public boolean loggedIn(){
-        return pref.getBoolean("loggedInmode", false);
-    }
-
-    /**
-     * Update valore dei timbri.
-     * @param timbriValue int Nuovo valore dei timbri
+     * Sets if user is logged in info in shared pref
+     * @param context Application context
+     * @param logged Logged value
+     * @return Edit pref result
      */
-    public void updateTimbriValue(int timbriValue)
+    public static boolean setLoggedIn(Context context,boolean logged)
     {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
+        editor.putBoolean(IS_LOGIN,logged);
+        return editor.commit();
+    }
+
+    /**
+     * Return the login value from prefs
+     * @param context Application context
+     * @return Login value
+     */
+    public static boolean loggedIn(Context context)
+    {
+        if(!retrieveSharedPrefs(context,false))
+            return false;
+
+        return preferences.getBoolean(IS_LOGIN,false);
+    }
+
+    /**
+     * Updates timbri values in shared pref
+     * @param context Application context
+     * @param timbriValue New value of timbri
+     * @return Update data result
+     */
+    public static boolean updateTimbriValue(Context context,int timbriValue)
+    {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
         editor.putInt(KEY_TIMBRI,timbriValue);
-        editor.commit();
+        return editor.commit();
     }
 
     /**
-     * Update valore degli omaggi
-     * @param omaggiValue int Nuovo valore degli omaggi
+     * Updates omaggi values in shared pref
+     * @param context Application context
+     * @param omaggiValue New value of omaggi
+     * @return Update data result
      */
-    public void updateOmaggiValue(int omaggiValue)
+    public static boolean updateOmaggiValue(Context context,int omaggiValue)
     {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
         editor.putInt(KEY_OMAGGI,omaggiValue);
-        editor.commit();
+        return editor.commit();
     }
 
-    public void updateTimbriAndOmaggiValue(int timbri,int omaggi)
+    /**
+     * Updates omaggi values in shared pref
+     * @param context Application context
+     * @param timbri New value of timbri
+     * @param omaggi New value of omaggi
+     * @return Update data result
+     */
+    public static boolean updateTimbriAndOmaggiValues(Context context,int timbri,int omaggi)
     {
-        editor.putInt(KEY_TIMBRI,timbri);
-        editor.putInt(KEY_TIMBRI,omaggi);
+        if(!retrieveSharedPrefs(context,true))
+            return false;
 
-        editor.commit();
+        editor.putInt(KEY_TIMBRI,timbri);
+        editor.putInt(KEY_OMAGGI,omaggi);
+        return editor.commit();
     }
+
+    //PRIVATE FUNCTIONS------------------------------------------------------------------
+
+    /**
+     * Gets shared prefs from context. If writeMode is true, opens also the editor
+     * @param context Application context
+     * @param writeMode Write in shared prefs mode
+     * @return Open shared pref result
+     */
+    private static boolean retrieveSharedPrefs(Context context,boolean writeMode)
+    {
+        preferences = context.getSharedPreferences(PREFERENCES_NAME,Context.MODE_PRIVATE);
+        if(preferences == null) {
+            Log.d("Shared Pref Error","Failed to load Shared Preferences!");
+            return false;
+        }
+
+        if(writeMode) {
+            editor = preferences.edit();
+        }
+
+        return true;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

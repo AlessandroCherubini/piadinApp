@@ -24,10 +24,16 @@ public class MainActivity extends AppCompatActivity {
         // Session class instance
         //session = new SessionManager(getApplicationContext());
 
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
         
         // Se sei loggato, allora vai diretto nella Home Activity, senza mostrare la Main.
+        /*
         if(session.loggedIn()){
+            startActivity(new Intent(MainActivity.this, HomeActivity.class));
+            finish();
+        }
+        */
+        if(SessionManager.loggedIn(this)) {
             startActivity(new Intent(MainActivity.this, HomeActivity.class));
             finish();
         }

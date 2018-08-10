@@ -34,7 +34,7 @@ public class MyProfileActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -47,22 +47,32 @@ public class MyProfileActivity extends AppCompatActivity
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
         HashMap<String, String> utente;
-        utente = session.getUserDetails();
+        //utente = session.getUserDetails();
+        utente = SessionManager.getUserDetails(this);
 
         TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.username_nav);
-        txtProfileName.setText(utente.get("name"));
-
         TextView txtProfileEmail = navigationView.getHeaderView(0).findViewById(R.id.email_nav);
-        txtProfileEmail.setText(utente.get("email"));
-
         TextView emailText = findViewById(R.id.profile_email);
-        emailText.setText(utente.get("email"));
-
         TextView nameText = findViewById(R.id.profile_username);
-        nameText.setText(utente.get("name"));
-
         TextView phoneText = findViewById(R.id.profile_phone);
-        phoneText.setText(utente.get("phone"));
+
+        if(utente == null) {
+            txtProfileName.setText("");
+            txtProfileEmail.setText("");
+            emailText.setText("");
+            nameText.setText("");
+            phoneText.setText("");
+        } else {
+            String nome = utente.get("name");
+            String mail = utente.get("email");
+            String telefono = utente.get("phone");
+
+            txtProfileName.setText(nome);
+            txtProfileEmail.setText(mail);
+            emailText.setText(mail);
+            nameText.setText(nome);
+            phoneText.setText(telefono);
+        }
     }
 
     @Override
@@ -130,7 +140,8 @@ public class MyProfileActivity extends AppCompatActivity
                                     new Runnable() {
                                         public void run() {
                                             // termina la sessione dell'utente.
-                                            session.logoutUser();
+                                            //session.logoutUser();
+                                            SessionManager.logoutUser(getApplicationContext());
                                             finish();
                                             progressDialog.dismiss();
 
