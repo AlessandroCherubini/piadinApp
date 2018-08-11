@@ -3,6 +3,7 @@ package com.example.ale.piadinapp.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,8 @@ import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.utility.DBHelper;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,6 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     // data is passed into the constructor
     CategorieIngredientiAdapter(Context context, List<String> data) {
         this.mInflater = LayoutInflater.from(context);
-        superContext = context;
         this.mData = data;
     }
 
@@ -79,6 +81,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
             }
         });
 
+        // Prendo l'adapter e la lista degli Ingredienti correnti della piadina.
         final IngredientsAdapter adapter = (IngredientsAdapter) holder.recyclerViewIngredienti.getAdapter();
         final List<Ingrediente> listaIngredientiCorrenti = adapter.getArrayList();
 
@@ -122,6 +125,11 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
                                         Double prezzoIngrediente = ingredienti.get(position).getPrice();
                                         totalePiadina = totalePiadina + prezzoIngrediente;
                                         TextView prezzoPiadina = (TextView) ((Activity) mContext).findViewById(R.id.prezzoTotalePiadina);
+
+                                        DecimalFormat df = new DecimalFormat("#.##");
+                                        df.setRoundingMode(RoundingMode.CEILING);
+                                        prezzoPiadina.setText(df.format(totalePiadina) + " €");
+
                                         prezzoPiadina.setText(totalePiadina + " €");
                                         totaleIngredienti = totaleIngredienti + prezzoIngrediente;
                                         listaIngredientiCorrenti.add(ingredienti.get(position));
@@ -167,11 +175,12 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.categoria);
+            myTextView.setTypeface(null, Typeface.BOLD);
             showButton = itemView.findViewById(R.id.dropDownButton);
             // tutto l'elemento dell'adapter attiva il listener; se metto il pulsante show crasha!
             //showButton.setOnClickListener(this);
             recyclerViewAddIngredienti = itemView.findViewById(R.id.recycler_ingredienti);
-            recyclerViewIngredienti = ((Activity) superContext).findViewById(R.id.ingredients);
+            recyclerViewIngredienti = ((Activity) mContext).findViewById(R.id.ingredients);
 
         }
 

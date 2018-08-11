@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +102,16 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     public List<Ingrediente> getArrayList(){
         return mData;
+    }
+
+    public ArrayList<Ingrediente> getIngredientiArrayList(){
+        ArrayList<Ingrediente> ingredienti = new ArrayList<>();
+
+        for(Ingrediente ingrediente: mData){
+            ingredienti.add(ingrediente);
+        }
+
+        return ingredienti;
     }
 
     // allows clicks events to be caught

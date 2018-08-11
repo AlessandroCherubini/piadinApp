@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.os.UserHandle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -68,6 +69,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -80,6 +83,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     DBHelper helper;
     ArrayList<Ingrediente> ingredientiPiadina;
     ArrayList<Ingrediente> listaIngredienti= new ArrayList<Ingrediente>();
+    RecyclerView recyclerView;
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
     CartItem cartItem;
@@ -156,9 +160,16 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         });
 
         // RecyclerView per gli ingredienti presenti nella Piadina.
-        ingredientiPiadina = chosenPiadina.getIngredienti();
 
-        final RecyclerView recyclerView = findViewById(R.id.ingredients);
+        // Gestione del recupero degli ingredienti
+        if(savedInstanceState == null || !savedInstanceState.containsKey("ingredienti")) {
+            ingredientiPiadina = chosenPiadina.getIngredienti();
+        }
+        else{
+            ingredientiPiadina = savedInstanceState.getParcelableArrayList("ingredienti");
+        }
+
+        recyclerView = findViewById(R.id.ingredients);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IngredientsAdapter(this, ingredientiPiadina);
         adapter.setClickListener(this);
@@ -222,7 +233,11 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                                 Double prezzoIngrediente = adapter.getItem(position).getPrice();
                                 totalePiadina = totalePiadina - prezzoIngrediente;
                                 TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-                                prezzoPiadina.setText(totalePiadina + " €");
+
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                df.setRoundingMode(RoundingMode.CEILING);
+                                prezzoPiadina.setText(df.format(totalePiadina) + " €");
+
                                 totaleIngredienti = totaleIngredienti - prezzoIngrediente;
                                 adapter.removeItem(position);
                                 Toast.makeText(CustomizePiadinaActivity.this, "Ingrediente rimosso", Toast.LENGTH_SHORT).show();
@@ -287,8 +302,11 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            prezzoPiadina.setText(totalePiadina + " €");
 
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            prezzoPiadina.setText(df.format(totalePiadina) + " €");
         }
         else if (rb2.isChecked() && rb4.isChecked()){
 
@@ -301,7 +319,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO;
         totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-        prezzoPiadina.setText(totalePiadina+ " €");
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            prezzoPiadina.setText(df.format(totalePiadina) + " €");
         }
         else if (rb3.isChecked() && rb4.isChecked()){
 
@@ -314,7 +335,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            prezzoPiadina.setText(totalePiadina+ " €");
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            prezzoPiadina.setText(df.format(totalePiadina) + " €");
         }
 
         else if (rb1.isChecked() && rb5.isChecked()){
@@ -328,7 +352,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            prezzoPiadina.setText(totalePiadina+ " €");
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            prezzoPiadina.setText(df.format(totalePiadina) + " €");
         }
 
         else if (rb2.isChecked() && rb5.isChecked()){
@@ -342,7 +369,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            prezzoPiadina.setText(totalePiadina+ " €");
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            prezzoPiadina.setText(df.format(totalePiadina) + " €");
         }
 
         else if (rb3.isChecked() && rb5.isChecked()){
@@ -357,7 +387,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            prezzoPiadina.setText(totalePiadina+ " €");
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            prezzoPiadina.setText(df.format(totalePiadina) + " €");
         }
 
 
@@ -447,4 +480,46 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save UI state changes to the savedInstanceState.
+        savedInstanceState.putParcelableArrayList("ingredienti", adapter.getIngredientiArrayList());
+        savedInstanceState.putDouble("prezzo", totalePiadina);
+        /*Log.d("SAVE", "Telefono girato SAVE!");
+        Log.d("SAVE", printIngredienti(adapter.getIngredientiArrayList()));*/
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //Log.d("LOAD", "Elementi recuperati!");
+
+        // Recupero ingredienti Piadina: viene fatto in onCreate
+
+        // Recupero prezzo Piadina
+        totalePiadina = savedInstanceState.getDouble("prezzo");
+        TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        prezzoPiadina.setText(df.format(totalePiadina) + " €");
+    }
+
+    // Funzione utilizzata per stampare gli ingredienti da ArrayList a String per i log.
+/*    private String printIngredienti(ArrayList<Ingrediente> ingredienti){
+        String ingredientiStringa="";
+
+        for(Ingrediente ingrediente:ingredienti){
+            String parziale;
+
+            parziale = ingrediente.getIdIngrediente() + ingrediente.getName() + ingrediente.getPrice() +
+                    ingrediente.getCategoria() + ingrediente.getLastUpdated();
+
+            ingredientiStringa = ingredientiStringa + " " + parziale;
+        }
+        return ingredientiStringa;
+    }*/
 }
