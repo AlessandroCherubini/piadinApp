@@ -44,6 +44,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpResponse;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.MainActivity;
 import com.example.ale.piadinapp.MyOrderActivity;
@@ -60,8 +61,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -99,63 +106,9 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         TextView tvTot= (TextView)findViewById(R.id.tv_total);
         Button clearCart = (Button)findViewById((R.id.clear_cart));
 
+
         data = cs.ViewAll(getApplicationContext());
         createNotificationChannel();
-
-
-            String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
-            if (EasyPermissions.hasPermissions(this, perms)) {
-
-            } else {
-
-                EasyPermissions.requestPermissions(this, "Richiesta permesso accesso posizione",1, perms);
-            }
-
-        Log.d("PERMESSI",""+checkLocationPermission());
-
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        LocationManager lm = (LocationManager)getApplicationContext()
-                .getSystemService(Context.LOCATION_SERVICE);
-
-        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-
-
-
-        Location net_loc = null, gps_loc = null, finalLoc = null;
-
-        if (gps_enabled)
-            lm.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
-            gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (network_enabled)
-            lm.requestLocationUpdates( LocationManager.NETWORK_PROVIDER, 1000, 100, this);
-            net_loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-        if (gps_loc != null && net_loc != null) {
-
-            //smaller the number more accurate result will
-            if (gps_loc.getAccuracy() > net_loc.getAccuracy())
-                finalLoc = net_loc;
-            else
-                finalLoc = gps_loc;
-
-        } else {
-
-            if (gps_loc != null) {
-                finalLoc = gps_loc;
-            } else if (net_loc != null) {
-                finalLoc = net_loc;
-            }
-        }
-
-        final double latitude =finalLoc.getLatitude();
-        final double longitude =finalLoc.getLongitude();
-
-
-
 
         clearCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +137,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 String formato = cs.getString(id, "formato", getApplicationContext());
                 String impasto = cs.getString(id, "impasto", getApplicationContext());
                 String ingredients = cs.getString(id, "ingredienti", getApplicationContext());
-                Double prezzo= cs.getDouble(id, "prezzo", getApplicationContext());
+                Double prezzo= Double.valueOf(cs.getDouble(id, "prezzo", getApplicationContext()));
                 String nome = cs.getString(id, "nome", getApplicationContext());
                 String identifier =cs.getString(id,"identifier",getApplicationContext());
 
@@ -265,12 +218,30 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                     @Override
                     public void onSuccessMap(int duration) {
 
-                    Log.d("DISTANZA",""+duration);
+                       /* Log.d("DISTANZA",""+duration);
+
+                        Calendar calander = Calendar.getInstance();
+                        Log.d("DATA ATTUALE",""+calander.getTime());
+                        long nowMills=calander.getTime().getTime();
+                        GregorianCalendar oraRitiro= new GregorianCalendar(2018,8,11,21,00,00);
+                        long oraRitiroMills=oraRitiro.getTime().getTime();
+
+                        long diffInMills = oraRitiroMills-nowMills;
+                        double diffInSec=diffInMills/1000/60/60/24;
+
+                        Log.d("DIFF","differenza in millisecondi="+diffInSec);*/
+
+
+
 
                     }
                 };
 
                 sendNotification();
+
+                Location location = getLocation();
+                final double latitude =location.getLatitude();
+                final double longitude =location.getLongitude();
                 travelTimeRequest(latitude,longitude);
             }
 
@@ -371,6 +342,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         notificationManager.notify(1, notification.build());
     }
 
+
     public void travelTimeRequest(double latitude, double longitude){
 
 
@@ -417,6 +389,59 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
             }
         });
 
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
+
+    }
+
+    public Location getLocation(){
+
+
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
+        if (EasyPermissions.hasPermissions(this, perms)) { }
+        else
+        {
+            EasyPermissions.requestPermissions(this, "Richiesta permesso accesso posizione",1, perms);
+        }
+
+        Log.d("PERMESSI",""+checkLocationPermission());
+
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location net_loc = null, gps_loc = null, finalLoc = null;
+
+        if (gps_enabled){
+            lm.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
+            gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+
+        if (network_enabled) {
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 100, this);
+            net_loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        if (gps_loc != null && net_loc != null) {
+
+            //smaller the number more accurate result will
+            if (gps_loc.getAccuracy() > net_loc.getAccuracy())
+                finalLoc = net_loc;
+            else
+                finalLoc = gps_loc;
+
+        } else {
+
+            if (gps_loc != null) {
+                finalLoc = gps_loc;
+            } else if (net_loc != null) {
+                finalLoc = net_loc;
+            }
+        }
+    return finalLoc;
     }
 
 
