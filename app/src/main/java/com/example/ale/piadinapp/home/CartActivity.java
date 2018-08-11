@@ -1,12 +1,8 @@
 package com.example.ale.piadinapp.home;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,22 +10,19 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.app.AlertDialog;
+
 
 import com.carteasy.v1.lib.Carteasy;
-import com.example.ale.piadinapp.MainActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
-import com.example.ale.piadinapp.classi.Piadina;
 import com.google.gson.Gson;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,13 +30,11 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity{
 
-
     CartItemAdapter adapter;
     ArrayList<CartItem> Items = new ArrayList<CartItem>();
     ArrayList<Ingrediente> ingredienti = new ArrayList<Ingrediente>();
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +44,8 @@ public class CartActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TextView tvTot= (TextView)findViewById(R.id.tv_total);
-        Button clearCart = (Button)findViewById((R.id.clear_cart));
+        TextView tvTot = findViewById(R.id.tv_total);
+        Button clearCart = findViewById((R.id.clear_cart));
 
         data = cs.ViewAll(getApplicationContext());
 
@@ -67,16 +58,9 @@ public class CartActivity extends AppCompatActivity{
             }
         });
 
-        //cs.persistData(getApplicationContext(),true);
-
-        // ricevo l'elemento inserito nel carrello
-
-
-
         String id;
         if (data == null || data.size()==0) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_LONG);
-            toast.show();
+            Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_SHORT).show();
         } else {
             int k = 0;
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
@@ -99,7 +83,6 @@ public class CartActivity extends AppCompatActivity{
                 ingredienti.clear();
 
                 for (String ing : ings) {
-
                     ingredienti.add(new Ingrediente(ing));
                 }
 
@@ -111,61 +94,69 @@ public class CartActivity extends AppCompatActivity{
             }
         }
 
-
         final RecyclerView rv = findViewById(R.id.cart_item);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CartItemAdapter(getApplicationContext(), Items, new ClickListener() {
             @Override
-            public void onPositionClicked(int position) {
+            public void onPositionClicked(final int position) {
 
-                String identify= adapter.getItem(position).getIdentifier();
-                cs.RemoveId(identify,getApplicationContext());
-                adapter.removeItem(position);
-                setTotale();
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //Yes button clicked
+                                String identify= adapter.getItem(position).getIdentifier();
+                                cs.RemoveId(identify,getApplicationContext());
+                                adapter.removeItem(position);
+                                setTotale();
 
+                                Toast.makeText(CartActivity.this, "Eliminato!", Toast.LENGTH_SHORT).show();
+                                break;
 
-                Toast.makeText(CartActivity.this, "Item rimosso dal carrello", Toast.LENGTH_SHORT).show();
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                // Non si fa niente!
+                                break;
+                        }
+                    }
+                };
 
-                if(adapter.getItemCount() == 0){
-                    Toast.makeText(CartActivity.this, "Il carrello è vuoto!", Toast.LENGTH_SHORT).show();
-                }
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+                builder.setMessage("Sei sicuro di volerlo eliminare?").setPositiveButton("Sì", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
 
             }
 
             @Override
             public void onCartItemClicked(int position) {
-
-
                 Intent intent = new Intent(getApplicationContext(),CustomizePiadinaActivity.class);
                 Gson gson = new Gson();
                 String modificaPiadinaAsAString = gson.toJson(adapter.getItem(position));
                 intent.putExtra("modificaPiadina",modificaPiadinaAsAString);
                 startActivity(intent);
-
             }
         });
 
         rv.setAdapter(adapter);
-
         setTotale();
 
         DividerItemDecoration itemDecorator = new DividerItemDecoration(CartActivity.this, DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(ContextCompat.getDrawable(CartActivity.this, R.drawable.piadina_divider));
         rv.addItemDecoration(itemDecorator);
-
-
     }
 
     public void setTotale(){
+        // Somma dei prezzi delle piadine
         double tot=0;
         for (int i =0; i<adapter.getItemCount();i++) {
             tot= tot +adapter.getItem(i).getPrezzo();
         }
 
-        String totale = "Totale: " + String.valueOf(tot);
-        TextView tvTot= (TextView)findViewById(R.id.tv_total);
-        tvTot.setText(totale);
+        TextView tvTot = findViewById(R.id.tv_total);
+
+        BigDecimal totale = new BigDecimal(tot);
+        tvTot.setText("Totale: " + totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
     }
 
     public void svuotaCarrello (){

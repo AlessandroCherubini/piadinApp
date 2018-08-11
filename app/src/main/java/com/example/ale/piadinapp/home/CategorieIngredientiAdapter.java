@@ -19,6 +19,7 @@ import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.utility.DBHelper;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -124,13 +125,10 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
                                         //Yes button clicked
                                         Double prezzoIngrediente = ingredienti.get(position).getPrice();
                                         totalePiadina = totalePiadina + prezzoIngrediente;
-                                        TextView prezzoPiadina = (TextView) ((Activity) mContext).findViewById(R.id.prezzoTotalePiadina);
+                                        TextView prezzoPiadina = ((Activity) mContext).findViewById(R.id.prezzoTotalePiadina);
 
-                                        DecimalFormat df = new DecimalFormat("#.##");
-                                        df.setRoundingMode(RoundingMode.CEILING);
-                                        prezzoPiadina.setText(df.format(totalePiadina) + " €");
-
-                                        prezzoPiadina.setText(totalePiadina + " €");
+                                        BigDecimal totale = new BigDecimal(totalePiadina);
+                                        prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
                                         totaleIngredienti = totaleIngredienti + prezzoIngrediente;
                                         listaIngredientiCorrenti.add(ingredienti.get(position));
                                         adapter.notifyItemInserted(adapter.getItemCount()-1);

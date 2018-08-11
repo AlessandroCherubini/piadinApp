@@ -1,38 +1,11 @@
 package com.example.ale.piadinapp.home;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentSender;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.database.DatabaseErrorHandler;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Parcelable;
-import android.os.UserHandle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -40,37 +13,21 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.widget.AdapterView;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.carteasy.v1.lib.Carteasy;
-import com.example.ale.piadinapp.HomeActivity;
 import com.example.ale.piadinapp.R;
-import com.example.ale.piadinapp.WeAreHereActivity;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
-import com.example.ale.utility.CustomAdapter;
 import com.example.ale.utility.DBHelper;
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -136,7 +93,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         totaleImpastoEFormato = chosenPiadina.getPrice();
         totalePiadina = totaleImpastoEFormato;
 
-        final TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
+        final TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
         prezzoPiadina.setText(totalePiadina + " €");
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
@@ -234,9 +191,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                                 totalePiadina = totalePiadina - prezzoIngrediente;
                                 TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
 
-                                DecimalFormat df = new DecimalFormat("#.##");
-                                df.setRoundingMode(RoundingMode.CEILING);
-                                prezzoPiadina.setText(df.format(totalePiadina) + " €");
+                                BigDecimal totale = new BigDecimal(totalePiadina);
+                                prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
 
                                 totaleIngredienti = totaleIngredienti - prezzoIngrediente;
                                 adapter.removeItem(position);
@@ -303,26 +259,22 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             totaleImpastoEFormato = prezzoPiadinaBase;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
 
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
-
-            prezzoPiadina.setText(df.format(totalePiadina) + " €");
+            BigDecimal totale = new BigDecimal(totalePiadina);
+            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
         else if (rb2.isChecked() && rb4.isChecked()){
 
-        rb2.setTypeface(null, Typeface.BOLD_ITALIC);
-        rb4.setTypeface(null, Typeface.BOLD_ITALIC);
-        //set the other two radio buttons text style to default
-        rb1.setTypeface(null, Typeface.NORMAL);
-        rb5.setTypeface(null, Typeface.NORMAL);
-        rb3.setTypeface(null, Typeface.NORMAL);
+            rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+            rb4.setTypeface(null, Typeface.BOLD_ITALIC);
+            //set the other two radio buttons text style to default
+            rb1.setTypeface(null, Typeface.NORMAL);
+            rb5.setTypeface(null, Typeface.NORMAL);
+            rb3.setTypeface(null, Typeface.NORMAL);
 
-        totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO;
-        totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
-
-            prezzoPiadina.setText(df.format(totalePiadina) + " €");
+            totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO;
+            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
+            BigDecimal totale = new BigDecimal(totalePiadina);
+            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
         else if (rb3.isChecked() && rb4.isChecked()){
 
@@ -335,10 +287,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
-
-            prezzoPiadina.setText(df.format(totalePiadina) + " €");
+            BigDecimal totale = new BigDecimal(totalePiadina);
+            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
 
         else if (rb1.isChecked() && rb5.isChecked()){
@@ -352,10 +302,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
-
-            prezzoPiadina.setText(df.format(totalePiadina) + " €");
+            BigDecimal totale = new BigDecimal(totalePiadina);
+            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
 
         else if (rb2.isChecked() && rb5.isChecked()){
@@ -369,10 +317,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
-
-            prezzoPiadina.setText(df.format(totalePiadina) + " €");
+            BigDecimal totale = new BigDecimal(totalePiadina);
+            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
 
         else if (rb3.isChecked() && rb5.isChecked()){
@@ -387,10 +333,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
 
-            prezzoPiadina.setText(df.format(totalePiadina) + " €");
+            BigDecimal totale = new BigDecimal(totalePiadina);
+            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
 
 
@@ -502,10 +447,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         totalePiadina = savedInstanceState.getDouble("prezzo");
         TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-
-        prezzoPiadina.setText(df.format(totalePiadina) + " €");
+        BigDecimal totale = new BigDecimal(totalePiadina);
+        prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
     }
 
     // Funzione utilizzata per stampare gli ingredienti da ArrayList a String per i log.
