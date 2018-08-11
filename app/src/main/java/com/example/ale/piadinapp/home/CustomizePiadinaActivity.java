@@ -155,7 +155,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             }
         });
 
-        // RecyclerView per gli ingredienti persenti nella Piadina.
+        // RecyclerView per gli ingredienti presenti nella Piadina.
         ingredientiPiadina = chosenPiadina.getIngredienti();
 
         final RecyclerView recyclerView = findViewById(R.id.ingredients);
@@ -179,19 +179,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             public void onItemClick(View view, int position) {
                 Toast.makeText(CustomizePiadinaActivity.this,"Cliccato: " + categorieAdapter.getItem(position), Toast.LENGTH_SHORT).show();
 
-                // Aprire e chiudere la lista degli ingredienti della singola categoria
-/*                RecyclerView recIng = view.findViewById(R.id.recycler_ingredienti);
-                switch(recIng.getVisibility()){
-                    case View.GONE:
-                        recIng.setVisibility(View.VISIBLE);
-                        break;
-                    case View.VISIBLE:
-                        recIng.setVisibility(View.GONE);
-                        break;
-                    }*/
                 }
         });
-
         recyclerViewCategorie.setAdapter(categorieAdapter);
 
         DividerItemDecoration itemDecoratorCategorie = new DividerItemDecoration(CustomizePiadinaActivity.this, DividerItemDecoration.VERTICAL);

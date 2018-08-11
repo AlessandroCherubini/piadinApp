@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.Ingrediente;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
@@ -19,6 +20,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     private List<Ingrediente> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private View ingredientiView;
 
 
     // data is passed into the constructor
@@ -31,6 +33,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.layout_ingrediente, parent, false);
+        ingredientiView = parent;
         return new ViewHolder(view);
     }
 
@@ -41,6 +44,12 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         holder.myTextView.setText(ingrediente.getName());
         Double prezzo = new Double(ingrediente.getPrice());
         holder.textPrice.setText(prezzo.toString() + " €");
+
+        IngredientsAdapter adapter = (IngredientsAdapter) holder.recyclerIngredienti.getAdapter();
+
+        List<Ingrediente> ingredientiCorrenti = adapter.getArrayList();
+        ingredientiCorrenti.toString();
+        mData.toString();
     }
 
     // total number of rows
@@ -57,6 +66,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         ImageButton removeButton;
         ImageButton allergeniButton;
         TextView textPrice;
+        RecyclerView recyclerIngredienti;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -66,6 +76,9 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
             allergeniButton.setOnClickListener(this);
             removeButton.setOnClickListener(this);
             textPrice=itemView.findViewById(R.id.textViewPrice);
+
+            recyclerIngredienti = ingredientiView.findViewById(R.id.ingredients);
+
         }
 
         @Override
@@ -86,6 +99,9 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         return mData.get(id);
     }
 
+    public List<Ingrediente> getArrayList(){
+        return mData;
+    }
 
     // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {
