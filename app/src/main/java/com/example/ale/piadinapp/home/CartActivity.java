@@ -64,6 +64,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -71,6 +72,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -218,18 +220,19 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                     @Override
                     public void onSuccessMap(int duration) {
 
-                       /* Log.d("DISTANZA",""+duration);
+                        Log.d("DISTANZA",""+duration);
 
-                        Calendar calander = Calendar.getInstance();
-                        Log.d("DATA ATTUALE",""+calander.getTime());
-                        long nowMills=calander.getTime().getTime();
-                        GregorianCalendar oraRitiro= new GregorianCalendar(2018,8,11,21,00,00);
-                        long oraRitiroMills=oraRitiro.getTime().getTime();
+                        GregorianCalendar now = new GregorianCalendar();
+                        Date oraAttuale = now.getTime();
 
-                        long diffInMills = oraRitiroMills-nowMills;
-                        double diffInSec=diffInMills/1000/60/60/24;
+                        GregorianCalendar oraRitiro= new GregorianCalendar(2018,Calendar.AUGUST,11,21,00,00);
+                        Date oraRitiroDate = oraRitiro.getTime();
 
-                        Log.d("DIFF","differenza in millisecondi="+diffInSec);*/
+                        long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(oraRitiroDate.getTime() - oraAttuale.getTime());
+
+                        //TODO IDEARE BENE IL CORPO DEL METODO E CONTROLLARE I TIPI CON DURATION, FORSE LONG?
+                        if (timeBeforePick-((long)duration+TimeUnit.MINUTES.toSeconds(5))==0){}
+
 
 
 
