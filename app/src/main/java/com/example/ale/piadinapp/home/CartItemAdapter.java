@@ -54,9 +54,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
         holder.tvIngredienti.setText(item.printIngredienti());
         holder.tvPrezzo.setText(String.valueOf(item.getPrezzo()));
 
-
-
     }
+
     public CartItem getItem(int id){
 
         return itemList.get(id);

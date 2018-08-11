@@ -1,8 +1,11 @@
 package com.example.ale.piadinapp.home;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     Context mContext;
+    View ingredientiView;
     AddIngredientAdapter addIngredientiAdapter;
     private DBHelper helper;
 
@@ -38,28 +42,72 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
         View view = mInflater.inflate(R.layout.layout_categorie, parent, false);
         mContext = parent.getContext();
         helper = new DBHelper(mContext);
+        ingredientiView = parent;
+
         return new ViewHolder(view);
 
     }
 
     // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         String categoria = mData.get(position);
         holder.myTextView.setText(categoria);
+        holder.reclycleIngredienti.setVisibility(View.GONE);
+        holder.showButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(holder.reclycleIngredienti.getVisibility()){
+                    case View.GONE:
+                        holder.reclycleIngredienti.setVisibility(View.VISIBLE);
+                        holder.showButton.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
+                        break;
+                    case View.VISIBLE:
+                        holder.reclycleIngredienti.setVisibility(View.GONE);
+                        holder.showButton.setImageResource(R.drawable.ic_categoria);
+                }
 
-        ArrayList<Ingrediente> ingredienti = helper.getIngredientiByCategoria(categoria);
+            }
+        });
+
+        final RecyclerView ingredientiCorrenti = ingredientiView.findViewById(R.id.ingredients);
+        //final RecyclerView.Adapter adapterIngredientiCorrenti = ingredientiCorrenti.getAdapter();
+
+        final ArrayList<Ingrediente> ingredienti = helper.getIngredientiByCategoria(categoria);
         holder.reclycleIngredienti.setLayoutManager(new LinearLayoutManager(mContext));
 
         addIngredientiAdapter = new AddIngredientAdapter(mContext, ingredienti);
-/*        addIngredientiAdapter.setClickListener(new AddIngredientAdapter.ItemClickListener() {
+        addIngredientiAdapter.setClickListener(new AddIngredientAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                switch(view.getId()){
+                    case R.id.allergeniAddButton:
+                        // Click sull'allergeno dell'ingrediente da aggiungere.
+                        DialogInterface.OnClickListener allergeniClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case DialogInterface.BUTTON_NEUTRAL:
 
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builderAllergenti = new AlertDialog.Builder(mContext);
+                        builderAllergenti.setTitle("Allergeni relativi a " + ingredienti.get(position).getName());
+                        builderAllergenti.setIcon(R.drawable.ic_info_black_24dp);
+                        builderAllergenti.setMessage(ingredienti.get(position).getListaAllergeni()).
+                                setNeutralButton("Ok", allergeniClickListener).show();
+                        break;
+                    case R.id.addButton:
+                        // Click sul pulsante per aggiungere l'ingrediente alla piadina
+                        Log.d("CLICK", "Click pulsante ADD");
+                        break;
+                }
             }
-        });*/
-        holder.reclycleIngredienti.setAdapter(addIngredientiAdapter);
+        });
 
+        holder.reclycleIngredienti.setAdapter(addIngredientiAdapter);
 
     }
 
@@ -82,7 +130,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
             myTextView = itemView.findViewById(R.id.categoria);
             showButton = itemView.findViewById(R.id.dropDownButton);
             // tutto l'elemento dell'adapter attiva il listener; se metto il pulsante show crasha!
-            itemView.setOnClickListener(this);
+            //showButton.setOnClickListener(this);
 
             reclycleIngredienti = itemView.findViewById(R.id.recycler_ingredienti);
 

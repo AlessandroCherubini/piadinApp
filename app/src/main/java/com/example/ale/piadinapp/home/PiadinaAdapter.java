@@ -51,7 +51,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
         holder.textViewIngredients.setText(piadina.printIngredienti());
         //holder.textViewRating.setText(String.valueOf(piadina.getRating()));
         holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
-        piadina.printDettagliIngredienti();
+        //piadina.printDettagliIngredienti();
 
     }
 

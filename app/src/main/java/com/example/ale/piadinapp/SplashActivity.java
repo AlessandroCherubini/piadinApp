@@ -26,8 +26,10 @@ import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.SessionManager;
 import com.example.ale.utility.VolleyCallback;
 import com.example.ale.utility.VolleySingleton;
+import com.facebook.stetho.Stetho;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,20 +61,14 @@ public class SplashActivity extends AppCompatActivity{
                 ingredientiCallBack = new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        //progressBar.setIndeterminate(false);
-                        //progressBar.setVisibility(View.GONE);
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
                 };
-
                 checkUpdateIngredienti();
-
             }
         };
-
         checkUpdatePiadine();
-
     }
 
     public void checkUpdatePiadine() {
@@ -171,8 +167,6 @@ public class SplashActivity extends AppCompatActivity{
 
                                 Toast.makeText(SplashActivity.this, " "+diff, Toast.LENGTH_LONG).show();
 
-                                // TODO: da mettere nel db interno i dati scaricati dal db esterno.
-
                                 for (int i = 0; i < ingredienti.length(); i++) {
                                     JSONObject ingrediente = ingredienti.getJSONObject(i);
                                     long idIngrediente = ingrediente.getLong("id_ingrediente");
@@ -180,7 +174,7 @@ public class SplashActivity extends AppCompatActivity{
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
                                     String allergeniIngrediente = ingrediente.getString("allergeni");
                                     String categoriaIngrediente = ingrediente.getString("categoria");
-                                    Log.d("ALLERGENI", allergeniIngrediente);
+                                    //Log.d("ALLERGENI", allergeniIngrediente);
 
                                     Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente,
                                             categoriaIngrediente, serverTimeStamp);
@@ -221,7 +215,5 @@ public class SplashActivity extends AppCompatActivity{
         });
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
-
     }
-
 }

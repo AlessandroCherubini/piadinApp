@@ -159,8 +159,7 @@ public class CartActivity extends AppCompatActivity{
 
     public void setTotale(){
         double tot=0;
-        for (int i =0; i<adapter.getItemCount();i++)
-        {
+        for (int i =0; i<adapter.getItemCount();i++) {
             tot= tot +adapter.getItem(i).getPrezzo();
         }
 
@@ -170,20 +169,12 @@ public class CartActivity extends AppCompatActivity{
     }
 
     public void svuotaCarrello (){
-
-        if (data==null || data.size()==0)
-        {
-
+        if (data==null || data.size()==0) {
             Toast toast = Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_LONG);
             toast.show();
-        }
-
-        else
-        {
-
+        }else {
             int numeroItem=adapter.getItemCount();
-            for (int i =0; i<numeroItem;i++)
-            {
+            for (int i =0; i<numeroItem;i++) {
                 int numPiadina = i+1;
                 cs.RemoveId("Piadina "+numPiadina,getApplicationContext());
                 adapter.removeItem(0);
@@ -192,12 +183,7 @@ public class CartActivity extends AppCompatActivity{
             Items.clear();
             data=null;
         }
-
-
-
-
     }
-
 }
 
 

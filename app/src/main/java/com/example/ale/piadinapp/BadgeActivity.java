@@ -142,9 +142,11 @@ public class BadgeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+
+        // Click sulla ToolBar: se vogliamo che faccia cose cliccando sulle icone
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

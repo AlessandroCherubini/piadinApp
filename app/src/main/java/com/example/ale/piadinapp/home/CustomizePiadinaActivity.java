@@ -84,8 +84,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     Map<Integer, Map> data;
     CartItem cartItem;
 
-
-
     public final static Double IMPASTO_INTEGRALE = 0.30;
     public final static Double FORMATO_BABY = -1.0;
     public final static Double FORMATO_ROTOLO = 2.0;
@@ -94,8 +92,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     static double totaleImpastoEFormato = 0;
     static double totaleIngredienti = 0;
     public Context mContext;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +180,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                 Toast.makeText(CustomizePiadinaActivity.this,"Cliccato: " + categorieAdapter.getItem(position), Toast.LENGTH_SHORT).show();
 
                 // Aprire e chiudere la lista degli ingredienti della singola categoria
-                RecyclerView recIng = view.findViewById(R.id.recycler_ingredienti);
+/*                RecyclerView recIng = view.findViewById(R.id.recycler_ingredienti);
                 switch(recIng.getVisibility()){
                     case View.GONE:
                         recIng.setVisibility(View.VISIBLE);
@@ -192,7 +188,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                     case View.VISIBLE:
                         recIng.setVisibility(View.GONE);
                         break;
-                    }
+                    }*/
                 }
         });
 

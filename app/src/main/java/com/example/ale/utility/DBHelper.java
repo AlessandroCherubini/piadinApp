@@ -1,6 +1,5 @@
 package com.example.ale.utility;
 import com.example.ale.piadinapp.classi.Ingrediente;
-import com.example.ale.piadinapp.classi.Ordine;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.classi.User;
@@ -45,15 +44,6 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_INGREDIENTI_ALLERGENI = "allergeni";
     public static final String COLUMN_INGREDIENTI_CATEGORIA = "categoria";
     public static final String COLUMN_INGREDIENTI_TIMESTAMP = "updated_at";
-
-    // tabella: ordini
-    public static final String TABLE_ORDINI_NAME = "ordini";
-    public static final String COLUMN_ORDINI_ID = "id_ordine";
-    public static final String COLUMN_ORDINI_TIMESTAMP = "timestamp_ordine";
-    public static final String COLUMN_ORDINI_PIADINE = "piadine";
-    public static final String COLUMN_ORDINI_NOTA = "nota_ordine";
-    public static final String COLUMN_ORDINI_PREZZO = "prezzo";
-    public static final String COLUMN_ORDINI_TIMESTAMP_UPDATE = "updated_at";
 
     //tabella: timbri
     public static final String TABLE_TIMBRI_NAME             = "timbri";
@@ -144,8 +134,7 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
     //**** TABELLA USER ********************************************************
-    public User insertUser (User queryValues)
-    {
+    public User insertUser (User queryValues) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("username", queryValues.nickname);
@@ -159,10 +148,6 @@ public class DBHelper extends SQLiteOpenHelper{
         }finally{
             database.close();
         }
-
-        //Inserimento nuova riga nella tabella Timbri relativa al nuovo utente
-        Timbro newTimbro = new Timbro(0,queryValues.email,0,0);
-        insertTimbro(newTimbro);
 
         return queryValues;
     }
@@ -218,8 +203,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return myUser;
     }
 
-    public void printLoginsTable()
-    {
+    public void printLoginsTable() {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_LOGINS_NAME + ";";
         Log.d("DB/PRINT", "Stampa tabella utenti!");
@@ -239,8 +223,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     //**** TABELLA PIADINE *****************************************************
     // Metodo per le ottenere le Piadine dal database Interno.
-    public ArrayList<Piadina> getPiadine()
-    {
+    public ArrayList<Piadina> getPiadine() {
         ArrayList<Piadina> piadine = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -263,8 +246,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return piadine;
     }
 
-    public Piadina getPiadinaByPosition (long position)
-    {
+    public Piadina getPiadinaByPosition (long position) {
         ArrayList<Ingrediente> ingredienti = new ArrayList<>();
         String query = "Select nome, ingredienti, prezzo, updated_at from piadine where id_piadine='"+position+"'";
         Piadina myPiadina= new Piadina(position, "",null,0,0);
@@ -287,8 +269,7 @@ public class DBHelper extends SQLiteOpenHelper{
     {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        String piadinaIngredienti = piadina.
-                printIngredienti();
+        String piadinaIngredienti = piadina.printIngredienti();
 
         values.put(COLUMN_PIADINE_NAME, piadina.getNome());
         values.put(COLUMN_PIADINE_INGREDIENTI, piadinaIngredienti);
@@ -298,7 +279,7 @@ public class DBHelper extends SQLiteOpenHelper{
         try {
             long id = database.insert(TABLE_PIADINE_NAME, null, values);
             piadina.setId(id);
-            Log.d("DB/INSERT", "Piadina aggiunta al db interno!");
+            //Log.d("DB/INSERT", "Piadina aggiunta al db interno!");
         }catch(Exception e){
             Log.d("DB/INSERT", e.toString());
         }
@@ -306,8 +287,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }
 
-    public long getInternalTimeStampPiadine()
-    {
+    public long getInternalTimeStampPiadine() {
         long timeStamp = 0;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -356,7 +336,7 @@ public class DBHelper extends SQLiteOpenHelper{
         try {
             long id = database.insert(TABLE_INGREDIENTI_NAME, null, values);
             ingrediente.setIdIngrediente(id);
-            Log.d("DB/INSERT", "Ingrediente aggiunto al db interno!");
+            //Log.d("DB/INSERT", "Ingrediente aggiunto al db interno!");
         }catch(Exception e){
             Log.d("DB/INSERT", e.toString());
         }
@@ -406,7 +386,7 @@ public class DBHelper extends SQLiteOpenHelper{
         String[] result = stringaIngredienti.split(",\\s");
 
         for (int i=0; i < result.length; i++) {
-            Log.d("STRINGA", result[i]);
+            //Log.d("STRINGA", result[i]);
             Ingrediente ingrediente = getIngredienteByName(result[i]);
             listaIngredienti.add(ingrediente);
         }
@@ -487,41 +467,34 @@ public class DBHelper extends SQLiteOpenHelper{
         return ingredienti;
     }
 
-    public void insertOrdini(){
+    public void printIngredientiTable()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_INGREDIENTI_NAME + ";";
+        Log.d("DB/PRINT", "Stampa tabella ingredienti!");
 
-    }
-
-/*    public void insertOrdine (Ordine ordine){
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getTimestampOrdine());
-        values.put(COLUMN_ORDINI_PIADINE, ordine.getCartItems());
-        values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
-        values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
-        values.put(COLUMN_ORDINI_TIMESTAMP_UPDATE, ordine.getLastUpdated());
-
-        try {
-            long id = database.insert(TABLE_ORDINI_NAME, null, values);
-            ordine.setIdOrdine(id);
-            Log.d("DB/INSERT", "Ordine aggiunto al db interno!");
-        }catch(Exception e){
-            Log.d("DB/INSERT", e.toString());
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()){
+            do {
+                Log.d("DB/PRINT", "ID Ingrediente: " + cursor.getLong(0));
+                Log.d("DB/PRINT", "Nome Ingrediente: " + cursor.getString(1));
+                Log.d("DB/PRINT", "Prezzo Ingrediente: " + cursor.getDouble(2));
+                Log.d("DB/PRINT", "Allergeni Ingrediente: " + cursor.getString(3));
+                Log.d("DB/PRINT", "Categoria Ingrediente: " + cursor.getString(4));
+                Log.d("DB/PRINT", "Timestamp Ingrediente: " + cursor.getLong(5));
+            } while (cursor.moveToNext());
         }
-        database.close();
-
-    }*/
-
+        db.close();
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //**** TABELLA TIMBRI ******************************************************
-    public Timbro insertTimbro(Timbro queryValues)
-    {
+    public Timbro insertTimbro(Timbro queryValues) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TIMBRI_EMAIL,queryValues.userEmail);
-        values.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
-        values.put(COLUMN_TIMBRI_OMAGGI_RICEVUTI,queryValues.numberOmaggi);
+        values.put(COLUMN_TIMBRI_EMAIL, queryValues.userEmail);
+        values.put(COLUMN_TIMBRI_NUMERO_TIMBRI, queryValues.numberTimbri);
+        values.put(COLUMN_TIMBRI_OMAGGI_RICEVUTI, queryValues.numberOmaggi);
         try {
             queryValues.timbroId = database.insert(TABLE_TIMBRI_NAME,null,values);
         } catch (Exception e) {
@@ -533,8 +506,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return queryValues;
     }
 
-    public boolean updateTimbriNumber(Timbro queryValues)
-    {
+    public boolean updateTimbriNumber(Timbro queryValues) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
@@ -601,9 +573,9 @@ public class DBHelper extends SQLiteOpenHelper{
         if(cursor.moveToFirst()) {
             do {
                 Log.d("DB/PRINT", "ID Timbro: " + cursor.getLong(COLUMN_TIMBRI_ID_INDEX));
-                Log.d("DB/PRINT", "ID Email Utente: " + cursor.getString(COLUMN_TIMBRI_EMAIL_INDEX));
-                Log.d("DB/PRINT", "ID Numero Timbri: " + cursor.getInt(COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX));
-                Log.d("DB/PRINT", "ID Numero Omaggi: " + cursor.getInt(COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX));
+                Log.d("DB/PRINT", "Email Utente: " + cursor.getString(COLUMN_TIMBRI_EMAIL_INDEX));
+                Log.d("DB/PRINT", "Numero Timbri: " + cursor.getInt(COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX));
+                Log.d("DB/PRINT", "Numero Omaggi: " + cursor.getInt(COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX));
             } while (cursor.moveToNext());
         }
 
