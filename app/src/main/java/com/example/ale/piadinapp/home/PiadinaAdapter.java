@@ -82,14 +82,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
         }
 
         public void onClick(View v) {
-
-//            if (v.getId() == addButton.getId()) {
-//                Toast.makeText(v.getContext(), "ITEM PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
-//            }
-
-            listenerRef.get().onPositionClicked(getAdapterPosition());
+            listenerRef.get().onPositionClicked(v, getAdapterPosition());
         }
     }
 

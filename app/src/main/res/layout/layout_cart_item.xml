@@ -29,7 +29,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/formato"
+                android:id="@+id/formato_string"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_nome"
@@ -37,7 +37,35 @@
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
+                android:text="Formato: "
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@color/primaryDarkColor" />
+
+            <TextView
+                android:id="@+id/formato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_nome"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="62dp"
+                android:layout_marginTop="0dp"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
                 android:text="Formato"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@color/primaryDarkColor" />
+
+            <TextView
+                android:id="@+id/impasto_string"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/formato"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Impasto: "
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/primaryDarkColor" />
 
@@ -48,6 +76,8 @@
                 android:layout_below="@id/formato"
                 android:layout_alignLeft="@id/tv_nome"
                 android:layout_centerHorizontal="true"
+                android:layout_marginLeft="62dp"
+                android:layout_marginTop="0dp"
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Impasto"
@@ -73,8 +103,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="140dp"
-                android:layout_toEndOf="@+id/formato"
+                android:layout_marginStart="0dp"
+                android:layout_toEndOf="@+id/tv_nome"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
                 android:text="5.9"
@@ -110,9 +140,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="11dp"
-                android:background="@drawable/button_selector"
+                android:background="@drawable/delete_button_selector"
                 android:elevation="4dp"
-                android:src="@drawable/ic_remove_black_24dp" />
+                android:src="@drawable/ic_delete_black_24dp" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

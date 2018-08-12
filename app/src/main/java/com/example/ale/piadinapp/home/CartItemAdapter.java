@@ -77,6 +77,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
 
         TextView tvNome, formato, tvImpasto, tvIngredienti, tvPrezzo;
         ImageButton remButton;
+        ImageButton editButton;
         private WeakReference<ClickListener> listenerRef;
 
         public ItemViewHolder(View itemView) {
@@ -87,32 +88,23 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
             tvImpasto = itemView.findViewById(R.id.tv_impasto);
             tvIngredienti = itemView.findViewById(R.id.tv_ingredienti);
             tvPrezzo = itemView.findViewById(R.id.tv_prezzo);
+            editButton = itemView.findViewById(R.id.editButton);
             remButton = itemView.findViewById(R.id.remButton);
+
             listenerRef = new WeakReference<>(listener);
 
-            itemView.setOnClickListener(this);
+            editButton.setOnClickListener(this);
             remButton.setOnClickListener(this);
         }
 
         public void onClick(View v) {
-
             if (v.getId() == remButton.getId()){
 
-                listenerRef.get().onPositionClicked(getAdapterPosition());
+                listenerRef.get().onPositionClicked(v, getAdapterPosition());
 
+            } else if (v.getId() == editButton.getId()){
+                listenerRef.get().onPositionClicked(v, getAdapterPosition());
             }
-            else if (v.getId()== itemView.getId()){
-
-                listenerRef.get().onCartItemClicked(getAdapterPosition());
-
-            }
-//            if (v.getId() == addButton.getId()) {
-//                Toast.makeText(v.getContext(), "ITEM PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
-//            }
-
-
         }
     }
 

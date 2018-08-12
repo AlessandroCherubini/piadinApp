@@ -68,21 +68,24 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        if (intent.getExtras().get("indexPiadina")!=null){
+        if (intent.getExtras().get("indexPiadina")!= null){
 
             int position = intent.getIntExtra("indexPiadina",0);
             chosenPiadina = helper.getPiadinaByPosition((long)position+1);
         }
-        else if (intent.getExtras().get("randomPiadina")!=null){
+        else if (intent.getExtras().get("randomPiadina")!= null){
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
             chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
         }
-        else if (intent.getExtras().get("modificaPiadina")!=null){
+        else if (intent.getExtras().get("modificaPiadina")!= null){
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
             chosenPiadina = cartItem.cartItemToPiadina(cartItem);
+            Button editButton = findViewById(R.id.addKart);
+            editButton.setText("Conferma Modifica");
+            editButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_edit_black_24dp, 0, 0, 0);
 
             //TODO: sistemare problemi
 
@@ -109,7 +112,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         final Button button = findViewById(R.id.addKart);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_SHORT);
                 toast.show();
                 aggiungiAlCarrello();
                 finish();
@@ -355,7 +358,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         String formato;
         ArrayList<Ingrediente> ingredienti;
         double prezzo;
-        if (rb1.isChecked()) { formato = "Normale";}
+        if (rb1.isChecked()) { formato = "Piadina";}
         else if (rb2.isChecked()){formato="Rotolo";}
         else if(rb3.isChecked()){formato= "Baby";}
         else {formato = null;}

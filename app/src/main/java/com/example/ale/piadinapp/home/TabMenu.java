@@ -126,7 +126,7 @@ public class TabMenu extends Fragment{
 
         //creating recyclerview adapter
         PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
-            @Override public void onPositionClicked(int position) {
+            @Override public void onPositionClicked(View view, int position) {
                 // callback performed on click
 
 
@@ -136,12 +136,6 @@ public class TabMenu extends Fragment{
                 startActivity(intent);
 
             }
-
-            @Override
-            public void onCartItemClicked(int position) {
-
-            }
-
         });
         //setting adapter to recyclerview
         recyclerView.setAdapter(adapter);

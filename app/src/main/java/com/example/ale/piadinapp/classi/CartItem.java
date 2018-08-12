@@ -11,6 +11,30 @@ public class CartItem {
     private double prezzo;
     private String identifier;
 
+    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti ) {
+        this.nome = nome;
+        this.formato=formato;
+        this.impasto=impasto;
+        this.prezzo=prezzo;
+        this.ingredienti=ingredienti;
+    }
+
+    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti, String identifier ) {
+        this.nome = nome;
+        this.formato=formato;
+        this.impasto=impasto;
+        this.prezzo=prezzo;
+        this.ingredienti=ingredienti;
+        this.identifier=identifier;
+    }
+
+    public Piadina  cartItemToPiadina(CartItem item) {
+
+        Piadina piadina = new Piadina(nome,ingredienti,prezzo);
+
+        return piadina;
+    }
+
 
     public String getNome() {
         return nome;
@@ -49,6 +73,14 @@ public class CartItem {
         return ingredienti;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
     public String printIngredienti (){
         String stringaIngredienti = "";
         for(int i = 0; i < ingredienti.size(); i++){
@@ -63,41 +95,6 @@ public class CartItem {
     public void setIngredienti(ArrayList<Ingrediente> ingredienti) {
         this.ingredienti = ingredienti;
     }
-
-    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti ) {
-
-        this.nome = nome;
-        this.formato=formato;
-        this.impasto=impasto;
-        this.prezzo=prezzo;
-        this.ingredienti=ingredienti;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti, String identifier ) {
-
-        this.nome = nome;
-        this.formato=formato;
-        this.impasto=impasto;
-        this.prezzo=prezzo;
-        this.ingredienti=ingredienti;
-        this.identifier=identifier;
-    }
-
-    public Piadina  cartItemToPiadina(CartItem item) {
-
-        Piadina piadina = new Piadina(nome,ingredienti,prezzo);
-
-        return piadina;
-    }
-
 
 
 

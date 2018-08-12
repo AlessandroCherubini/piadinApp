@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,6 @@ import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.utility.DBHelper;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,36 +113,16 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
 
                     case R.id.addButton:
                         // Click sul pulsante per aggiungere l'ingrediente alla piadina
-                        Log.d("CLICK", "Click pulsante ADD");
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        //Yes button clicked
-                                        Double prezzoIngrediente = ingredienti.get(position).getPrice();
-                                        totalePiadina = totalePiadina + prezzoIngrediente;
-                                        TextView prezzoPiadina = ((Activity) mContext).findViewById(R.id.prezzoTotalePiadina);
+                        Double prezzoIngrediente = ingredienti.get(position).getPrice();
+                        totalePiadina = totalePiadina + prezzoIngrediente;
+                        TextView prezzoPiadina = ((Activity) mContext).findViewById(R.id.prezzoTotalePiadina);
 
-                                        BigDecimal totale = new BigDecimal(totalePiadina);
-                                        prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
-                                        totaleIngredienti = totaleIngredienti + prezzoIngrediente;
-                                        listaIngredientiCorrenti.add(ingredienti.get(position));
-                                        adapter.notifyItemInserted(adapter.getItemCount()-1);
-                                        Toast.makeText(mContext, "Ingrediente aggiunto", Toast.LENGTH_SHORT).show();
-                                        break;
-
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        //No button clicked
-                                        // Non si fa niente!
-                                        break;
-                                }
-                            }
-                        };
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setMessage("Vuoi aggiungere " + ingredienti.get(position).getName() + " ?").setPositiveButton("Sì", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener).show();
+                        BigDecimal totale = new BigDecimal(totalePiadina);
+                        prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+                        totaleIngredienti = totaleIngredienti + prezzoIngrediente;
+                        listaIngredientiCorrenti.add(ingredienti.get(position));
+                        adapter.notifyItemInserted(adapter.getItemCount()-1);
+                        Toast.makeText(mContext, "Ingrediente aggiunto", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -158,7 +135,6 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     // total number of rows
     @Override
     public int getItemCount() {
-
         return mData.size();
     }
 
@@ -179,13 +155,11 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
             //showButton.setOnClickListener(this);
             recyclerViewAddIngredienti = itemView.findViewById(R.id.recycler_ingredienti);
             recyclerViewIngredienti = ((Activity) mContext).findViewById(R.id.ingredients);
-
         }
 
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-
         }
 
     }
@@ -198,7 +172,6 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
 
     // convenience method for getting data at click position
     String getItem(int id) {
-
         return mData.get(id);
     }
 
@@ -210,6 +183,5 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
-
     }
 }
