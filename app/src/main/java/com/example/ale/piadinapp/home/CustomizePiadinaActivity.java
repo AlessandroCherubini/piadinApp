@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +39,12 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     IngredientsAdapter adapter;
     CategorieIngredientiAdapter categorieAdapter;
     DBHelper helper;
+    String nomePiadina;
+    String formatoPiadina;
+    String impastoPiadina;
+    static int quantitaPiadina;
+    static int ratingPiadina;
     ArrayList<Ingrediente> ingredientiPiadina;
-    ArrayList<Ingrediente> listaIngredienti= new ArrayList<Ingrediente>();
     RecyclerView recyclerView;
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
@@ -64,9 +69,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
-
-
         Intent intent = getIntent();
+        TextView name = findViewById(R.id.nome_piadina);
 
         if (intent.getExtras().get("indexPiadina")!= null){
 
@@ -82,7 +86,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
-            chosenPiadina = cartItem.cartItemToPiadina(cartItem);
+            chosenPiadina = cartItem.cartItemToPiadina();
+            // Set dei radio button per Formato e Impasto
+            setRadioButtons(chosenPiadina);
+
             Button editButton = findViewById(R.id.addKart);
             editButton.setText("Conferma Modifica");
             editButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_edit_black_24dp, 0, 0, 0);
@@ -93,6 +100,12 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // Attributi variabili della piadina selezionata
+        nomePiadina = chosenPiadina.getNome();
+        formatoPiadina = chosenPiadina.getFormato();
+        impastoPiadina = chosenPiadina.getImpasto();
+        quantitaPiadina = chosenPiadina.getQuantita();
+        ratingPiadina = chosenPiadina.getRating();
         totaleImpastoEFormato = chosenPiadina.getPrice();
         totalePiadina = totaleImpastoEFormato;
 
@@ -215,8 +228,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Vuoi rimuovere " + adapter.getItem(position).getName() + " ?").setPositiveButton("Sì", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
+                builder.setTitle("Elimina");
+                builder.setMessage("Vuoi rimuovere " + adapter.getItem(position).getName() + " ?").setPositiveButton("Sì, Elimina", dialogClickListener)
+                        .setNegativeButton("Annulla", dialogClickListener).show();
 
                 break;
 
@@ -229,16 +243,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     public void onRadioButtonClicked(View v) {
 
-        helper = new DBHelper(this);
-        Intent intent = getIntent();
-        int position = intent.getIntExtra("indexPiadina",0);
-        chosenPiadina = helper.getPiadinaByPosition((long)position + 1);
         double prezzoPiadinaBase = chosenPiadina.getPrice();
-
-
         TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
-        //String prezzoCorrente = removeLastChar(prezzoPiadina.getText().toString());
-
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
@@ -259,6 +265,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
+            formatoPiadina = "Piadina";
+            impastoPiadina = "Normale";
             totaleImpastoEFormato = prezzoPiadinaBase;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
 
@@ -274,6 +282,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
+            formatoPiadina = "Rotolo";
+            impastoPiadina = "Normale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
             BigDecimal totale = new BigDecimal(totalePiadina);
@@ -288,6 +298,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.NORMAL);
             rb2.setTypeface(null, Typeface.NORMAL);
 
+            formatoPiadina = "Baby";
+            impastoPiadina = "Normale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
             BigDecimal totale = new BigDecimal(totalePiadina);
@@ -303,6 +315,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb4.setTypeface(null, Typeface.NORMAL);
             rb2.setTypeface(null, Typeface.NORMAL);
 
+            formatoPiadina = "Piadina";
+            impastoPiadina = "Integrale";
             totaleImpastoEFormato = prezzoPiadinaBase + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
             BigDecimal totale = new BigDecimal(totalePiadina);
@@ -318,6 +332,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb4.setTypeface(null, Typeface.NORMAL);
             rb3.setTypeface(null, Typeface.NORMAL);
 
+            formatoPiadina = "Rotolo";
+            impastoPiadina = "Integrale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
             BigDecimal totale = new BigDecimal(totalePiadina);
@@ -330,10 +346,11 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             rb5.setTypeface(null, Typeface.BOLD_ITALIC);
 
             rb1.setTypeface(null, Typeface.NORMAL);
-
             rb2.setTypeface(null, Typeface.NORMAL);
             rb4.setTypeface(null, Typeface.NORMAL);
 
+            formatoPiadina = "Baby";
+            impastoPiadina = "Integrale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY + IMPASTO_INTEGRALE;
             totalePiadina = totaleImpastoEFormato + totaleIngredienti;
 
@@ -341,53 +358,14 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
         }
 
-
     }
 
     private void aggiungiAlCarrello(){
-
-        //cs.persistData(getApplicationContext(),true);
-
-        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
-        RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
-        RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
-        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
-        RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
-
-        String impasto;
-        String formato;
-        ArrayList<Ingrediente> ingredienti;
-        double prezzo;
-        if (rb1.isChecked()) { formato = "Piadina";}
-        else if (rb2.isChecked()){formato="Rotolo";}
-        else if(rb3.isChecked()){formato= "Baby";}
-        else {formato = null;}
-
-        if (rb4.isChecked()){impasto= "Normale";}
-        else if (rb5.isChecked()){impasto = "Integrale";}
-        else {impasto=null;}
-
-        final TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
-        prezzo = Double.parseDouble(removeLastChar(prezzoPiadina.getText().toString()));
-
-        int i;
-
-        for(i=0; i<adapter.getItemCount();i++){
-
-            listaIngredienti.add(adapter.getItem(i));
-        }
-
-
-        String ingredients = listaIngredienti.toString();
-        TextView name = (TextView) findViewById(R.id.nome_piadina);
-        String nome = name.getText().toString();
-
         data = cs.ViewAll(getApplicationContext());
-
         String id;
-        if (data==null || data.size()==0)
-        {
-            id = "Piadina "+1;
+
+        if (data == null || data.size() == 0) {
+            id = "Piadina " + 1;
         }
         else {
             int k = 0;
@@ -395,38 +373,22 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                 k++;
             }
 
-            int numero = k+1;
-            id = "Piadina "+numero;
+            int numero = k + 1;
+            id = "Piadina " + numero;
         }
 
-
-        cs.add(id,"nome",nome);
-        cs.add(id, "formato", formato);
-        cs.add(id,"impasto",impasto);
-        cs.add(id,"prezzo",prezzo);
-        cs.add(id,"ingredienti", ingredients);
-        cs.add(id,"identifier",id);
+        cs.add(id,"nome", nomePiadina);
+        cs.add(id, "formato", formatoPiadina);
+        cs.add(id,"impasto", impastoPiadina);
+        cs.add(id,"prezzo", totalePiadina);
+        cs.add(id,"ingredienti", ingredientiPiadina.toString());
+        cs.add(id, "quantita", quantitaPiadina);
+        cs.add(id, "rating", ratingPiadina);
+        cs.add(id,"identifier", id);
         cs.commit(getApplicationContext());
-
-
     }
-
-    private static String removeLastChar(String str) {
-
-        return str.substring(0, str.length() - 1);
-    }
-
 
     public void onFragmentInteraction(Uri uri){}
-
-    public Context getmContext() {
-        return mContext;
-    }
-
-    public void setmContext(Context mContext) {
-        this.mContext = mContext;
-    }
-
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -454,6 +416,40 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
     }
 
+    private void setRadioButtons(Piadina piadina){
+        String formato = piadina.getFormato();
+        String impasto = piadina.getImpasto();
+
+        RadioGroup radioFormato = findViewById(R.id.rg1);
+        RadioGroup radioImpasto = findViewById(R.id.rg2);
+
+        switch (formato){
+            case "Piadina":
+                radioFormato.check(R.id.rb_normale);
+                break;
+            case "Rotolo":
+                radioFormato.check(R.id.rb_rotolo);
+                break;
+            case "Baby":
+                radioFormato.check(R.id.rb_baby);
+                break;
+            default:
+                radioFormato.check(R.id.rb_normale);
+                break;
+        }
+
+        switch (impasto){
+            case "Normale":
+                radioImpasto.check(R.id.rb_impasto_normale);
+                break;
+            case "Integrale":
+                radioImpasto.check(R.id.rb_integrale);
+                break;
+            default :
+                radioImpasto.check(R.id.rb_impasto_normale);
+                break;
+        }
+    }
     // Funzione utilizzata per stampare gli ingredienti da ArrayList a String per i log.
 /*    private String printIngredienti(ArrayList<Ingrediente> ingredienti){
         String ingredientiStringa="";

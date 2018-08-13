@@ -1,5 +1,6 @@
 package com.example.ale.piadinapp.home;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.utility.DBHelper;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
@@ -35,12 +37,17 @@ public class CartActivity extends AppCompatActivity{
     ArrayList<Ingrediente> ingredienti = new ArrayList<Ingrediente>();
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
+    DBHelper helper;
     TextView tvTot;
+    Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+        mContext = this;
+        helper = new DBHelper(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -64,29 +71,33 @@ public class CartActivity extends AppCompatActivity{
         } else {
             int k = 0;
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+                Map map = entry.getValue();
 
                 int numero = k + 1;
                 id = "Piadina " + numero;
-                String formato = cs.getString(id, "formato", getApplicationContext());
-                String impasto = cs.getString(id, "impasto", getApplicationContext());
-                String ingredients = cs.getString(id, "ingredienti", getApplicationContext());
-                Double prezzo= cs.getDouble(id, "prezzo", getApplicationContext());
-                String nome = cs.getString(id, "nome", getApplicationContext());
-                String identifier =cs.getString(id,"identifier",getApplicationContext());
+                String nome = cs.getString(id, "nome", mContext);
+                String formato = cs.getString(id, "formato", mContext);
+                String impasto = cs.getString(id, "impasto", mContext);
+                String ingredients = cs.getString(id, "ingredienti", mContext);
+                Double prezzo = cs.getDouble(id, "prezzo", mContext);
+                Integer quantita = Integer.parseInt((String) map.get("quantita"));
+                Integer rating = Integer.parseInt((String) map.get("rating"));
+                String identifier = cs.getString(id,"identifier",mContext);
 
                 //ricostruisco gli ingredienti e l'stanza della classe CartItem
 
                 String strippedIngredients = ingredients.replaceAll("\\[", "").replaceAll("\\]", "");
-                List<String> ings = Arrays.asList(strippedIngredients.split(","));
+                List<String> ings = Arrays.asList(strippedIngredients.split(", "));
 
                 ingredienti = new ArrayList<>();
                 ingredienti.clear();
 
                 for (String ing : ings) {
-                    ingredienti.add(new Ingrediente(ing));
+                    Ingrediente ingrediente = helper.getIngredienteByName(ing);
+                    ingredienti.add(ingrediente);
                 }
 
-                CartItem item = new CartItem(nome, formato, impasto, prezzo, ingredienti,identifier);
+                CartItem item = new CartItem(nome, formato, impasto, prezzo, quantita, rating, ingredienti, identifier);
                 Items.add(item);
 
                 k++;
@@ -104,7 +115,7 @@ public class CartActivity extends AppCompatActivity{
                         Intent intent = new Intent(getApplicationContext(),CustomizePiadinaActivity.class);
                         Gson gson = new Gson();
                         String modificaPiadinaAsAString = gson.toJson(adapter.getItem(position));
-                        intent.putExtra("modificaPiadina",modificaPiadinaAsAString);
+                        intent.putExtra("modificaPiadina", modificaPiadinaAsAString);
                         startActivity(intent);
                         break;
                     case R.id.remButton:
@@ -131,8 +142,9 @@ public class CartActivity extends AppCompatActivity{
                         };
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
-                        builder.setMessage("Sei sicuro di volerlo eliminare?").setPositiveButton("Sì", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener).show();
+                        builder.setTitle("Elimina");
+                        builder.setMessage("Vuoi davvero rimuovere questo elemento dal carrello?").setPositiveButton("Sì, Elimina", dialogClickListener)
+                                .setNegativeButton("Annulla", dialogClickListener).show();
 
                         break;
                 }

@@ -101,10 +101,15 @@ public class SplashActivity extends AppCompatActivity{
                                     String nomePiadina = piadina.getString("nome");
                                     String descrizionePiadina = piadina.getString("descrizione");
                                     Double prezzoPiadina = piadina.getDouble("prezzo");
+                                    String formatoPiadina = piadina.getString("formato");
+                                    String impastoPiadina = piadina.getString("impasto");
+                                    int quantitaPiadina = piadina.getInt("quantita");
+                                    int ratingPiadina = piadina.getInt("rating");
 
                                     ArrayList<Ingrediente> ingredientiPiadina = helper.getIngredientiFromString(descrizionePiadina);
 
-                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, ingredientiPiadina, prezzoPiadina, serverTimeStamp);
+                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, ingredientiPiadina, prezzoPiadina,
+                                            formatoPiadina, impastoPiadina, quantitaPiadina, ratingPiadina, serverTimeStamp);
                                     helper.insertPiadina(piadinaInterna);
                                 }
                                 Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");

@@ -5,18 +5,20 @@ import java.util.ArrayList;
 public class Ordine {
 
     private long idOrdine;
+    private String emailUtente;
     private long timestampOrdine;
+    private double prezzoOrdine;
     private ArrayList<Piadina> cartItems;
     private String notaOrdine;
-    private double prezzoOrdine;
     private long lastUpdated;
 
-    public void Ordine(long idOrdine, long timestampData, ArrayList<Piadina> piadineOrdinate, String notaOrdine, double prezzoOrdine, long lastUpdated){
+    public void Ordine(long idOrdine, String emailUtente, long timestampData, double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
         this.idOrdine = idOrdine;
+        this.emailUtente = emailUtente;
+        this.prezzoOrdine = prezzoOrdine;
         this.timestampOrdine = timestampData;
         this.cartItems = piadineOrdinate;
         this.notaOrdine = notaOrdine;
-        this.prezzoOrdine = prezzoOrdine;
         this.lastUpdated = lastUpdated;
     }
 
@@ -28,6 +30,13 @@ public class Ordine {
         this.idOrdine = idOrdine;
     }
 
+    public String getEmailUtente() {
+        return emailUtente;
+    }
+
+    public void setEmailUtente(String emailUtente) {
+        this.emailUtente = emailUtente;
+    }
 
     public long getTimestampOrdine() {
         return timestampOrdine;
@@ -69,4 +78,23 @@ public class Ordine {
         this.lastUpdated = lastUpdated;
     }
 
+
+    public String printPiadine(){
+        String piadineOrdine ="";
+        String separatorePiadine =" - ";
+        String separatoreAttributi ="; ";
+
+        for(Piadina piadina:cartItems){
+            String stampaIngredienti = piadina.printIngredienti();
+
+            String piadinaOrdine = "[" + piadina.getNome() + separatoreAttributi +
+                    piadina.getFormato() + separatoreAttributi +
+                    piadina.getImpasto() + separatoreAttributi +
+                    stampaIngredienti + separatoreAttributi +
+                    piadina.getPrice() + "]";
+
+            piadineOrdine = piadinaOrdine + piadinaOrdine;
+        }
+        return piadineOrdine;
+    }
 }

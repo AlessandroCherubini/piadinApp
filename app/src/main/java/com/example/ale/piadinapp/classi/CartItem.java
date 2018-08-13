@@ -9,28 +9,42 @@ public class CartItem {
     private String impasto;
     private ArrayList<Ingrediente> ingredienti;
     private double prezzo;
+    private int quantita;
+    private int rating;
     private String identifier;
 
-    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti ) {
+    public CartItem(String nome, String formato, String impasto, double prezzo, int quantita, ArrayList<Ingrediente> ingredienti ) {
         this.nome = nome;
         this.formato=formato;
         this.impasto=impasto;
         this.prezzo=prezzo;
+        this.quantita = quantita;
         this.ingredienti=ingredienti;
     }
 
-    public CartItem(String nome, String formato, String impasto, double prezzo, ArrayList<Ingrediente> ingredienti, String identifier ) {
+    public CartItem(String nome, String formato, String impasto, double prezzo, int quantita, int rating, ArrayList<Ingrediente> ingredienti, String identifier ) {
         this.nome = nome;
         this.formato=formato;
         this.impasto=impasto;
         this.prezzo=prezzo;
+        this.quantita = quantita;
+        this.rating = rating;
         this.ingredienti=ingredienti;
         this.identifier=identifier;
     }
 
-    public Piadina  cartItemToPiadina(CartItem item) {
+    public Piadina cartItemToPiadina() {
 
-        Piadina piadina = new Piadina(nome,ingredienti,prezzo);
+        String nomePiadina = nome;
+        String formatoPiadina = formato;
+        String impastoPiadina = impasto;
+        double prezzoPiadina = prezzo;
+        ArrayList<Ingrediente> ingredientiPiadina = ingredienti;
+        int quantitaPiadina = quantita;
+        int ratingPiadina = rating;
+
+        Piadina piadina = new Piadina(nomePiadina, formatoPiadina, impastoPiadina,ingredientiPiadina,
+                prezzoPiadina, quantitaPiadina, ratingPiadina);
 
         return piadina;
     }
@@ -71,6 +85,22 @@ public class CartItem {
 
     public ArrayList<Ingrediente> getIngredienti() {
         return ingredienti;
+    }
+
+    public int getQuantita() {
+        return quantita;
+    }
+
+    public void setQuantita(int quantita) {
+        this.quantita = quantita;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public String getIdentifier() {

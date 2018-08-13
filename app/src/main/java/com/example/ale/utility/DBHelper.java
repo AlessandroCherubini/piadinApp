@@ -1,5 +1,6 @@
 package com.example.ale.utility;
 import com.example.ale.piadinapp.classi.Ingrediente;
+import com.example.ale.piadinapp.classi.Ordine;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.classi.User;
@@ -34,6 +35,10 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_PIADINE_NAME = "nome";
     public static final String COLUMN_PIADINE_INGREDIENTI = "ingredienti";
     public static final String COLUMN_PIADINE_PREZZO = "prezzo";
+    public static final String COLUMN_PIADINE_FORMATO = "formato";
+    public static final String COLUMN_PIADINE_IMPASTO = "impasto";
+    public static final String COLUMN_PIADINE_QUANTITA = "quantita";
+    public static final String COLUMN_PIADINE_RATING = "rating";
     public static final String COLUMN_PIADINE_TIMESTAMP = "updated_at";
 
     // tabella: ingredienti
@@ -58,6 +63,16 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final int COLUMN_TIMBRI_NUMERO_TIMBRI_INDEX   = 2;
     public static final int COLUMN_TIMBRI_OMAGGI_RICEVUTI_INDEX = 3;
 
+    //tabella: ordini
+    public static final String TABLE_ORDINI_NAME = "ordini";
+    public static final String COLUMN_ORDINI_ID = "id_ordine";
+    public static final String COLUMN_ORDINI_EMAIL = "email_utente";
+    public static final String COLUMN_ORDINI_DATA = "data_ordine";
+    public static final String COLUMN_ORDINI_DESCRIZIONE = "descrizione";
+    public static final String COLUMN_ORDINI_PREZZO = "prezzo";
+    public static final String COLUMN_ORDINI_NOTA = "nota";
+    public static final String COLUMN_ORDINI_TIMESTAMP = "updated_at";
+
     // costruttore.
     public DBHelper(Context context) {
 
@@ -81,7 +96,11 @@ public class DBHelper extends SQLiteOpenHelper{
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PIADINE_NAME +
                 " VARCHAR, " +COLUMN_PIADINE_INGREDIENTI+
                 " TEXT, " + COLUMN_PIADINE_PREZZO +
-                " DOUBLE, " + COLUMN_PIADINE_TIMESTAMP + " LONG);";
+                " DOUBLE, " + COLUMN_PIADINE_FORMATO +
+                " VARCHAR, " + COLUMN_PIADINE_IMPASTO +
+                " VARCHAR, " + COLUMN_PIADINE_QUANTITA +
+                " INTEGER, " + COLUMN_PIADINE_RATING +
+                " INTEGER, " + COLUMN_PIADINE_TIMESTAMP + " LONG);";
 
         String query_ingredienti = "CREATE TABLE " + TABLE_INGREDIENTI_NAME
                 + "(" + COLUMN_INGREDIENTI_ID +
@@ -92,13 +111,20 @@ public class DBHelper extends SQLiteOpenHelper{
                 " VARCHAR, " + COLUMN_INGREDIENTI_TIMESTAMP + " LONG);";
 
         String query_timbri = "CREATE TABLE " + TABLE_TIMBRI_NAME
-                + "("
-                + COLUMN_TIMBRI_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_TIMBRI_EMAIL + " TEXT, "
-                + COLUMN_TIMBRI_NUMERO_TIMBRI + " INTEGER, "
-                + COLUMN_TIMBRI_OMAGGI_RICEVUTI + " INTEGER, "
-                + COLUMN_TIMBRI_TIMESTAMP + " LONG);";
+                + "(" + COLUMN_TIMBRI_ID +
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_TIMBRI_EMAIL +
+                " TEXT, " + COLUMN_TIMBRI_NUMERO_TIMBRI +
+                " INTEGER, " + COLUMN_TIMBRI_OMAGGI_RICEVUTI +
+                " INTEGER, " + COLUMN_TIMBRI_TIMESTAMP + " LONG);";
 
+        String query_ordini = "CREATE TABLE " + TABLE_ORDINI_NAME
+                + "(" + COLUMN_ORDINI_ID +
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDINI_EMAIL +
+                " VARCHAR, " + COLUMN_ORDINI_DATA +
+                " LONG, " + COLUMN_ORDINI_PREZZO +
+                " DOUBLE, " + COLUMN_ORDINI_DESCRIZIONE +
+                " VARCHAR, " + COLUMN_ORDINI_NOTA +
+                " VARCHAR, " + COLUMN_ORDINI_TIMESTAMP + " LONG);";
 
         // creazione tabella: users
         sqLiteDatabase.execSQL(query_logins);
@@ -108,6 +134,8 @@ public class DBHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(query_ingredienti);
         //Crezione tabella: timbri
         sqLiteDatabase.execSQL(query_timbri);
+        // Creazione tabella: ordini
+        sqLiteDatabase.execSQL(query_ordini);
 
     }
 
@@ -235,10 +263,15 @@ public class DBHelper extends SQLiteOpenHelper{
                 String nomePiadina = cursorPiadine.getString(1);
                 String ingredientiPiadina = cursorPiadine.getString(2);
                 double prezzoPiadina = cursorPiadine.getDouble(3);
-                long lastUpdatePiadina = cursorPiadine.getLong(4);
+                String formatoPiadina = cursorPiadine.getString(4);
+                String impastoPiadina = cursorPiadine.getString(5);
+                int quantitaPiadina = cursorPiadine.getInt(6);
+                int ratingPiadina = cursorPiadine.getInt(7);
+                long lastUpdatePiadina = cursorPiadine.getLong(8);
 
                 ArrayList<Ingrediente> ingredienti = getIngredientiFromString(ingredientiPiadina);
-                Piadina piadina = new Piadina(idPiadina, nomePiadina, ingredienti, prezzoPiadina, lastUpdatePiadina);
+                Piadina piadina = new Piadina(idPiadina, nomePiadina, ingredienti, prezzoPiadina,
+                        formatoPiadina, impastoPiadina, quantitaPiadina, ratingPiadina, lastUpdatePiadina);
 
                 piadine.add(piadina);
             } while (cursorPiadine.moveToNext());
@@ -248,8 +281,11 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public Piadina getPiadinaByPosition (long position) {
         ArrayList<Ingrediente> ingredienti = new ArrayList<>();
-        String query = "Select nome, ingredienti, prezzo, updated_at from piadine where id_piadine='"+position+"'";
-        Piadina myPiadina= new Piadina(position, "",null,0,0);
+
+        String query = "Select nome, ingredienti, prezzo, formato, impasto, quantita, rating, updated_at from piadine where id_piadine='"+position+"'";
+
+        Piadina myPiadina= new Piadina(position, "", null, 0, "", "", 0, 0, 0);
+
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()){
@@ -259,7 +295,11 @@ public class DBHelper extends SQLiteOpenHelper{
                 ingredienti = getIngredientiFromString(descrizione);
                 myPiadina.setIngredienti(ingredienti);
                 myPiadina.setPrice(cursor.getDouble(2));
-                myPiadina.setLastUpdated(cursor.getLong(3));
+                myPiadina.setFormato(cursor.getString(3));
+                myPiadina.setImpasto(cursor.getString(4));
+                myPiadina.setQuantita(cursor.getInt(5));
+                myPiadina.setRating(cursor.getInt(6));
+                myPiadina.setLastUpdated(cursor.getLong(7));
             } while (cursor.moveToNext());
         }
         return myPiadina;
@@ -274,6 +314,10 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put(COLUMN_PIADINE_NAME, piadina.getNome());
         values.put(COLUMN_PIADINE_INGREDIENTI, piadinaIngredienti);
         values.put(COLUMN_PIADINE_PREZZO, piadina.getPrice());
+        values.put(COLUMN_PIADINE_FORMATO, piadina.getFormato());
+        values.put(COLUMN_PIADINE_IMPASTO, piadina.getImpasto());
+        values.put(COLUMN_PIADINE_QUANTITA, piadina.getQuantita());
+        values.put(COLUMN_PIADINE_RATING, piadina.getRating());
         values.put(COLUMN_PIADINE_TIMESTAMP, piadina.getLastUpdated());
 
         try {
@@ -295,7 +339,7 @@ public class DBHelper extends SQLiteOpenHelper{
         Cursor cursorPiadine = db.rawQuery(sql, null);
 
         if(cursorPiadine.moveToFirst()){
-            timeStamp = cursorPiadine.getLong(4);
+            timeStamp = cursorPiadine.getLong(8);
         }
 
         return timeStamp;
@@ -563,6 +607,35 @@ public class DBHelper extends SQLiteOpenHelper{
         return myTimbro;
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //**** TABELLA INGREDIENTI**************************************************
+    public void insertOrdine (Ordine ordine) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String piadineOrdine = ordine.printPiadine();
+
+        values.put(COLUMN_ORDINI_EMAIL, ordine.getEmailUtente());
+        values.put(COLUMN_ORDINI_DATA, ordine.getTimestampOrdine());
+        values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
+        values.put(COLUMN_ORDINI_DESCRIZIONE, piadineOrdine);
+        values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
+        values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getLastUpdated());
+
+        try {
+            long id = database.insert(TABLE_ORDINI_NAME, null, values);
+            ordine.setIdOrdine(id);
+            //Log.d("DB/INSERT", "Ordine aggiunto al db interno!");
+        }catch(Exception e){
+            Log.d("DB/INSERT", e.toString());
+        }
+
+        database.close();
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //**** PRINT FUNCTIONS **************************************************
     public void printTimbriTable()
     {
         SQLiteDatabase db = this.getReadableDatabase();
