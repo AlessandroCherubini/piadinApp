@@ -305,6 +305,26 @@ public class DBHelper extends SQLiteOpenHelper{
         return myPiadina;
     }
 
+    public Piadina getPiadinaByName (String name)
+    {
+        ArrayList<Ingrediente> ingredienti = new ArrayList<>();
+        String query = "Select nome, ingredienti, prezzo, updated_at from piadine where nome='"+name+"'";
+        Piadina myPiadina= new Piadina(name,null,0);
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(query, null);
+        if (cursor.moveToFirst()){
+            do {
+                myPiadina.setNome(cursor.getString(0));
+                String descrizione = cursor.getString(1);
+                ingredienti = getIngredientiFromString(descrizione);
+                myPiadina.setIngredienti(ingredienti);
+                myPiadina.setPrice(cursor.getDouble(2));
+                myPiadina.setLastUpdated(cursor.getLong(3));
+            } while (cursor.moveToNext());
+        }
+        return myPiadina;
+    }
+
     public void insertPiadina (Piadina piadina)
     {
         SQLiteDatabase database = this.getWritableDatabase();

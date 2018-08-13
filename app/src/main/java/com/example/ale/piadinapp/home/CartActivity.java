@@ -1,9 +1,27 @@
 package com.example.ale.piadinapp.home;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.media.Image;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,21 +34,50 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpResponse;
 import com.carteasy.v1.lib.Carteasy;
+import com.example.ale.piadinapp.MainActivity;
+import com.example.ale.piadinapp.MyOrderActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
-import com.example.ale.utility.DBHelper;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.classi.ServiceNotification;
+import com.example.ale.utility.CustomRequest;
+import com.example.ale.utility.VolleyCallback;
+import com.example.ale.utility.VolleySingleton;
 import com.google.gson.Gson;
 
-import java.math.BigDecimal;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class CartActivity extends AppCompatActivity{
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class CartActivity extends AppCompatActivity implements LocationListener{
 
     CartItemAdapter adapter;
     ArrayList<CartItem> Items = new ArrayList<CartItem>();
@@ -40,6 +87,16 @@ public class CartActivity extends AppCompatActivity{
     DBHelper helper;
     TextView tvTot;
     Context mContext;
+    VolleyCallback durataCallBack;
+    private static Context context;
+
+
+    public boolean checkLocationPermission()
+    {
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = this.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +112,11 @@ public class CartActivity extends AppCompatActivity{
         tvTot = findViewById(R.id.tv_total);
         Button clearCart = findViewById((R.id.clear_cart));
 
+        context=getApplicationContext();
+
+
         data = cs.ViewAll(getApplicationContext());
+        createNotificationChannel();
 
         clearCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +125,9 @@ public class CartActivity extends AppCompatActivity{
                 recreate();
             }
         });
+
+        cs.persistData(getApplicationContext(),true);
+        // ricevo l'elemento inserito nel carrello
 
         String id;
         if (data == null || data.size()==0) {
@@ -103,6 +167,7 @@ public class CartActivity extends AppCompatActivity{
                 k++;
 
             }
+
         }
 
         final RecyclerView rv = findViewById(R.id.cart_item);
@@ -158,6 +223,58 @@ public class CartActivity extends AppCompatActivity{
         DividerItemDecoration itemDecorator = new DividerItemDecoration(CartActivity.this, DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(ContextCompat.getDrawable(CartActivity.this, R.drawable.piadina_divider));
         rv.addItemDecoration(itemDecorator);
+
+        Button notify = (Button) findViewById(R.id.effettua_ordine);
+        notify.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(final View v) {
+
+            }
+
+        });
+
+        Button startService = (Button) findViewById(R.id.start_service);
+        startService.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(final View v) {
+
+                String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
+                if (EasyPermissions.hasPermissions(getApplicationContext(), perms)) { }
+                else
+                {
+                    EasyPermissions.requestPermissions(getParent(), "Richiesta permesso accesso posizione",1, perms);
+                }
+
+                Log.d("PERMESSI",""+checkLocationPermission());
+
+                startService(v);
+
+            }
+
+        });
+
+        final Button stopService = (Button) findViewById(R.id.stop_service);
+        stopService.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(final View v) {
+
+                stopNotificationService();
+
+            }
+
+        });
+
+    }
+
+    public void stopNotificationService(){
+
+        Intent intent = new Intent(CartActivity.getAppContext(), ServiceNotification.class);
+        PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        stopService(intent);
+        pintent.cancel();
+        alarm.cancel(pintent);
+        stopService(new Intent(getApplicationContext(),ServiceNotification.class));
     }
 
     public void setTotale(){
@@ -184,6 +301,69 @@ public class CartActivity extends AppCompatActivity{
             Items.clear();
             data = null;
         }
+
+    }
+
+    private void createNotificationChannel(){
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "piadina_channel";
+            String description = "notifiche_paidina";
+            NotificationChannel channel = new NotificationChannel("piadina_channel", name, NotificationCompat.PRIORITY_DEFAULT);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+
+
+    public void startService(View v)
+    {
+        Log.d("START","SERVICE: Start Service");
+        startService(new Intent(this,ServiceNotification.class));
+        Intent notificationIntent = new Intent(this, ServiceNotification.class);
+        PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
+        AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
+        //SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
+    }
+
+    public static Context getAppContext(){
+        return CartActivity.context;
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
 

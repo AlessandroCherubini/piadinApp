@@ -58,6 +58,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     static double totaleImpastoEFormato = 0;
     static double totaleIngredienti = 0;
     public Context mContext;
+    String identificatore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,24 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             //TODO: sistemare problemi
 
+            if (cartItem.getFormato().equalsIgnoreCase("Rotolo")){
+
+                rb2.setChecked(true);
+                rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+
+            }
+            else if(cartItem.getFormato().equalsIgnoreCase("Baby")){
+
+                rb3.setChecked(true);
+                rb3.setTypeface(null, Typeface.BOLD_ITALIC);
+            }
+
+            if (cartItem.getImpasto().equalsIgnoreCase("Integrale")){
+
+                rb5.setChecked(true);
+                rb5.setTypeface(null, Typeface.BOLD_ITALIC);
+            }
+
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -117,12 +136,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         nomePiadina.setTypeface(null, Typeface.BOLD);
 
         // Radio Button
-        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
-        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
-        rb1.setTypeface(null, Typeface.BOLD_ITALIC);
-        rb4.setTypeface(null, Typeface.BOLD_ITALIC);
+        if (rb1.isChecked()){rb1.setTypeface(null, Typeface.BOLD_ITALIC);}
+        if(rb4.isChecked()){rb4.setTypeface(null, Typeface.BOLD_ITALIC);}
 
-        final Button button = findViewById(R.id.addKart);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_SHORT);
@@ -252,9 +269,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
         RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
 
-        //is the current radio button now checked?
-        boolean  checked = ((RadioButton) v).isChecked();
-
         //now check which radio button is selected
         if (rb1.isChecked() && rb4.isChecked()){
 
@@ -367,7 +381,13 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         if (data == null || data.size() == 0) {
             id = "Piadina " + 1;
         }
+        else if ((cs.get(identificatore,"nome",getApplicationContext())) != null && identificatore != null){
+
+            id = identificatore;
+
+        }
         else {
+
             int k = 0;
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
                 k++;
