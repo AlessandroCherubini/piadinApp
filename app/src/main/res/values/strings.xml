@@ -48,6 +48,7 @@
     <string name="logout">Logout</string>
     <string name="dove_siamo">Dove Siamo</string>
 
+    <!-- Pagina di Personalizzazione -->
     <string name="euro">€</string>
     <string name="prefisso_personalizza">Piadina selezionata:</string>
     <string name="personalizza_piadina">Personalizza</string>
@@ -61,17 +62,21 @@
     <string name="ingredienti">Ingredienti:</string>
     <string name="add_ingredienti">Aggiungi Ingredienti:</string>
     <string name="aggiungi_carrello">Aggiungi al carrello</string>
+    <!-- Pagina del Carrello -->
+    <string name="svuota_carrello">Svuota Carrello</string>
+    <string name="effettua_ordine">Effettua Ordine</string>
     <!-- Pagina Il mio Profilo -->
     <string name="change_password">Cambia password</string>
     <string name="username_label">Nome account</string>
     <string name="email_label">Email account</string>
     <string name="phone_label">Cellulare</string>
-    <string name="title_activity_cart">CartActivity</string>
-
+    <string name="title_activity_cart">Riepilogo Ordine</string>
+    <!-- Pagina di Personalizzazione -->
     <string name="form">Formato:\u00A0</string>
     <string name="imp">Impasto:\u00A0</string>
     <string name="ings">Ingredienti:\u00A0</string>
-    <string name="title_activity_shaker">ShakerActivity</string>
+    <!-- Pagina Shaker Piadina -->
+    <string name="title_activity_shaker">Shake Piadina</string>
     <string name="shake_button">"Non sai che piadina scegliere? \n Ci pensiamo noi! \n Premi il pulsante e scuoti lo smartphone!"</string>
     <string name="messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
     <!-- Pagina Tessera -->
@@ -80,7 +85,7 @@
     <string name="omaggi_ricevuti_str">Piadine omaggio guadagnate: 0</string>
     <string name="read_qr_btn_str">Read QR code</string>
     <!-- Pagina QR scanner -->
-    <string name="title_activity_qrreader">QRReaderActivity</string>
+    <string name="title_activity_qrreader">Tessera Personale</string>
     <string name="scan_btn_str">Scan</string>
     <string name="result_str">No result</string>
     <string name="timbri_percentage_str">0%</string>

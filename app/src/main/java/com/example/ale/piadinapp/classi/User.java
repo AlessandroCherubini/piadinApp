@@ -12,7 +12,7 @@ public class User {
         this.nickname = username;
         this.password = password;
         this.email = email;
-        this.phone = email;
+        this.phone = phone;
     }
 
     public String toString(){

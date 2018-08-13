@@ -8,6 +8,7 @@ import android.util.Log;
 import com.example.ale.piadinapp.MainActivity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SessionManager {
     //Private variables
@@ -16,7 +17,7 @@ public class SessionManager {
     private static final String PREFERENCES_NAME = "piadinApp"; //Shared pref filename
 
     //Shared preferences keys
-    private static final String IS_LOGIN  = "IsLoggedIn";
+    private static final String IS_LOGIN  = "loggedInmode";
     public static final String KEY_NAME   = "name"; //User name
     public static final String KEY_EMAIL  = "email"; //Email address
     public static final String KEY_PHONE  = "phone";
@@ -37,24 +38,23 @@ public class SessionManager {
      * @param omaggi Number of free piadine
      * @return  Commit in SharedPref result
      */
-    public static boolean createLoginSession(Context context,String name,String email,String phone,int timbri,int omaggi)
-    {
+    public static boolean createLoginSession(Context context, String name, String email, String phone,int timbri,int omaggi) {
         if(!retrieveSharedPrefs(context,true))
             return false;
 
-        editor = preferences.edit();
+        //editor = preferences.edit();
 
         //Store login value as true
-        editor.putBoolean(IS_LOGIN,true);
+        editor.putBoolean(IS_LOGIN, true);
         //Store name
-        editor.putString(KEY_NAME,name);
+        editor.putString(KEY_NAME, name);
         //Store email
-        editor.putString(KEY_EMAIL,email);
+        editor.putString(KEY_EMAIL, email);
         //Store user phone
-        editor.putString(KEY_PHONE,phone);
+        editor.putString(KEY_PHONE, phone);
         //Store fidelity card infos
-        editor.putInt(KEY_TIMBRI,timbri);
-        editor.putInt(KEY_OMAGGI,omaggi);
+        editor.putInt(KEY_TIMBRI, timbri);
+        editor.putInt(KEY_OMAGGI, omaggi);
 
         //Commit changes
         return editor.commit();
@@ -66,18 +66,17 @@ public class SessionManager {
      * @param context Application context
      * @return HashMap with user data. In Shared pref is null, return null.
      */
-    public static HashMap<String,String> getUserDetails(Context context)
-    {
+    public static HashMap<String,String> getUserDetails(Context context) {
         if(!retrieveSharedPrefs(context,false))
             return null;
 
         HashMap<String,String> userData = new HashMap<>();
         //Username
-        userData.put(KEY_NAME,preferences.getString(KEY_NAME,""));
+        userData.put(KEY_NAME, preferences.getString(KEY_NAME,""));
         //Email
-        userData.put(KEY_EMAIL,preferences.getString(KEY_EMAIL,""));
+        userData.put(KEY_EMAIL, preferences.getString(KEY_EMAIL,""));
         //Phone number
-        userData.put(KEY_PHONE,preferences.getString(KEY_PHONE,""));
+        userData.put(KEY_PHONE, preferences.getString(KEY_PHONE,""));
 
         return userData;
     }
@@ -95,9 +94,9 @@ public class SessionManager {
 
         HashMap<String,Integer> badgeData = new HashMap<>();
         //Timbri
-        badgeData.put(KEY_TIMBRI,preferences.getInt(KEY_TIMBRI,-1));
+        badgeData.put(KEY_TIMBRI, preferences.getInt(KEY_TIMBRI,-1));
         //Omaggi
-        badgeData.put(KEY_OMAGGI,preferences.getInt(KEY_OMAGGI,-1));
+        badgeData.put(KEY_OMAGGI, preferences.getInt(KEY_OMAGGI,-1));
 
         return badgeData;
     }
@@ -214,9 +213,9 @@ public class SessionManager {
      * @param writeMode Write in shared prefs mode
      * @return Open shared pref result
      */
-    private static boolean retrieveSharedPrefs(Context context,boolean writeMode)
-    {
-        preferences = context.getSharedPreferences(PREFERENCES_NAME,Context.MODE_PRIVATE);
+    private static boolean retrieveSharedPrefs(Context context, boolean writeMode) {
+        preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+
         if(preferences == null) {
             Log.d("Shared Pref Error","Failed to load Shared Preferences!");
             return false;
@@ -229,4 +228,11 @@ public class SessionManager {
         return true;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    public static void printSharedPreferences(){
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            Log.d("SHARED_PREFERENCES", entry.getKey() + ": " + entry.getValue().toString());
+        }
+    }
 }

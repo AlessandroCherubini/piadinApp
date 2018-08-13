@@ -70,14 +70,14 @@ public class ServiceNotification extends IntentService implements LocationListen
                 GregorianCalendar now = new GregorianCalendar();
                 Date oraAttuale = now.getTime();
 
-                GregorianCalendar oraRitiro= new GregorianCalendar(2018, Calendar.AUGUST,13,21,20,00);
+                GregorianCalendar oraRitiro= new GregorianCalendar(2018, Calendar.AUGUST,13,13,25,00);
                 Date oraRitiroDate = oraRitiro.getTime();
 
                 long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(oraRitiroDate.getTime() - oraAttuale.getTime());
 
 
                 //TODO IDEARE BENE LE CONDIZIONI DEL METODO
-                if (timeBeforePick-((long)duration+TimeUnit.MINUTES.toSeconds(5))<=0){
+                if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(5)) <= 0){
 
                     sendNotification();
 
@@ -89,9 +89,14 @@ public class ServiceNotification extends IntentService implements LocationListen
         };
 
         Location location = getLocation();
-        final double latitude =location.getLatitude();
-        final double longitude =location.getLongitude();
-        travelTimeRequest(latitude,longitude);
+        if(location != null){
+            final double latitude = location.getLatitude();
+            final double longitude = location.getLongitude();
+            travelTimeRequest(latitude,longitude);
+        }
+        else{
+            Toast.makeText(CartActivity.getAppContext(), "Localizzazione spenta.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -132,10 +137,10 @@ public class ServiceNotification extends IntentService implements LocationListen
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, "channel_piadina");
         notification.setSmallIcon(R.mipmap.ic_launcher_round);
         notification.setContentTitle("Ritira l'ordine!");
-        notification.setContentText("Se vuoi ritirare lordine in orario devi partire a breve");
+        notification.setContentText("Devi partire a brevissimo per arrivare in tempo!");
         notification.setAutoCancel(true);
         notification.setContentIntent(orderIntent);
-        notification.addAction(R.drawable.ic_map_black_24dp, "Naviga", navigatePendingIntent).setAutoCancel(true);
+        notification.addAction(R.drawable.ic_navigation_black_24dp, "Naviga", navigatePendingIntent).setAutoCancel(true);
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
 
@@ -181,7 +186,6 @@ public class ServiceNotification extends IntentService implements LocationListen
                 finalLoc = gps_loc;
 
         } else {
-
             if (gps_loc != null) {
                 finalLoc = gps_loc;
             } else if (net_loc != null) {
@@ -192,7 +196,6 @@ public class ServiceNotification extends IntentService implements LocationListen
     }
 
     public void travelTimeRequest(double latitude, double longitude){
-
 
         String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+latitude+","+longitude+"&destinations=GianGusto+Piadineria,+Via+dei+Pioppi,+18,+25080+Molinetto+BS/@45.496155,10.3505613,17z&key=AIzaSyADSK-zR8PLVu3ZhD1UOI6S6dcB-BSKjnQ";
 
