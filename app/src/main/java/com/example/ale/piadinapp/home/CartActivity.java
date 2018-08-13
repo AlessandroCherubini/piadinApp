@@ -242,7 +242,29 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         });
 
+        final Button stopService = (Button) findViewById(R.id.stop_service);
+        stopService.setOnClickListener(new View.OnClickListener() {
 
+            public void onClick(final View v) {
+
+                stopNotificationService();
+
+            }
+
+        });
+
+
+    }
+
+    public void stopNotificationService(){
+
+        Intent intent = new Intent(CartActivity.getAppContext(), ServiceNotification.class);
+        PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        stopService(intent);
+        pintent.cancel();
+        alarm.cancel(pintent);
+        stopService(new Intent(getApplicationContext(),ServiceNotification.class));
     }
 
     public void setTotale(){

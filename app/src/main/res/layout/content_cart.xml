@@ -57,10 +57,17 @@
             android:id="@+id/start_service"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/cart_item"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="-90dp"
+            android:layout_alignBaseline="@+id/textView3"
+            android:layout_toStartOf="@+id/effettua_ordine"
             android:text="Start Service" />
+
+        <Button
+            android:id="@+id/stop_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView3"
+            android:layout_alignEnd="@+id/effettua_ordine"
+            android:text="STOP SERVICE" />
 
     </RelativeLayout>
 
