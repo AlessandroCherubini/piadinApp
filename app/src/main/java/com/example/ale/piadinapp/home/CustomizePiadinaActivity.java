@@ -94,6 +94,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     static double totaleImpastoEFormato = 0;
     static double totaleIngredienti = 0;
     public Context mContext;
+    String identificatore;
+
+
 
 
 
@@ -108,9 +111,16 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
 
-
         Intent intent = getIntent();
 
+        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
+        RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
+        RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
+        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
+        RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
+
+
+        Button button = findViewById(R.id.addKart);
         if (intent.getExtras().get("indexPiadina")!=null){
 
             int position = intent.getIntExtra("indexPiadina",0);
@@ -126,8 +136,27 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
             chosenPiadina = cartItem.cartItemToPiadina(cartItem);
+            button.setText("Effettua Modifica");
 
-            //TODO: sistemare problemi
+            identificatore = cartItem.getIdentifier();
+
+            if (cartItem.getFormato().equalsIgnoreCase("Rotolo")){
+
+                rb2.setChecked(true);
+                rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+
+            }
+            else if(cartItem.getFormato().equalsIgnoreCase("Baby")){
+
+                rb3.setChecked(true);
+                rb3.setTypeface(null, Typeface.BOLD_ITALIC);
+            }
+
+            if (cartItem.getImpasto().equalsIgnoreCase("Integrale")){
+
+                rb5.setChecked(true);
+                rb5.setTypeface(null, Typeface.BOLD_ITALIC);
+            }
 
         }
 
@@ -144,12 +173,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         nomePiadina.setTypeface(null, Typeface.BOLD);
 
         // Radio Button
-        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
-        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
-        rb1.setTypeface(null, Typeface.BOLD_ITALIC);
-        rb4.setTypeface(null, Typeface.BOLD_ITALIC);
+        if (rb1.isChecked()){rb1.setTypeface(null, Typeface.BOLD_ITALIC);}
+        if(rb4.isChecked()){rb4.setTypeface(null, Typeface.BOLD_ITALIC);}
 
-        final Button button = findViewById(R.id.addKart);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_LONG);
@@ -271,14 +298,13 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public void onRadioButtonClicked(View v) {
 
         helper = new DBHelper(this);
-        Intent intent = getIntent();
-        int position = intent.getIntExtra("indexPiadina",0);
-        chosenPiadina = helper.getPiadinaByPosition((long)position + 1);
-        double prezzoPiadinaBase = chosenPiadina.getPrice();
+        double prezzoPiadinaBase = helper.getPiadinaByName(chosenPiadina.getNome()).getPrice();
+
 
 
         TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
         //String prezzoCorrente = removeLastChar(prezzoPiadina.getText().toString());
+
 
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
@@ -286,9 +312,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
         RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
         RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
-
-        //is the current radio button now checked?
-        boolean  checked = ((RadioButton) v).isChecked();
 
         //now check which radio button is selected
         if (rb1.isChecked() && rb4.isChecked()){
@@ -380,7 +403,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
     private void aggiungiAlCarrello(){
 
-        //cs.persistData(getApplicationContext(),true);
+        cs.persistData(getApplicationContext(),true);
 
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
@@ -423,7 +446,13 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         {
             id = "Piadina "+1;
         }
+        else if ((cs.get(identificatore,"nome",getApplicationContext())) != null && identificatore != null){
+
+            id = identificatore;
+
+        }
         else {
+
             int k = 0;
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
                 k++;

@@ -53,6 +53,15 @@
             android:layout_alignParentEnd="true"
             android:text="Totale:" />
 
+        <Button
+            android:id="@+id/start_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/cart_item"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="-90dp"
+            android:text="Start Service" />
+
     </RelativeLayout>
 
 

@@ -131,6 +131,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ale.piadinapp.HomeActivity" />
         </activity>
+
+        <service android:name=".classi.ServiceNotification"/>
+        
     </application>
 
 </manifest>
