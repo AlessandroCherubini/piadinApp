@@ -1,20 +1,23 @@
 package com.example.ale.piadinapp.classi;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class Ordine {
 
     private long idOrdine;
     private String emailUtente;
-    private long timestampOrdine;
+    private String telefonoUtente;
+    private String timestampOrdine;
     private double prezzoOrdine;
     private ArrayList<Piadina> cartItems;
     private String notaOrdine;
     private long lastUpdated;
 
-    public Ordine(long idOrdine, String emailUtente, long timestampData, double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
+    public Ordine(long idOrdine, String emailUtente, String telefonoUtente, String timestampData, double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
         this.idOrdine = idOrdine;
         this.emailUtente = emailUtente;
+        this.telefonoUtente = telefonoUtente;
         this.prezzoOrdine = prezzoOrdine;
         this.timestampOrdine = timestampData;
         this.cartItems = piadineOrdinate;
@@ -38,11 +41,19 @@ public class Ordine {
         this.emailUtente = emailUtente;
     }
 
-    public long getTimestampOrdine() {
+    public String getTelefonoUtente() {
+        return telefonoUtente;
+    }
+
+    public void setTelefonoUtente(String telefonoUtente) {
+        this.telefonoUtente = telefonoUtente;
+    }
+
+    public String getTimestampOrdine() {
         return timestampOrdine;
     }
 
-    public void setTimestampOrdine(long timestampOrdine) {
+    public void setTimestampOrdine(String timestampOrdine) {
         this.timestampOrdine = timestampOrdine;
     }
 

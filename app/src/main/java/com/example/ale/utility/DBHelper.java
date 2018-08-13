@@ -67,6 +67,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String TABLE_ORDINI_NAME = "ordini";
     public static final String COLUMN_ORDINI_ID = "id_ordine";
     public static final String COLUMN_ORDINI_EMAIL = "email_utente";
+    public static final String COLUMN_ORDINI_TELEFONO = "telefono_utente";
     public static final String COLUMN_ORDINI_DATA = "data_ordine";
     public static final String COLUMN_ORDINI_DESCRIZIONE = "descrizione";
     public static final String COLUMN_ORDINI_PREZZO = "prezzo";
@@ -120,8 +121,9 @@ public class DBHelper extends SQLiteOpenHelper{
         String query_ordini = "CREATE TABLE " + TABLE_ORDINI_NAME
                 + "(" + COLUMN_ORDINI_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDINI_EMAIL +
+                " VARCHAR, " + COLUMN_ORDINI_TELEFONO +
                 " VARCHAR, " + COLUMN_ORDINI_DATA +
-                " LONG, " + COLUMN_ORDINI_PREZZO +
+                " VARCHAR, " + COLUMN_ORDINI_PREZZO +
                 " DOUBLE, " + COLUMN_ORDINI_DESCRIZIONE +
                 " VARCHAR, " + COLUMN_ORDINI_NOTA +
                 " VARCHAR, " + COLUMN_ORDINI_TIMESTAMP + " LONG);";
@@ -654,6 +656,7 @@ public class DBHelper extends SQLiteOpenHelper{
         String piadineOrdine = ordine.printPiadine();
 
         values.put(COLUMN_ORDINI_EMAIL, ordine.getEmailUtente());
+        values.put(COLUMN_ORDINI_TELEFONO, ordine.getTelefonoUtente());
         values.put(COLUMN_ORDINI_DATA, ordine.getTimestampOrdine());
         values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
         values.put(COLUMN_ORDINI_DESCRIZIONE, piadineOrdine);
@@ -681,11 +684,12 @@ public class DBHelper extends SQLiteOpenHelper{
             do {
                 Log.d("DB/PRINT", "ID Ordine: " + cursor.getLong(0));
                 Log.d("DB/PRINT", "Email Utente: " + cursor.getString(1));
-                Log.d("DB/PRINT", "Timestamp Ordine: " + cursor.getLong(2));
-                Log.d("DB/PRINT", "Totale Ordine: " + cursor.getDouble(3));
-                Log.d("DB/PRINT", "Piadine Ordinate: " + cursor.getString(4));
-                Log.d("DB/PRINT", "Nota Ordine: " + cursor.getString(5));
-                Log.d("DB/PRINT", "Last Update Ordine: " + cursor.getLong(6));
+                Log.d("DB/PRINT", "Telefono Utente: " + cursor.getString(2));
+                Log.d("DB/PRINT", "Timestamp Ordine: " + cursor.getString(3));
+                Log.d("DB/PRINT", "Totale Ordine: " + cursor.getDouble(4));
+                Log.d("DB/PRINT", "Piadine Ordinate: " + cursor.getString(5));
+                Log.d("DB/PRINT", "Nota Ordine: " + cursor.getString(6));
+                Log.d("DB/PRINT", "Last Update Ordine: " + cursor.getLong(7));
             } while (cursor.moveToNext());
         }
 

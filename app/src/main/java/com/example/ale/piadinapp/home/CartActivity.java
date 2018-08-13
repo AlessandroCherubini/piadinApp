@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,15 +26,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.HomeActivity;
+import com.example.ale.piadinapp.LoginActivity;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
@@ -68,9 +72,10 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     View view;
     static Context mContext;
     Calendar dateCalendar;
-    long timestampOrdine;
+    String timestampOrdine;
     double totaleOrdine;
     String notaOrdine;
+    long lastUpdateOrdine;
     ArrayList<Piadina> piadineOrdine;
     Ordine ordine;
     SessionManager session;
@@ -213,6 +218,11 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
             public void onClick(final View v) {
 
+                if(cartItems.size() == 0){
+                    Toast.makeText(CartActivity.this, "Carrello vuoto!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 final Calendar currentDate = Calendar.getInstance();
                 dateCalendar = Calendar.getInstance();
 
@@ -230,24 +240,11 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
                                         //GregorianCalendar gregOrario = new GregorianCalendar(year, monthOfYear, dayOfMonth, hourOfDay, minute, 00);
                                         //timestampOrdine = gregOrario.getTimeInMillis();
-                                        timestampOrdine = dateCalendar.getTimeInMillis();
-                                        String timestampDB = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateCalendar.getTime());
-                                        Log.d("ORARIO", "" + timestampDB + "" + timestampOrdine);
+                                        lastUpdateOrdine = dateCalendar.getTimeInMillis();
+                                        timestampOrdine = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateCalendar.getTime());
+                                        Log.d("ORARIO", "" + lastUpdateOrdine + "" + timestampOrdine);
 
-                                        String emailUtente = utente.get("email");
-                                        notaOrdine = "Sono allergico a Bianchini";
-                                        piadineOrdine = creaPiadineOrdine(cartItems);
-                                        ordine = new Ordine(0, emailUtente, timestampOrdine, totaleOrdine, piadineOrdine,
-                                                notaOrdine, timestampOrdine);
-
-                                        helper.insertOrdine(ordine);
-                                        helper.printTabellaOrdine();
-
-                                        Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
-                                        svuotaCarrello();
-                                        finish();
-
-                                        //addOrderinExternalDB(ordine);
+                                        addNotaOrdine();
 
                                     }
                                 }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
@@ -310,6 +307,67 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         }
 
         return piadineOrdine;
+    }
+
+    public void addNotaOrdine(){
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_nota, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText editText = dialogView.findViewById(R.id.testo_nota);
+
+        dialogBuilder.setTitle("Nota dell'ordine:");
+        dialogBuilder.setIcon(R.drawable.ic_note_add_black_24dp);
+        dialogBuilder.setMessage("È data la possibilità di scrivere una eventuale nota per il gestore.");
+        dialogBuilder.setPositiveButton("Ok, ordina", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                notaOrdine = editText.getText().toString().trim();
+
+                // Procediamo con l'ordine!!
+                final ProgressDialog progressDialog = new ProgressDialog(CartActivity.this,
+                        R.style.AppTheme_Dark_Dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Evasione dell'ordine...");
+                progressDialog.show();
+
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                // On complete call either onLoginSuccess or onLoginFailed
+                                finishOrder();
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+            }
+        });
+
+        dialogBuilder.setNegativeButton("Annulla ordine", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+    }
+
+    public void finishOrder(){
+        String emailUtente = utente.get("email");
+        String telefonoUtente = utente.get("phone");
+        piadineOrdine = creaPiadineOrdine(cartItems);
+        ordine = new Ordine(0, emailUtente, telefonoUtente, timestampOrdine, totaleOrdine, piadineOrdine,
+                notaOrdine, lastUpdateOrdine);
+
+        helper.insertOrdine(ordine);
+        helper.printTabellaOrdine();
+
+        OnlineHelper onlineHelper = new OnlineHelper();
+        onlineHelper.addOrderinExternalDB(mContext, ordine);
+
+        svuotaCarrello();
+        finish();
     }
 
     public void stopNotificationService(){
