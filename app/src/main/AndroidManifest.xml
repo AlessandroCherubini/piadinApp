@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+
+
     <application
         android:name=".classi.PiadinApp"
         android:allowBackup="true"
@@ -127,6 +129,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ale.piadinapp.HomeActivity" />
         </activity>
+
+        <service android:name=".classi.ServiceNotification"/>
+        
     </application>
 
 </manifest>
