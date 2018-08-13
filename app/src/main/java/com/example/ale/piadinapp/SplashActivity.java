@@ -1,14 +1,9 @@
 package com.example.ale.piadinapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -16,27 +11,21 @@ import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
-import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
-import com.example.ale.utility.SessionManager;
 import com.example.ale.utility.VolleyCallback;
 import com.example.ale.utility.VolleySingleton;
-import com.facebook.stetho.Stetho;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SplashActivity extends AppCompatActivity{

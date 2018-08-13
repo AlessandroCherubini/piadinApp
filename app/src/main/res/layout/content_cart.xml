@@ -53,6 +53,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/cart_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -74,16 +75,25 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/cart_item"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_above="@id/clear_cart"
             android:layout_alignParentTop="true"
             android:layout_marginTop="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cart_recycler"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="-93dp"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/start_service"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/textView3"
-            android:layout_toStartOf="@+id/effettua_ordine"
             android:text="Start Service" />
 
         <Button
@@ -91,9 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/textView3"
-            android:layout_alignEnd="@+id/effettua_ordine"
+
             android:text="STOP SERVICE" />
-
     </LinearLayout>
-
 </RelativeLayout>

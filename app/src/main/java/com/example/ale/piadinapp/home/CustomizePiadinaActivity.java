@@ -83,7 +83,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
             chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
         }
-        else if (intent.getExtras().get("modificaPiadina")!= null){
+        else if (intent.getExtras().get("modificaPiadina")!= null) {
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
@@ -93,29 +93,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             Button editButton = findViewById(R.id.addKart);
             editButton.setText("Conferma Modifica");
-            editButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_edit_black_24dp, 0, 0, 0);
-
-            //TODO: sistemare problemi
-
-            if (cartItem.getFormato().equalsIgnoreCase("Rotolo")){
-
-                rb2.setChecked(true);
-                rb2.setTypeface(null, Typeface.BOLD_ITALIC);
-
-            }
-            else if(cartItem.getFormato().equalsIgnoreCase("Baby")){
-
-                rb3.setChecked(true);
-                rb3.setTypeface(null, Typeface.BOLD_ITALIC);
-            }
-
-            if (cartItem.getImpasto().equalsIgnoreCase("Integrale")){
-
-                rb5.setChecked(true);
-                rb5.setTypeface(null, Typeface.BOLD_ITALIC);
-            }
-
+            editButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_black_24dp, 0, 0, 0);
         }
+            //TODO: sistemare problemi
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -136,10 +116,12 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         nomePiadina.setTypeface(null, Typeface.BOLD);
 
         // Radio Button
-        if (rb1.isChecked()){rb1.setTypeface(null, Typeface.BOLD_ITALIC);}
-        if(rb4.isChecked()){rb4.setTypeface(null, Typeface.BOLD_ITALIC);}
+        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
+        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
+        rb1.setTypeface(null, Typeface.BOLD_ITALIC);
+        rb4.setTypeface(null, Typeface.BOLD_ITALIC);
 
-
+        final Button button = findViewById(R.id.addKart);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_SHORT);
@@ -194,7 +176,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         switch(view.getId()){
 
             case R.id.allergeniButton:
-
                 DialogInterface.OnClickListener allergeniClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -250,16 +231,13 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                         .setNegativeButton("Annulla", dialogClickListener).show();
 
                 break;
-
         }
-
 
         //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
 
     public void onRadioButtonClicked(View v) {
-
         double prezzoPiadinaBase = chosenPiadina.getPrice();
         TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
 
@@ -443,30 +421,43 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         RadioGroup radioFormato = findViewById(R.id.rg1);
         RadioGroup radioImpasto = findViewById(R.id.rg2);
 
+        RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
+        RadioButton rb2 = (RadioButton) findViewById(R.id.rb_rotolo);
+        RadioButton rb3 = (RadioButton) findViewById(R.id.rb_baby);
+        RadioButton rb4 = (RadioButton) findViewById(R.id.rb_impasto_normale);
+        RadioButton rb5 = (RadioButton) findViewById(R.id.rb_integrale);
+
         switch (formato){
             case "Piadina":
                 radioFormato.check(R.id.rb_normale);
+                rb1.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             case "Rotolo":
                 radioFormato.check(R.id.rb_rotolo);
+                rb2.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             case "Baby":
                 radioFormato.check(R.id.rb_baby);
+                rb3.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             default:
                 radioFormato.check(R.id.rb_normale);
+                rb1.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
         }
 
         switch (impasto){
             case "Normale":
                 radioImpasto.check(R.id.rb_impasto_normale);
+                rb4.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             case "Integrale":
                 radioImpasto.check(R.id.rb_integrale);
+                rb5.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             default :
                 radioImpasto.check(R.id.rb_impasto_normale);
+                rb4.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
         }
     }

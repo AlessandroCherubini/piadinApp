@@ -12,7 +12,7 @@ public class Ordine {
     private String notaOrdine;
     private long lastUpdated;
 
-    public void Ordine(long idOrdine, String emailUtente, long timestampData, double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
+    public Ordine(long idOrdine, String emailUtente, long timestampData, double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
         this.idOrdine = idOrdine;
         this.emailUtente = emailUtente;
         this.prezzoOrdine = prezzoOrdine;
@@ -93,8 +93,11 @@ public class Ordine {
                     stampaIngredienti + separatoreAttributi +
                     piadina.getPrice() + "]";
 
-            piadineOrdine = piadinaOrdine + piadinaOrdine;
+            piadineOrdine = piadineOrdine + piadinaOrdine + separatorePiadine;
         }
-        return piadineOrdine;
+
+        String piadineOrdineString = piadineOrdine.substring(0, piadineOrdine.length() - 3);
+
+        return piadineOrdineString;
     }
 }

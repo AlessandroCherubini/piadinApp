@@ -305,11 +305,11 @@ public class DBHelper extends SQLiteOpenHelper{
         return myPiadina;
     }
 
-    public Piadina getPiadinaByName (String name)
+/*    public Piadina getPiadinaByName (String name)
     {
         ArrayList<Ingrediente> ingredienti = new ArrayList<>();
-        String query = "Select nome, ingredienti, prezzo, updated_at from piadine where nome='"+name+"'";
-        Piadina myPiadina= new Piadina(name,null,0);
+        String query = "Select nome, ingredienti, prezzo, formato, impasto, quantita, rating, updated_at from piadine where nome='"+name+"'";
+        Piadina myPiadina= new Piadina(name, null, 0, "", "", "", 0, 0, null);
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()){
@@ -323,7 +323,7 @@ public class DBHelper extends SQLiteOpenHelper{
             } while (cursor.moveToNext());
         }
         return myPiadina;
-    }
+    }*/
 
     public void insertPiadina (Piadina piadina)
     {
@@ -627,37 +627,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return myTimbro;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //**** TABELLA INGREDIENTI**************************************************
-    public void insertOrdine (Ordine ordine) {
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String piadineOrdine = ordine.printPiadine();
-
-        values.put(COLUMN_ORDINI_EMAIL, ordine.getEmailUtente());
-        values.put(COLUMN_ORDINI_DATA, ordine.getTimestampOrdine());
-        values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
-        values.put(COLUMN_ORDINI_DESCRIZIONE, piadineOrdine);
-        values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
-        values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getLastUpdated());
-
-        try {
-            long id = database.insert(TABLE_ORDINI_NAME, null, values);
-            ordine.setIdOrdine(id);
-            //Log.d("DB/INSERT", "Ordine aggiunto al db interno!");
-        }catch(Exception e){
-            Log.d("DB/INSERT", e.toString());
-        }
-
-        database.close();
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     //**** PRINT FUNCTIONS **************************************************
-    public void printTimbriTable()
-    {
+    public void printTimbriTable() {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_TIMBRI_NAME + ";";
         Log.d("DB/PRINT","Stampa tabella timbri!");
@@ -675,4 +646,51 @@ public class DBHelper extends SQLiteOpenHelper{
         db.close();
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //**** TABELLA ORDINE **************************************************
+    public void insertOrdine (Ordine ordine) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String piadineOrdine = ordine.printPiadine();
+
+        values.put(COLUMN_ORDINI_EMAIL, ordine.getEmailUtente());
+        values.put(COLUMN_ORDINI_DATA, ordine.getTimestampOrdine());
+        values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
+        values.put(COLUMN_ORDINI_DESCRIZIONE, piadineOrdine);
+        values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
+        values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getLastUpdated());
+
+        try {
+            long id = database.insert(TABLE_ORDINI_NAME, null, values);
+            ordine.setIdOrdine(id);
+            Log.d("DB/INSERT", "Ordine aggiunto al db interno!");
+        }catch(Exception e){
+            Log.d("DB/INSERT", e.toString());
+        }
+
+        database.close();
+    }
+
+    public void printTabellaOrdine() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_ORDINI_NAME + ";";
+        Log.d("DB/PRINT","Stampa tabella ordini!");
+
+        Cursor cursor = db.rawQuery(sql,null);
+        if(cursor.moveToFirst()) {
+            do {
+                Log.d("DB/PRINT", "ID Ordine: " + cursor.getLong(0));
+                Log.d("DB/PRINT", "Email Utente: " + cursor.getString(1));
+                Log.d("DB/PRINT", "Timestamp Ordine: " + cursor.getLong(2));
+                Log.d("DB/PRINT", "Totale Ordine: " + cursor.getDouble(3));
+                Log.d("DB/PRINT", "Piadine Ordinate: " + cursor.getString(4));
+                Log.d("DB/PRINT", "Nota Ordine: " + cursor.getString(5));
+                Log.d("DB/PRINT", "Last Update Ordine: " + cursor.getLong(6));
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 }
