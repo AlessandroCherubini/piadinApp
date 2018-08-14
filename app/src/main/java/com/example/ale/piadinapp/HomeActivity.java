@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
         /*DBHelper helper = new DBHelper(this);
         helper.printIngredientiTable();*/
 
@@ -107,16 +107,19 @@ public class HomeActivity extends AppCompatActivity
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
         HashMap<String, String> utente;
-        utente = session.getUserDetails();
+        //utente = session.getUserDetails();
+        utente = SessionManager.getUserDetails(this);
 
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
-        txtProfileName.setText(utente.get("name"));
-
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
-        txtProfileEmail.setText(utente.get("email"));
 
-
-
+        if(utente == null) {
+            txtProfileName.setText("");
+            txtProfileEmail.setText("");
+        } else {
+            txtProfileName.setText(utente.get("name"));
+            txtProfileEmail.setText(utente.get("email"));
+        }
     }
 
 
@@ -258,7 +261,8 @@ public class HomeActivity extends AppCompatActivity
                                         new Runnable() {
                                             public void run() {
                                                 // termina la sessione dell'utente.
-                                                session.logoutUser();
+                                                //session.logoutUser();
+                                                SessionManager.logoutUser(getApplicationContext());
                                                 finish();
                                                 progressDialog.dismiss();
 

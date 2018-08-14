@@ -16,6 +16,7 @@ public class CustomRequest extends Request<JSONObject> {
 
     private Listener<JSONObject> listener;
     private Map<String, String> params;
+    private JSONObject paramsJson;
 
     public CustomRequest(String url, Map<String, String> params,
                          Listener<JSONObject> reponseListener, ErrorListener errorListener) {
@@ -30,6 +31,14 @@ public class CustomRequest extends Request<JSONObject> {
         this.listener = reponseListener;
         this.params = params;
     }
+
+  /*      public CustomRequest(String order, int method, String url, JSONObject params,
+                         Listener<JSONObject> reponseListener, ErrorListener errorListener) {
+        super(method, url, errorListener);
+        this.listener = reponseListener;
+        this.paramsJson = params;
+    }*/
+
 
     protected Map<String, String> getParams()
             throws com.android.volley.AuthFailureError {

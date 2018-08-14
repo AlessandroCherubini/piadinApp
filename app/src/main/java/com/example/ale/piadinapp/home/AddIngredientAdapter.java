@@ -20,7 +20,7 @@ import java.util.List;
 public class AddIngredientAdapter extends RecyclerView.Adapter<AddIngredientAdapter.ViewHolder>{
     private List<Ingrediente> mData;
     private LayoutInflater mInflater;
-    private IngredientsAdapter.ItemClickListener mClickListener;
+    private AddIngredientAdapter.ItemClickListener mClickListener;
 
     // data is passed into the constructor
     AddIngredientAdapter(Context context, List<Ingrediente> data) {
@@ -49,6 +49,10 @@ public class AddIngredientAdapter extends RecyclerView.Adapter<AddIngredientAdap
     public int getItemCount() {
 
         return mData.size();
+    }
+
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
     }
 
 
@@ -88,9 +92,9 @@ public class AddIngredientAdapter extends RecyclerView.Adapter<AddIngredientAdap
     }
 
     // allows clicks events to be caught
-    void setClickListener(IngredientsAdapter.ItemClickListener itemClickListener) {
+/*    public void setClickListener(IngredientsAdapter.ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
-    }
+    }*/
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {

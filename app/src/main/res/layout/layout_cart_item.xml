@@ -29,29 +29,60 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/formato"
-                android:layout_width="258dp"
+                android:id="@+id/formato_string"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/tv_nome"
                 android:layout_below="@id/tv_nome"
+                android:layout_alignLeft="@id/tv_nome"
                 android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Formato: "
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@color/primaryDarkColor" />
+
+            <TextView
+                android:id="@+id/formato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_nome"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="62dp"
+                android:layout_marginTop="0dp"
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Formato"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="#000000" />
+                android:textColor="@color/primaryDarkColor" />
+
+            <TextView
+                android:id="@+id/impasto_string"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/formato"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Impasto: "
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@color/primaryDarkColor" />
+
             <TextView
                 android:id="@+id/tv_impasto"
-                android:layout_width="258dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/tv_nome"
                 android:layout_below="@id/formato"
+                android:layout_alignLeft="@id/tv_nome"
                 android:layout_centerHorizontal="true"
+                android:layout_marginLeft="62dp"
+                android:layout_marginTop="0dp"
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Impasto"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="#000000" />
+                android:textColor="@color/primaryDarkColor" />
 
             <TextView
                 android:id="@+id/tv_ingredienti"
@@ -64,7 +95,7 @@
                 android:paddingBottom="5dp"
                 android:text="Ingredienti"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="#000000" />
+                android:textColor="@color/primaryDarkColor" />
 
 
             <TextView
@@ -72,12 +103,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="11dp"
-                android:textSize="15sp"
-                android:layout_toEndOf="@+id/formato"
+                android:layout_marginStart="0dp"
+                android:layout_toEndOf="@+id/tv_nome"
                 android:fontFamily="@font/museo_slab"
                 android:gravity="center"
-                android:text="5.9" />
+                android:text="5.9"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/textViewPrice2"
@@ -92,17 +123,26 @@
                 android:text="@string/euro" />
 
             <ImageButton
+                android:id="@+id/editButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="69dp"
+                android:background="@drawable/button_selector"
+                android:elevation="4dp"
+                android:src="@drawable/ic_edit_black_24dp" />
+
+            <ImageButton
                 android:id="@+id/remButton"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="11dp"
-                android:background="@drawable/button_selector"
+                android:background="@drawable/delete_button_selector"
                 android:elevation="4dp"
-                android:src="@drawable/ic_remove_black_24dp" />
-
-
+                android:src="@drawable/ic_delete_black_24dp" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

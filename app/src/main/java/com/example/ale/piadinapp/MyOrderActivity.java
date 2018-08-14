@@ -64,7 +64,7 @@ public class MyOrderActivity extends AppCompatActivity
         setContentView(R.layout.activity_my_order);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -78,15 +78,19 @@ public class MyOrderActivity extends AppCompatActivity
 
         // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
         HashMap<String, String> utente;
-        utente = session.getUserDetails();
+        //utente = session.getUserDetails();
+        utente = SessionManager.getUserDetails(this);
 
         TextView txtProfileName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username_nav);
-        txtProfileName.setText(utente.get("name"));
-
         TextView txtProfileEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_nav);
-        txtProfileEmail.setText(utente.get("email"));
 
-
+        if(utente == null) {
+            txtProfileEmail.setText("");
+            txtProfileName.setText("");
+        } else {
+            txtProfileEmail.setText(utente.get("email"));
+            txtProfileName.setText(utente.get("name"));
+        }
     }
 
     @Override
@@ -115,9 +119,10 @@ public class MyOrderActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        // Click sulla ToolBar: se vogliamo che faccia cose cliccando sulle icone
+/*        if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -158,7 +163,8 @@ public class MyOrderActivity extends AppCompatActivity
                                     new Runnable() {
                                         public void run() {
                                             // termina la sessione dell'utente.
-                                            session.logoutUser();
+                                            //session.logoutUser();
+                                            SessionManager.logoutUser(getApplicationContext());
                                             finish();
                                             progressDialog.dismiss();
                                         }
@@ -206,6 +212,7 @@ public class MyOrderActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
 
 

@@ -1,4 +1,5 @@
 package com.example.ale.piadinapp;
+import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.*;
 
@@ -56,7 +57,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     String name, email, password, reEnterPassword, mobile;
     final String urlCrea = "http://piadinapp.altervista.org/create_user.php";
-    private RequestQueue queue;
+    final String urlCreaBadge = "http://piadinapp.altervista.org/create_timbro.php";
+
     SessionManager session;
 
     @Override
@@ -64,8 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
-        queue = Volley.newRequestQueue(this);
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,13 +129,27 @@ public class SignUpActivity extends AppCompatActivity {
 
         User newUser = new User(0, name, password, email, mobile);
         dbHelper.insertUser(newUser);
+
+        Timbro newTimbro = new Timbro(0, email, 0, 0);
+        dbHelper.insertTimbro(newTimbro);
+
         dbHelper.close();
 
         insertUserInExternalDB(name, password, email, mobile);
+        insertBadgeInExternalDB(email);
 
         // sessione per l'utente.
+        /*
         session.setLoggedIn(true);
         session.createLoginSession(name, password, mobile,0,0);
+        */
+        SessionManager.setLoggedIn(this,true);
+        SessionManager.createLoginSession(this,
+                                          name,
+                                          email,
+                                          mobile,
+                                          0,
+                                          0);
 
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -218,8 +233,17 @@ public class SignUpActivity extends AppCompatActivity {
                             Log.d("JSON", "success: " + success);
                             if(success.equals("1")){
                                 // sessione per l'utente.
+                                /*
                                 session.setLoggedIn(true);
                                 session.createLoginSession(name, email, phone,0,0);
+                                */
+                                SessionManager.setLoggedIn(getApplicationContext(),true);
+                                SessionManager.createLoginSession(getApplicationContext(),
+                                        name,
+                                        email,
+                                        phone,
+                                        0,
+                                        0);
 
                                 _signupButton.setEnabled(true);
                                 setResult(RESULT_OK, null);
@@ -266,5 +290,64 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+    }
+
+    public void insertBadgeInExternalDB(final String email){
+
+        Map<String, String> params = new HashMap();
+        params.put("email", email);
+
+        JSONObject parameters = new JSONObject(params);
+        Log.d("JSON", parameters.toString());
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, urlCreaBadge, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("JSON", response.toString());
+                        try{
+                            String success = response.getString("success");
+                            Log.d("JSON", "success: " + success);
+                            if(success.equals("1")){
+                                Log.d("BADGE", "Creazione badge sul db esterno!");
+                            }
+                            else{
+                                int error = response.getInt("error");
+                                if(error == 1062){
+                                    _emailText.setError("Indirizzo email già in uso");
+                                    //valid = false;
+                                }
+                                Toast.makeText(getApplicationContext(), "Errore nella creazione della tessera dell'utente.", Toast.LENGTH_SHORT).show();
+                                _signupButton.setEnabled(true);
+                            }
+                        }catch(JSONException e){
+                            e.fillInStackTrace();
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (error instanceof TimeoutError){
+                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof NoConnectionError) {
+                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+
     }
 }
