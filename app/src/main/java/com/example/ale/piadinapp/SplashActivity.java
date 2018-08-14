@@ -1,13 +1,9 @@
 package com.example.ale.piadinapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -15,15 +11,12 @@ import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
-import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.VolleyCallback;
@@ -33,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SplashActivity extends AppCompatActivity{
@@ -53,26 +45,31 @@ public class SplashActivity extends AppCompatActivity{
 
         helper = new DBHelper(this);
 
+
         piadineCallBack = new VolleyCallback() {
             @Override
             public void onSuccess(String result) {
                 ingredientiCallBack = new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        //progressBar.setIndeterminate(false);
-                        //progressBar.setVisibility(View.GONE);
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
-                };
 
+                    @Override
+                    public void onSuccessMap(int duration) {
+
+                    }
+                };
                 checkUpdateIngredienti();
+            }
+
+            @Override
+            public void onSuccessMap(int duration) {
 
             }
         };
-
         checkUpdatePiadine();
-
     }
 
     public void checkUpdatePiadine() {
@@ -105,10 +102,15 @@ public class SplashActivity extends AppCompatActivity{
                                     String nomePiadina = piadina.getString("nome");
                                     String descrizionePiadina = piadina.getString("descrizione");
                                     Double prezzoPiadina = piadina.getDouble("prezzo");
+                                    String formatoPiadina = piadina.getString("formato");
+                                    String impastoPiadina = piadina.getString("impasto");
+                                    int quantitaPiadina = piadina.getInt("quantita");
+                                    int ratingPiadina = piadina.getInt("rating");
 
                                     ArrayList<Ingrediente> ingredientiPiadina = helper.getIngredientiFromString(descrizionePiadina);
 
-                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, ingredientiPiadina, prezzoPiadina, serverTimeStamp);
+                                    Piadina piadinaInterna = new Piadina(idPiadina, nomePiadina, ingredientiPiadina, prezzoPiadina,
+                                            formatoPiadina, impastoPiadina, quantitaPiadina, ratingPiadina, serverTimeStamp);
                                     helper.insertPiadina(piadinaInterna);
                                 }
                                 Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");
@@ -171,8 +173,6 @@ public class SplashActivity extends AppCompatActivity{
 
                                 Toast.makeText(SplashActivity.this, " "+diff, Toast.LENGTH_LONG).show();
 
-                                // TODO: da mettere nel db interno i dati scaricati dal db esterno.
-
                                 for (int i = 0; i < ingredienti.length(); i++) {
                                     JSONObject ingrediente = ingredienti.getJSONObject(i);
                                     long idIngrediente = ingrediente.getLong("id_ingrediente");
@@ -180,7 +180,7 @@ public class SplashActivity extends AppCompatActivity{
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
                                     String allergeniIngrediente = ingrediente.getString("allergeni");
                                     String categoriaIngrediente = ingrediente.getString("categoria");
-                                    Log.d("ALLERGENI", allergeniIngrediente);
+                                    //Log.d("ALLERGENI", allergeniIngrediente);
 
                                     Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente,
                                             categoriaIngrediente, serverTimeStamp);
@@ -188,7 +188,7 @@ public class SplashActivity extends AppCompatActivity{
                                 }
                                 Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
                                 //checkIngredienti = true;
-                                helper.printIngredientiTable();
+                                //helper.printIngredientiTable();
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
                             }
@@ -221,7 +221,5 @@ public class SplashActivity extends AppCompatActivity{
         });
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
-
     }
-
 }

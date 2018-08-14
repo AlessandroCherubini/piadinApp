@@ -13,24 +13,35 @@ public class Piadina{
     private String nome;
     private ArrayList<Ingrediente> ingredienti;
     private double price;
-    //private int rating;
+    private String formato;
+    private String impasto;
+    private int quantita;
+    private int rating;
     private long lastUpdated;
 
 
-    public Piadina(long id, String nome, ArrayList<Ingrediente> ingredienti, double price, long lastUpdated) {
+    public Piadina(long id, String nome, ArrayList<Ingrediente> ingredienti, double price,
+                   String formato, String impasto, int quantita, int rating, long lastUpdated) {
         this.id = id;
         this.nome = nome;
         this.ingredienti = ingredienti;
         this.price = price;
-        //this.rating = rating;
+        this.formato = formato;
+        this.impasto = impasto;
+        this.quantita = quantita;
+        this.rating = rating;
         this.lastUpdated = lastUpdated;
     }
 
-    public Piadina(String nome, ArrayList<Ingrediente> ingredienti, double price) {
+    public Piadina(String nome, String formato, String impasto, ArrayList<Ingrediente> ingredienti,
+                   double price, int quantita, int rating) {
         this.nome = nome;
         this.ingredienti = ingredienti;
+        this.formato = formato;
+        this.impasto = impasto;
         this.price = price;
-        //this.rating = rating;
+        this.quantita = quantita;
+        this.rating = rating;
     }
 
     public long getId() {
@@ -65,13 +76,37 @@ public class Piadina{
         this.price = price;
     }
 
-    /*public int getRating() {
+    public String getFormato() {
+        return formato;
+    }
+
+    public void setFormato(String formato) {
+        this.formato = formato;
+    }
+
+    public String getImpasto() {
+        return impasto;
+    }
+
+    public void setImpasto(String impasto) {
+        this.impasto = impasto;
+    }
+
+    public int getQuantita() {
+        return quantita;
+    }
+
+    public void setQuantita(int quantita) {
+        this.quantita = quantita;
+    }
+
+    public int getRating() {
         return rating;
     }
 
     public void setRating(int rating) {
         this.rating = rating;
-    }*/
+    }
 
     public long getLastUpdated() {
         return lastUpdated;

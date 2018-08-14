@@ -1,8 +1,11 @@
 package com.example.ale.piadinapp.classi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class Ingrediente {
+public class Ingrediente implements Parcelable {
 
     private long idIngrediente;
     private String name;
@@ -80,4 +83,39 @@ public class Ingrediente {
 
         return name;
     }
+
+    // Metodo utilizzato per l'interfaccia: serve a salvare l'oggetto Ingrediente quando si ruota il telefono.
+    private Ingrediente(Parcel in) {
+        idIngrediente = in.readLong();
+        name = in.readString();
+        price = in.readDouble();
+        listaAllergeni = in.readString();
+        categoria = in.readString();
+        lastUpdated = in.readLong();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(idIngrediente);
+        dest.writeString(name);
+        dest.writeDouble(price);
+        dest.writeString(listaAllergeni);
+        dest.writeString(categoria);
+        dest.writeLong(lastUpdated);
+    }
+
+    public static final Parcelable.Creator<Ingrediente> CREATOR = new Parcelable.Creator<Ingrediente>() {
+        public Ingrediente createFromParcel(Parcel in) {
+            return new Ingrediente(in);
+        }
+
+        public Ingrediente[] newArray(int size) {
+            return new Ingrediente[size];
+        }
+    };
 }
