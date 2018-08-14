@@ -90,14 +90,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     Map<Integer, Map> data;
     VolleyCallback durataCallBack;
     private static Context context;
-
-
-    public boolean checkLocationPermission()
-    {
-        String permission = "android.permission.ACCESS_FINE_LOCATION";
-        int res = this.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
-    }
+    View v;
 
 
 
@@ -237,6 +230,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 Log.d("PERMESSI",""+checkLocationPermission());
 
                 startService(v);
+                //onRequestPermissionsResult(1,perms, new int[]{1,1});
 
             }
 
@@ -335,6 +329,13 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
     }
 
+    public boolean checkLocationPermission()
+    {
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = this.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
     public static Context getAppContext(){
         return CartActivity.context;
     }
@@ -350,6 +351,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        startService(v);
     }
 
     @Override
