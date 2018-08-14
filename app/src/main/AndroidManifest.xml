@@ -135,7 +135,7 @@
                 android:value="com.example.ale.piadinapp.HomeActivity" />
         </activity>
 
-        <service android:name=".classi.ServiceNotification"/>
+        <service android:name=".services.NotificationService"/>
         
     </application>
 

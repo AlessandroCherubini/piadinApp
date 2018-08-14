@@ -572,42 +572,23 @@ public class DBHelper extends SQLiteOpenHelper{
         return queryValues;
     }
 
-    public boolean updateTimbriNumber(Timbro queryValues) {
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
-        int rowModifiedNumber = database.update(TABLE_TIMBRI_NAME,
-                                                values,
-                                                COLUMN_TIMBRI_ID + " = ?",
-                                                new String[] {String.valueOf(queryValues.timbroId)});
-
-        database.close();
-
-        if(rowModifiedNumber == 0) {
-            Log.d("Update Timbri Number","No Row affected");
-            return false;
-        }
-
-        Log.d("Update Timbri Number","Rows affected: " + Integer.toString(rowModifiedNumber));
-        return true;
-    }
-
-    public boolean updateTimbriTableOmaggiNumber(Timbro queryValues)
+    public boolean updateTimbroBadgeValues(Timbro queryValues)
     {
         SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_TIMBRI_OMAGGI_RICEVUTI,queryValues.numberOmaggi);
+        ContentValues value = new ContentValues();
+        value.put(COLUMN_TIMBRI_NUMERO_TIMBRI,queryValues.numberTimbri);
+        value.put(COLUMN_TIMBRI_OMAGGI_RICEVUTI,queryValues.numberOmaggi);
         int rowModifiedNumber = database.update(TABLE_TIMBRI_NAME,
-                                                values,
-                                                COLUMN_TIMBRI_ID + " = ?",
-                                                new String[] {String.valueOf(queryValues.timbroId)});
+                                          value,
+                                          COLUMN_TIMBRI_ID + " = ?",
+                                          new String[] {String.valueOf(queryValues.timbroId)});
 
         if(rowModifiedNumber == 0) {
-            Log.d("Update Omaggi Number","No Row affected");
+            Log.d("Update Badge Values","No Row affected");
             return false;
         }
 
-        Log.d("Update Omaggi Number","Row affected: " + Integer.toString(rowModifiedNumber));
+        Log.d("Update Badge Values","Row affected: " + Integer.toString(rowModifiedNumber));
         return true;
     }
 
@@ -627,6 +608,15 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
         return myTimbro;
+    }
+
+    public boolean updateTimbroByEmail(String email,int timbri,int omaggi)
+    {
+        Timbro userRow = getTimbroByEmail(email);
+        userRow.numberTimbri = timbri;
+        userRow.numberOmaggi = omaggi;
+
+        return updateTimbroBadgeValues(userRow);
     }
 
     //**** PRINT FUNCTIONS **************************************************

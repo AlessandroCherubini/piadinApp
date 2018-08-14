@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp.classi;
+package com.example.ale.piadinapp.services;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,14 +43,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
-public class ServiceNotification extends IntentService implements LocationListener{
+public class NotificationService extends IntentService implements LocationListener {
 
     VolleyCallback durataCallBack;
 
 
-    public ServiceNotification(){
+    public NotificationService(){
 
-        super("ServiceNotification");
+        super("NotificationService");
     }
 
 
@@ -107,13 +106,13 @@ public class ServiceNotification extends IntentService implements LocationListen
 
     public void stopNotificationService(){
 
-        Intent intent = new Intent(CartActivity.getAppContext(), ServiceNotification.class);
+        Intent intent = new Intent(CartActivity.getAppContext(), NotificationService.class);
         PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         stopService(intent);
         pintent.cancel();
         alarm.cancel(pintent);
-        stopService(new Intent(getApplicationContext(),ServiceNotification.class));
+        stopService(new Intent(getApplicationContext(),NotificationService.class));
     }
 
     private void sendNotification(){
