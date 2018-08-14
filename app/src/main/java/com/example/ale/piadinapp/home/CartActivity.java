@@ -81,17 +81,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     SessionManager session;
     HashMap<String, String> utente;
     VolleyCallback durataCallBack;
-<<<<<<< HEAD
-    private static Context context;
     View v;
-=======
-
-    public boolean checkLocationPermission() {
-        String permission = "android.permission.ACCESS_FINE_LOCATION";
-        int res = this.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
-    }
->>>>>>> new-dev
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,30 +255,22 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
             public void onClick(final View v) {
 
-<<<<<<< HEAD
-                String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
-                if (EasyPermissions.hasPermissions(getApplicationContext(), perms)) { }
-                else
-                {
-                    EasyPermissions.requestPermissions(getParent(), "Richiesta permesso accesso posizione",1, perms);
-                }
 
-                Log.d("PERMESSI",""+checkLocationPermission());
-
-                startService(v);
-                //onRequestPermissionsResult(1,perms, new int[]{1,1});
-=======
                 String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
                 if (EasyPermissions.hasPermissions(CartActivity.this, perms)) {
                     Log.d("PERMESSI","" + checkLocationPermission());
->>>>>>> new-dev
-
                     startService(v);
+
                 }
                 else {
-                    view = v;
+
                     EasyPermissions.requestPermissions(CartActivity.this, "Richiesta permesso per l\'utilizzo della posizione",1, perms);
-                    startService(v);
+                    String [] permission = {"android.permission.ACCESS_FINE_LOCATION","android.permission.INTERNET"};
+                    int res [] = new int[2];
+                    res[0]= checkCallingOrSelfPermission(permission[0]);
+                    res[1]= checkCallingOrSelfPermission(permission[1]);
+                    onRequestPermissionsResult(1,perms,res);
+                    //startService(v);
                 }
             }
 
@@ -457,7 +439,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
     }
 
-<<<<<<< HEAD
+
     public boolean checkLocationPermission()
     {
         String permission = "android.permission.ACCESS_FINE_LOCATION";
@@ -465,13 +447,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         return (res == PackageManager.PERMISSION_GRANTED);
     }
 
-    public static Context getAppContext(){
-        return CartActivity.context;
-    }
 
-
-=======
->>>>>>> new-dev
     @Override
     public void onLocationChanged(Location location) {
 
@@ -481,13 +457,12 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-/*        switch (requestCode) {
+        switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // Accessi consentiti!
-                    Log.d("ACCESSI", "" + grantResults[0]);
                     startService(view);
                 } else {
                     // permission denied!
@@ -495,7 +470,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 }
                 return;
             }
-        }*/
+        }
 
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
