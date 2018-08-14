@@ -113,6 +113,8 @@ public class BadgeActivity extends AppCompatActivity
             }
         });
         */
+
+        //Start/Stop service button
     }
 
     @Override
