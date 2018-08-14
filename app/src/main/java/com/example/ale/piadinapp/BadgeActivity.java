@@ -1,5 +1,8 @@
 package com.example.ale.piadinapp;
 
+import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +40,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.piadinapp.classi.Timbro;
+import com.example.ale.piadinapp.services.BadgeUpdateService;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
@@ -53,11 +57,14 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final char SEPARATOR_QR_STR = ';';
-    private static  final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
+    private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
+    private static final int SERVICE_INTERVAL = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +122,28 @@ public class BadgeActivity extends AppCompatActivity
         */
 
         //Start/Stop service button
+        final Button startService = (Button) findViewById(R.id.btnStartBadgeService);
+        startService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] permissions = { Manifest.permission.INTERNET };
+                if(EasyPermissions.hasPermissions(BadgeActivity.this,permissions)) {
+                    Log.d("PERMESSI","Set Internet permission");
+                    startUpdateService(v);
+                } else {
+                    EasyPermissions.requestPermissions(BadgeActivity.this,"Richiesta permesso per accesso a Internet",1,permissions);
+                    startUpdateService(v);
+                }
+            }
+        });
+
+        Button stopService = (Button) findViewById(R.id.btnStopBadgeService);
+        stopService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopUpdateService();
+            }
+        });
     }
 
     @Override
@@ -327,6 +356,32 @@ public class BadgeActivity extends AppCompatActivity
             //Inserimento numero di omaggi
             omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
         }
+    }
+
+    private void startUpdateService(View v)
+    {
+        Log.d("START","SERVICE: Update badge service");
+        startService(new Intent(this, BadgeUpdateService.class));
+        Intent badgeUpdateIntent = new Intent(this,BadgeUpdateService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,badgeUpdateIntent,0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
+         * Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
+         * SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
+         */
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),SERVICE_INTERVAL,pendingIntent);
+    }
+
+    private void stopUpdateService()
+    {
+        Intent intent = new Intent(this,BadgeUpdateService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(),0,intent,0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        stopService(intent);
+        pendingIntent.cancel();
+        alarm.cancel(pendingIntent);
+        stopService(new Intent(getApplicationContext(),BadgeUpdateService.class));
+        Log.d("SERVICE","Update Badge stopped");
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
