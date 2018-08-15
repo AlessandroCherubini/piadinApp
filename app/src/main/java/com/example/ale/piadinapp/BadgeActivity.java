@@ -64,7 +64,6 @@ public class BadgeActivity extends AppCompatActivity
 
     private static final char SEPARATOR_QR_STR = ';';
     private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
-    private static final int SERVICE_INTERVAL = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -362,14 +361,6 @@ public class BadgeActivity extends AppCompatActivity
     {
         Log.d("START","SERVICE: Update badge service");
         startService(new Intent(this, BadgeUpdateService.class));
-        Intent badgeUpdateIntent = new Intent(this,BadgeUpdateService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this,0,badgeUpdateIntent,0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        /*
-         * Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
-         * SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
-         */
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),SERVICE_INTERVAL,pendingIntent);
     }
 
     private void stopUpdateService()

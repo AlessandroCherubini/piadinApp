@@ -1,7 +1,11 @@
 package com.example.ale.piadinapp.services;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,6 +21,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.ale.piadinapp.BadgeActivity;
 import com.example.ale.utility.CustomRequest;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 import com.example.ale.utility.VolleyCallback;
 import com.example.ale.utility.VolleySingleton;
@@ -29,8 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BadgeUpdateService extends IntentService {
-    private static  final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
-    private static  final char SEPARATOR = ';';
+    private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
+    private static final String SEPARATOR = ";";
+    private static final int SERVICE_INTERVAL = 10000;
 
     private VolleyCallback serviceCallback;
 
@@ -47,6 +53,19 @@ public class BadgeUpdateService extends IntentService {
             public void onSuccess(String result)
             {
                 Log.d("BADGE_CALLBACK",result);
+                //todo: To FIX, usare interi per i valori di timbri e omaggi
+                /*
+                String[] params = result.split(SEPARATOR);
+                String email = params[0];
+                int timbri = Integer.valueOf(params[1]);
+                int omaggi = Integer.valueOf(params[2]);
+
+                DBHelper helper = new DBHelper(BadgeUpdateService.this);
+                boolean res = helper.updateTimbroByEmail(email,timbri,omaggi);
+                if(res) {
+                    SessionManager.updateTimbriAndOmaggiValues(BadgeUpdateService.this,timbri,omaggi);
+                }
+                */
             }
 
             @Override
@@ -55,17 +74,14 @@ public class BadgeUpdateService extends IntentService {
 
         HashMap<String,String> userData = SessionManager.getUserDetails(getApplicationContext());
         getBadgeDataRequest(userData.get("email"));
+
+        scheduleNextUpdate();
     }
 
     @Override
     public void onDestroy()
     {
         Log.d("BADGE_SERVICE","Distruzione service");
-    }
-
-    public void stopBadgeUpdateService()
-    {
-        //Intent intent = new Intent(BadgeActivity.geta)
     }
 
     //PRIVATE FUNCTIONS----------------------------------------------------------
@@ -86,10 +102,11 @@ public class BadgeUpdateService extends IntentService {
                             if(success == 1) {
                                 JSONArray timbro = response.getJSONArray("timbro");
                                 JSONObject obj = timbro.getJSONObject(0);
+                                String email = obj.getString("email");
                                 String numeroTimbriStr = obj.getString("numero_timbri");
                                 String omaggiRicevutiStr = obj.getString("omaggi_ricevuti");
 
-                                serviceCallback.onSuccess(numeroTimbriStr + SEPARATOR + omaggiRicevutiStr);
+                                serviceCallback.onSuccess(email + SEPARATOR + numeroTimbriStr + SEPARATOR + omaggiRicevutiStr);
                             } else {
                                 Log.d("BADGE_SERVICE/ERROR","Richiesta fallita");
                             }
@@ -119,6 +136,19 @@ public class BadgeUpdateService extends IntentService {
         );
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonRequest);
+    }
+
+    private void scheduleNextUpdate()
+    {
+        Intent intent = new Intent(this,this.getClass());
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
+         * Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
+         * SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
+         */
+        if(pendingIntent != null)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), SERVICE_INTERVAL, pendingIntent);
     }
     //---------------------------------------------------------------------------
 }
