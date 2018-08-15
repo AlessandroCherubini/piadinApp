@@ -674,6 +674,71 @@ public class DBHelper extends SQLiteOpenHelper{
         database.close();
     }
 
+    public ArrayList<Ordine> getOrdiniByEmail (final String email){
+        ArrayList<Ordine> ordiniUtente = new ArrayList<>();
+        ArrayList<Piadina> piadineOrdine = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "Select id_ordine, telefono_utente, data_ordine, descrizione, prezzo, nota, updated_at from ordini where email_utente ='"+email+"'";
+        Cursor cursorOrdini = db.rawQuery(sql, null);
+        if (cursorOrdini.moveToFirst()) {
+            do {
+                long idOrdine = cursorOrdini.getLong(0);
+                String telefonoOrdine = cursorOrdini.getString(1);
+                String dataOrdine = cursorOrdini.getString(2);
+                String descrizioneOrdine = cursorOrdini.getString(3);
+                piadineOrdine = getPiadineFromDescrizioneOrdine(descrizioneOrdine);
+                double prezzoOrdine = cursorOrdini.getDouble(4);
+                String notaOrdine = cursorOrdini.getString(5);
+                long lastUpdateOrdine = cursorOrdini.getLong(6);
+
+                Ordine ordine = new Ordine(idOrdine, email, telefonoOrdine, dataOrdine, prezzoOrdine, piadineOrdine, notaOrdine, lastUpdateOrdine);
+
+                ordiniUtente.add(ordine);
+            } while (cursorOrdini.moveToNext());
+        }
+        db.close();
+
+        return ordiniUtente;
+
+    }
+
+    public ArrayList<Piadina> getPiadineFromDescrizioneOrdine(String descrizione){
+        ArrayList<Piadina> piadineOrdine = new ArrayList<>();
+        ArrayList<Ingrediente> ingredientiPiadina = new ArrayList<>();
+        // divido la descrizione delle piadine in singole piadine
+        String[] strutturaPiadine = descrizione.split(" - ");
+        for(int i = 0; i < strutturaPiadine.length; i++){
+            strutturaPiadine[i] = strutturaPiadine[i].replace("[", "");
+            strutturaPiadine[i] = strutturaPiadine[i].replace("]", "");
+            // prendo gli attributi della singola Piaidna
+            String[] attributiPiadina = strutturaPiadine[i].split("; ");
+            String nomePiadina = attributiPiadina[0];
+            String formatoPiadina = attributiPiadina[1];
+            String impastoPiadina = attributiPiadina[2];
+            String printIngredientiPiadina = attributiPiadina[3];
+            String printprezzoPiadina = attributiPiadina[4];
+            double prezzoPiadina = Double.valueOf(printprezzoPiadina);
+            int quantitaPiadina = 1;
+            int ratingPiadina = 0;
+
+            // prendo gli ingredienti e riempio l'array
+            String[] nomiIngredienti = printIngredientiPiadina.split(", ");
+            for(String nome : nomiIngredienti){
+                Ingrediente ingrediente = getIngredienteByName(nome);
+                ingredientiPiadina.add(ingrediente);
+            }
+            // Compongo la piadina con tutti gli elementi presi dalla descrizione
+            Piadina piadina = new Piadina(nomePiadina, formatoPiadina, impastoPiadina, ingredientiPiadina, prezzoPiadina,
+                    quantitaPiadina, ratingPiadina);
+
+            piadineOrdine.add(piadina);
+            ingredientiPiadina.clear();
+        }
+
+        return piadineOrdine;
+    }
+
     public void printTabellaOrdine() {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_ORDINI_NAME + ";";

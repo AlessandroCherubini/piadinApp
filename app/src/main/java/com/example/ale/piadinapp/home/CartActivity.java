@@ -115,7 +115,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
             }
         });
 
-        cs.persistData(getApplicationContext(),true);
+        //cs.persistData(getApplicationContext(),true);
         // ricevo l'elemento inserito nel carrello
 
         String id;

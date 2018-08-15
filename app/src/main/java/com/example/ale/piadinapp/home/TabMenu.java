@@ -12,10 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.ale.piadinapp.MyOrderActivity;
-import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.R;
 import com.example.ale.utility.DBHelper;
@@ -119,13 +116,10 @@ public class TabMenu extends Fragment{
         recyclerView.addItemDecoration(itemDecorator);
 
         //initializing the productlist
-
         piadinaList = helper.getPiadine();
 
-
-
         //creating recyclerview adapter
-        PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
+        PiadineMenuAdapter adapter = new PiadineMenuAdapter(getActivity(), piadinaList, new ClickListener() {
             @Override public void onPositionClicked(View view, int position) {
                 // callback performed on click
 
