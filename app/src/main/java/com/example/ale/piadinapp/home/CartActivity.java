@@ -35,6 +35,15 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
@@ -53,12 +62,19 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import pub.devrel.easypermissions.EasyPermissions;
 import com.example.ale.utility.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class CartActivity extends AppCompatActivity implements LocationListener{
+
+    private final static String URL_GET_FASCE = "http://piadinapp.altervista.org/get_fasce.php";
 
     CartItemAdapter adapter;
     ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
@@ -225,30 +241,36 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 dateCalendar = Calendar.getInstance();
 
                new CustomDatePickerDialog(mContext, R.style.OrologioOrdini,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
-                                dateCalendar.set(year, monthOfYear, dayOfMonth);
-                                new TimePickerDialog(mContext, R.style.OrologioOrdini, new TimePickerDialog.OnTimeSetListener() {
-                                    @Override
-                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                        dateCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                        dateCalendar.set(Calendar.MINUTE, minute);
-                                        Log.v("ORARIO", "The choosen one "+ dateCalendar.getTime());
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
+                            dateCalendar.set(year, monthOfYear, dayOfMonth);
+                            /*
+                            new TimePickerDialog(mContext, R.style.OrologioOrdini, new TimePickerDialog.OnTimeSetListener() {
+                                @Override
+                                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                    dateCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                    dateCalendar.set(Calendar.MINUTE, minute);
+                                    Log.v("ORARIO", "The choosen one "+ dateCalendar.getTimeInMillis());
 
-                                        //GregorianCalendar gregOrario = new GregorianCalendar(year, monthOfYear, dayOfMonth, hourOfDay, minute, 00);
-                                        //timestampOrdine = gregOrario.getTimeInMillis();
-                                        lastUpdateOrdine = dateCalendar.getTimeInMillis();
-                                        timestampOrdine = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateCalendar.getTime());
-                                        Log.d("ORARIO", "" + lastUpdateOrdine + "" + timestampOrdine);
+                                    //GregorianCalendar gregOrario = new GregorianCalendar(year, monthOfYear, dayOfMonth, hourOfDay, minute, 00);
+                                    //timestampOrdine = gregOrario.getTimeInMillis();
+                                    lastUpdateOrdine = dateCalendar.getTimeInMillis();
+                                    timestampOrdine = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateCalendar.getTime());
+                                    Log.d("ORARIO", "" + lastUpdateOrdine + "" + timestampOrdine);
 
-                                        addNotaOrdine();
+                                    addNotaOrdine();
 
-                                    }
-                                }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
-                            }
-                        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
+                                }
+                            }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
+                            */
 
+                            //todo fare richista delle fasce
+                            timestampOrdine = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).format(dateCalendar.getTime());
+                            getDayFasceRequest(timestampOrdine,3);
+                        }
+                    }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)
+               ).show();
             }
 
         });
@@ -484,6 +506,43 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         return mContext;
     }
 
+    //PRIVATE FUNCTIONS------------------------------------------
+    private void getDayFasceRequest(String date,int itemCount)
+    {
+        Map<String,String> params = new HashMap<>();
+        params.put("data",date);
+        params.put("quantita",String.valueOf(itemCount));
+
+        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST, URL_GET_FASCE, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("FASCE/GET", response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error instanceof TimeoutError){
+                            Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                        }else if (error instanceof NoConnectionError) {
+                            Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                        } else if (error instanceof AuthFailureError) {
+                            Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
+                        } else if (error instanceof ServerError) {
+                            Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
+                        } else if (error instanceof NetworkError) {
+                            Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+                        } else if (error instanceof ParseError) {
+                            Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonRequest);
+    }
+    //-----------------------------------------------------------
 }
 
 

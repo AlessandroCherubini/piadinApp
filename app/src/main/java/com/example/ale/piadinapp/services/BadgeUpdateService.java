@@ -48,24 +48,18 @@ public class BadgeUpdateService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent)
     {
+        //todo: creare interface callback custom in questo file
         serviceCallback = new VolleyCallback() {
             @Override
             public void onSuccess(String result)
             {
                 Log.d("BADGE_CALLBACK",result);
-                //todo: To FIX, usare interi per i valori di timbri e omaggi
-                /*
-                String[] params = result.split(SEPARATOR);
-                String email = params[0];
-                int timbri = Integer.valueOf(params[1]);
-                int omaggi = Integer.valueOf(params[2]);
-
-                DBHelper helper = new DBHelper(BadgeUpdateService.this);
-                boolean res = helper.updateTimbroByEmail(email,timbri,omaggi);
-                if(res) {
-                    SessionManager.updateTimbriAndOmaggiValues(BadgeUpdateService.this,timbri,omaggi);
-                }
-                */
+                /*TODO
+                Get shared pref, confronto valore timbri tra shared e db esterno.
+                Se i valori sono uguali, non modifico niente e pianifico una nuova esecuzione del service.
+                Se i valori sono diversi, copio i valori dal db esterno a quello interno, NON pianifico una nuova esecuzione
+                -> il service muore
+                 */
             }
 
             @Override
@@ -75,7 +69,7 @@ public class BadgeUpdateService extends IntentService {
         HashMap<String,String> userData = SessionManager.getUserDetails(getApplicationContext());
         getBadgeDataRequest(userData.get("email"));
 
-        scheduleNextUpdate();
+        //scheduleNextUpdate();
     }
 
     @Override
