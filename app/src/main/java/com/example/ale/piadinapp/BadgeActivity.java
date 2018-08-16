@@ -109,17 +109,7 @@ public class BadgeActivity extends AppCompatActivity
 
         updateBadgeValuesString();
 
-        //Update badge values from DB
         /*
-        Button updateBadgeBtn = (Button) findViewById(R.id.btnUpdateBadgeValues);
-        updateBadgeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getUserBadgeExternalDB(userEmail);
-            }
-        });
-        */
-
         //Start/Stop service button
         final Button startService = (Button) findViewById(R.id.btnStartBadgeService);
         startService.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +133,26 @@ public class BadgeActivity extends AppCompatActivity
                 stopUpdateService();
             }
         });
+        */
+
+        //Start update service
+        String[] permissions = { Manifest.permission.INTERNET };
+        if(EasyPermissions.hasPermissions(BadgeActivity.this,permissions)) {
+            Log.d("PERMESSI","Set Internet permission");
+            startUpdateService();
+        } else {
+            EasyPermissions.requestPermissions(BadgeActivity.this,"Richiesta permesso per accesso a Internet",1,permissions);
+            startUpdateService();
+        }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        //Stop update badge service
+        stopUpdateService();
     }
 
     @Override
@@ -357,7 +367,7 @@ public class BadgeActivity extends AppCompatActivity
         }
     }
 
-    private void startUpdateService(View v)
+    private void startUpdateService()
     {
         Log.d("START","SERVICE: Update badge service");
         startService(new Intent(this, BadgeUpdateService.class));

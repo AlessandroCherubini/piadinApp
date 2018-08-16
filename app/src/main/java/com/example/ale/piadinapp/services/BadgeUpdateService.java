@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -38,7 +39,7 @@ public class BadgeUpdateService extends IntentService {
     private static final String SEPARATOR = ";";
     private static final int SERVICE_INTERVAL = 10000;
 
-    private VolleyCallback serviceCallback;
+    private BadgeServiceCallback badgeCallback;
 
     public BadgeUpdateService()
     {
@@ -48,35 +49,44 @@ public class BadgeUpdateService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent)
     {
-        //todo: creare interface callback custom in questo file
-        serviceCallback = new VolleyCallback() {
+        //todo spostare la callback in badge activity
+        badgeCallback = new BadgeServiceCallback() {
             @Override
-            public void onSuccess(String result)
+            public void onSuccess(String email,int timbri, int omaggi)
             {
-                Log.d("BADGE_CALLBACK",result);
-                /*TODO
-                Get shared pref, confronto valore timbri tra shared e db esterno.
-                Se i valori sono uguali, non modifico niente e pianifico una nuova esecuzione del service.
-                Se i valori sono diversi, copio i valori dal db esterno a quello interno, NON pianifico una nuova esecuzione
-                -> il service muore
-                 */
+                Log.d("BADGE_CALLBACK/SUCCESS",email);
+                //Recupero shared pref
+                HashMap<String,Integer> badgeData = SessionManager.getBadgeDetails(getApplicationContext());
+                int timbriLocal = badgeData.get(SessionManager.KEY_TIMBRI);
+                int omaggiLocal = badgeData.get(SessionManager.KEY_OMAGGI);
+
+                if(timbriLocal == timbri && omaggiLocal == omaggi) {
+                    Log.d("BADGE_CALLBACK/VALUES","Valori uguali, ripeto il service");
+                    scheduleNextUpdate();
+                } else {
+                    Log.d("BADGE_CALLBACK/VALUES","Valori diversi, aggiorno i valori");
+                    DBHelper helper = new DBHelper(getApplicationContext());
+                    helper.updateTimbroByEmail(email,timbri,omaggi);
+                    //Aggiorno shared preferences
+                    SessionManager.updateTimbriAndOmaggiValues(getApplicationContext(),timbri,omaggi);
+                    //Update stringhe nell'activity badge
+                }
             }
 
             @Override
-            public void onSuccessMap(int duration) {}
+            public void onFail(String result)
+            {
+                Log.d("BADGE_CALLBACK/ERROR",result);
+            }
         };
 
         HashMap<String,String> userData = SessionManager.getUserDetails(getApplicationContext());
         getBadgeDataRequest(userData.get("email"));
-
-        //scheduleNextUpdate();
     }
 
     @Override
     public void onDestroy()
-    {
-        Log.d("BADGE_SERVICE","Distruzione service");
-    }
+    {}
 
     //PRIVATE FUNCTIONS----------------------------------------------------------
     private void getBadgeDataRequest(String userEmail)
@@ -88,8 +98,6 @@ public class BadgeUpdateService extends IntentService {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("BADGE/UPDATE", response.toString());
-
                         try {
                             int success = response.getInt("success");
 
@@ -97,12 +105,12 @@ public class BadgeUpdateService extends IntentService {
                                 JSONArray timbro = response.getJSONArray("timbro");
                                 JSONObject obj = timbro.getJSONObject(0);
                                 String email = obj.getString("email");
-                                String numeroTimbriStr = obj.getString("numero_timbri");
-                                String omaggiRicevutiStr = obj.getString("omaggi_ricevuti");
+                                int numeroTimbri = obj.getInt("numero_timbri");
+                                int omaggiRicevuti = obj.getInt("omaggi_ricevuti");
 
-                                serviceCallback.onSuccess(email + SEPARATOR + numeroTimbriStr + SEPARATOR + omaggiRicevutiStr);
+                                badgeCallback.onSuccess(email,numeroTimbri,omaggiRicevuti);
                             } else {
-                                Log.d("BADGE_SERVICE/ERROR","Richiesta fallita");
+                                badgeCallback.onFail(response.toString());
                             }
                         } catch(JSONException e) {
                             e.printStackTrace();
@@ -143,6 +151,14 @@ public class BadgeUpdateService extends IntentService {
          */
         if(pendingIntent != null)
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), SERVICE_INTERVAL, pendingIntent);
+    }
+    //---------------------------------------------------------------------------
+
+    //CALLBACK INTERFACE---------------------------------------------------------
+    private interface BadgeServiceCallback {
+        void onSuccess(String email,int timbri,int omaggi);
+
+        void onFail(String result);
     }
     //---------------------------------------------------------------------------
 }
