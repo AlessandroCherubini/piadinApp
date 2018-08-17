@@ -36,8 +36,9 @@ import java.util.Map;
 
 public class BadgeUpdateService extends IntentService {
     private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
-    private static final String SEPARATOR = ";";
     private static final int SERVICE_INTERVAL = 10000;
+    //Usato per filtrare gli intent broadcast
+    public static final String BROADCAST_ACTION = "com.example.ale.piadinapp.services.updatebadge";
 
     private BadgeServiceCallback badgeCallback;
 
@@ -47,9 +48,8 @@ public class BadgeUpdateService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent)
+    protected void onHandleIntent(@Nullable final Intent intent)
     {
-        //todo spostare la callback in badge activity
         badgeCallback = new BadgeServiceCallback() {
             @Override
             public void onSuccess(String email,int timbri, int omaggi)
@@ -69,7 +69,9 @@ public class BadgeUpdateService extends IntentService {
                     helper.updateTimbroByEmail(email,timbri,omaggi);
                     //Aggiorno shared preferences
                     SessionManager.updateTimbriAndOmaggiValues(getApplicationContext(),timbri,omaggi);
-                    //Update stringhe nell'activity badge
+                    //todo: Update stringhe nell'activity badge
+                    Intent broadcastIntent = new Intent(BROADCAST_ACTION);
+                    sendBroadcast(broadcastIntent);
                 }
             }
 

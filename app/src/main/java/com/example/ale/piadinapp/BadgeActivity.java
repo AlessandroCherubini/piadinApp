@@ -1,14 +1,14 @@
 package com.example.ale.piadinapp;
 
-import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,48 +22,30 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
 import com.example.ale.piadinapp.home.ShakerActivity;
-import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.services.BadgeUpdateService;
-import com.example.ale.utility.CustomRequest;
-import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
-import com.example.ale.utility.VolleySingleton;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
-import java.util.Map;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final char SEPARATOR_QR_STR = ';';
-    private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
+
+    //Broadcast receiver per update stringhe del badge------
+    private BroadcastReceiver updateStringsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateBadgeValuesString();
+        }
+    };
+    //------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,41 +91,17 @@ public class BadgeActivity extends AppCompatActivity
 
         updateBadgeValuesString();
 
-        /*
-        //Start/Stop service button
-        final Button startService = (Button) findViewById(R.id.btnStartBadgeService);
-        startService.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String[] permissions = { Manifest.permission.INTERNET };
-                if(EasyPermissions.hasPermissions(BadgeActivity.this,permissions)) {
-                    Log.d("PERMESSI","Set Internet permission");
-                    startUpdateService(v);
-                } else {
-                    EasyPermissions.requestPermissions(BadgeActivity.this,"Richiesta permesso per accesso a Internet",1,permissions);
-                    startUpdateService(v);
-                }
-            }
-        });
+        startUpdateService();
+        //Registro il receiver
+        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+    }
 
-        Button stopService = (Button) findViewById(R.id.btnStopBadgeService);
-        stopService.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopUpdateService();
-            }
-        });
-        */
-
-        //Start update service
-        String[] permissions = { Manifest.permission.INTERNET };
-        if(EasyPermissions.hasPermissions(BadgeActivity.this,permissions)) {
-            Log.d("PERMESSI","Set Internet permission");
-            startUpdateService();
-        } else {
-            EasyPermissions.requestPermissions(BadgeActivity.this,"Richiesta permesso per accesso a Internet",1,permissions);
-            startUpdateService();
-        }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        startUpdateService();
+        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
     }
 
     @Override
@@ -153,6 +111,14 @@ public class BadgeActivity extends AppCompatActivity
 
         //Stop update badge service
         stopUpdateService();
+        unregisterReceiver(updateStringsReceiver);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        stopUpdateService();
+        unregisterReceiver(updateStringsReceiver);
     }
 
     @Override
@@ -283,68 +249,6 @@ public class BadgeActivity extends AppCompatActivity
     private String getOmaggiStr(int omaggiNumber)
     {
         return "Piadine omaggio guadagnate: " + Integer.toString(omaggiNumber);
-    }
-
-    private void getUserBadgeExternalDB(final String emailUtente) {
-        Map<String, String> params = new HashMap();
-        params.put("email", emailUtente);
-
-        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, URL_GET_BADGE, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        Log.d("BADGE/CONTROLLO_UTENTE", response.toString());
-                        try {
-                            int success = response.getInt("success");
-
-                            if(success == 1) {
-                                JSONArray timbro = response.getJSONArray("timbro");
-                                JSONObject obj = timbro.getJSONObject(0);
-                                int numeroTimbri = obj.getInt("numero_timbri");
-                                int omaggiRicevuti = obj.getInt("omaggi_ricevuti");
-
-                                //Timbro newTimbro = new Timbro(0, emailUtente, numeroTimbri, omaggiRicevuti);
-                                DBHelper helper = new DBHelper(BadgeActivity.this);
-                                boolean res = helper.updateTimbroByEmail(emailUtente,numeroTimbri,omaggiRicevuti);
-                                helper.printTimbriTable();
-                                if(res) {
-                                    SessionManager.updateTimbriAndOmaggiValues(BadgeActivity.this,numeroTimbri,omaggiRicevuti);
-                                    Toast.makeText(BadgeActivity.this,"Tessera aggiornata!",Toast.LENGTH_SHORT).show();
-                                    updateBadgeValuesString();
-                                } else {
-                                    Toast.makeText(BadgeActivity.this,"Aggiornamento Tessera fallito!",Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(BadgeActivity.this,"Non è stato possibile scaricate i dati della tessera!",Toast.LENGTH_SHORT).show();
-                            }
-                        }catch(JSONException e){
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                if (error instanceof TimeoutError){
-                    Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
-                }else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof AuthFailureError) {
-                    Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ServerError) {
-                    Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof NetworkError) {
-                    Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
     }
 
     private void updateBadgeValuesString()
