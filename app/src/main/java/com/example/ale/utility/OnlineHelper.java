@@ -15,6 +15,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
+import com.android.volley.toolbox.Volley;
 import com.example.ale.piadinapp.classi.Ordine;
 
 import org.json.JSONArray;
@@ -29,13 +30,29 @@ import java.util.Set;
 public class OnlineHelper {
 
     String urlCreaOrdine = "http://piadinapp.altervista.org/create_order.php";
+    private static final String URL_MANAGE_ORDER = "http://piadinapp.altervista.org/create_manage_order.php";
+    VolleyCallback volleyCallbackUser;
+    VolleyCallback volleyCallbackOrder;
+
     public OnlineHelper(){
 
     }
 
-    public void addOrderinExternalDB(final Context context, Ordine ordine){
-        /*JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();*/
+    public void addUserOrder(final Context context, final Ordine ordine){
+
+        volleyCallbackUser = new VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                DBHelper helper = new DBHelper(context);
+                helper.insertOrdine(ordine);
+            }
+
+            @Override
+            public void onSuccessMap(int duration) {
+
+            }
+        };
+
         Map<String, String> params = new HashMap();
 
         String emailOrdine = ordine.getEmailUtente();
@@ -68,9 +85,12 @@ public class OnlineHelper {
                         Log.d("JSON", response.toString());
                         try{
                             String success = response.getString("success");
+                            String timestamp = response.getString("timestamp");
+
                             Log.d("JSON", "success: " + success);
                             if(success.equals("1")){
                                 Toast.makeText(context, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
+                                volleyCallbackUser.onSuccess(timestamp);
                             }
                             else{
                                 Toast.makeText(context, "Oh no :(", Toast.LENGTH_SHORT).show();
@@ -103,4 +123,79 @@ public class OnlineHelper {
 
         VolleySingleton.getInstance(context).addToRequestQueue(jsObjRequest);
     }
+
+    public void addManageOrder(final Context context, final Ordine ordine, final String dataOrdine,
+                               final int idFascia, final int quantitaPiadine, final String emailUtente){
+
+        volleyCallbackOrder = new VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                ordine.setTimestampOrdine(result);
+
+                addUserOrder(context, ordine);
+            }
+
+            @Override
+            public void onSuccessMap(int duration) {
+
+            }
+        };
+
+        Map<String, String> params = new HashMap();
+
+        try{
+            params.put("data_ordine", dataOrdine);
+            params.put("id_fascia", String.valueOf(idFascia));
+            params.put("quantita", String.valueOf(quantitaPiadine));
+            params.put("email", emailUtente);
+
+        }catch(Exception e){
+            e.fillInStackTrace();
+        }
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, URL_MANAGE_ORDER, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("JSON", response.toString());
+                        try{
+                            String success = response.getString("success");
+                            String timestamp = response.getString("timestamp");
+
+                            Log.d("JSON", "success: " + success);
+                            if(success.equals("1")){
+                                volleyCallbackOrder.onSuccess(timestamp);
+                            }
+                            else{
+                                Toast.makeText(context, "Oh no :(", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch(JSONException e){
+                            e.fillInStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (error instanceof TimeoutError){
+                    Toast.makeText(context, "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof NoConnectionError) {
+                    Toast.makeText(context, "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(context, "Authentication Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(context, "Server Side Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(context, "Network Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(context, "Parse Error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        VolleySingleton.getInstance(context).addToRequestQueue(jsObjRequest);
+    }
+
 }

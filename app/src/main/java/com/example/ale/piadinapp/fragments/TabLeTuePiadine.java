@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp.home;
+package com.example.ale.piadinapp.fragments;
 
 import android.content.Context;
 import android.net.Uri;

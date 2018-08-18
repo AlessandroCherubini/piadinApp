@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.ale.piadinapp.home.TabCreaPiadina;
-import com.example.ale.piadinapp.home.TabLeTuePiadine;
-import com.example.ale.piadinapp.home.TabMenu;
+import com.example.ale.piadinapp.fragments.TabCreaPiadina;
+import com.example.ale.piadinapp.fragments.TabLeTuePiadine;
+import com.example.ale.piadinapp.fragments.TabMenu;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;

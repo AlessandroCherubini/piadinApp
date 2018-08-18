@@ -1,13 +1,11 @@
 package com.example.ale.piadinapp;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -20,18 +18,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.home.CartActivity;
-import com.example.ale.piadinapp.classi.User;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.ShakerActivity;
-import com.example.ale.piadinapp.home.TabCreaPiadina;
-import com.example.ale.piadinapp.home.TabLeTuePiadine;
-import com.example.ale.piadinapp.home.TabMenu;
-import com.example.ale.utility.DBHelper;
+import com.example.ale.piadinapp.fragments.TabCreaPiadina;
+import com.example.ale.piadinapp.fragments.TabLeTuePiadine;
+import com.example.ale.piadinapp.fragments.TabMenu;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -42,13 +37,10 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TabMenu.OnFragmentInteractionListener,
         TabCreaPiadina.OnFragmentInteractionListener, TabLeTuePiadine.OnFragmentInteractionListener {
 
-    SessionManager session;
-
     TextView textCartItemCount;
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
     int mCartItemCount;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +69,7 @@ public class HomeActivity extends AppCompatActivity
 
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -148,7 +140,6 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
-
 
         final MenuItem menuItem = menu.findItem(R.id.action_cart);
 
@@ -224,8 +215,6 @@ public class HomeActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -306,7 +295,7 @@ public class HomeActivity extends AppCompatActivity
 
             }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

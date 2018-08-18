@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp.home;
+package com.example.ale.piadinapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 
 import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.home.ClickListener;
+import com.example.ale.piadinapp.home.CustomizePiadinaActivity;
+import com.example.ale.piadinapp.home.PiadineMenuAdapter;
 import com.example.ale.utility.DBHelper;
 
 import java.util.ArrayList;
@@ -74,11 +77,7 @@ public class TabMenu extends Fragment{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
@@ -105,7 +104,6 @@ public class TabMenu extends Fragment{
     @Override
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-
 
         recyclerView = getView().findViewById(R.id.recyclerViewMenu);
         recyclerView.setHasFixedSize(true);
