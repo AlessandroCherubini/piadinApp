@@ -74,6 +74,19 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_ORDINI_NOTA = "nota";
     public static final String COLUMN_ORDINI_TIMESTAMP = "updated_at";
 
+    //tabella: piadine_votate
+    public static final String TABLE_RATED_NAME = "le_mie_piadine";
+    public static final String COLUMN_RATED_ID = "id_piadina";
+    public static final String COLUMN_RATED_EMAIL = "email_utente";
+    public static final String COLUMN_RATED_NOME = "nome_piadina";
+    public static final String COLUMN_RATED_DESCRIZIONE = "descrizione";
+    public static final String COLUMN_RATED_PREZZO = "prezzo";
+    public static final String COLUMN_RATED_FORMATO = "formato";
+    public static final String COLUMN_RATED_IMPASTO = "impasto";
+    public static final String COLUMN_RATED_QUANTITA = "quantita";
+    public static final String COLUMN_RATED_VOTO = "voto";
+    public static final String COLUMN_RATED_TIMESTAMP = "updated_at";
+
     // costruttore.
     public DBHelper(Context context) {
 
@@ -128,6 +141,18 @@ public class DBHelper extends SQLiteOpenHelper{
                 " VARCHAR, " + COLUMN_ORDINI_NOTA +
                 " VARCHAR, " + COLUMN_ORDINI_TIMESTAMP + " LONG);";
 
+        String query_rating = "CREATE TABLE " + TABLE_RATED_NAME
+                + "(" + COLUMN_RATED_ID +
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDINI_EMAIL +
+                " VARCHAR, " + COLUMN_RATED_NOME +
+                " VARCHAR, " + COLUMN_RATED_DESCRIZIONE +
+                " VARCHAR, " + COLUMN_RATED_PREZZO +
+                " DOUBLE, " + COLUMN_RATED_FORMATO +
+                " VARCHAR, " + COLUMN_RATED_IMPASTO +
+                " VARCHAR, " + COLUMN_RATED_QUANTITA +
+                " INTEGER, " + COLUMN_RATED_VOTO +
+                " INTEGER, " + COLUMN_RATED_TIMESTAMP + " LONG);";
+
         // creazione tabella: users
         sqLiteDatabase.execSQL(query_logins);
         // creazione tabella: piadine
@@ -138,7 +163,8 @@ public class DBHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(query_timbri);
         // Creazione tabella: ordini
         sqLiteDatabase.execSQL(query_ordini);
-
+        // Creazione tabella: piadine votate
+        sqLiteDatabase.execSQL(query_rating);
     }
 
     @Override
@@ -327,8 +353,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return myPiadina;
     }*/
 
-    public void insertPiadina (Piadina piadina)
-    {
+    public void insertPiadina (Piadina piadina) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         String piadinaIngredienti = piadina.printIngredienti();
@@ -423,6 +448,22 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
         return timeStamp;
+    }
+
+    public boolean existOrdersByEmail(String emailUtente){
+        boolean exist;
+
+        String query = "Select updated_at from ordini where email_utente ='"+emailUtente+"'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorOrdini = db.rawQuery(query, null);
+
+        if(cursorOrdini.moveToFirst()){
+            exist = true;
+        }else{
+            exist = false;
+        }
+
+        return exist;
     }
 
     public Ingrediente getIngredienteByName (String nomeIngrediente)
@@ -676,7 +717,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public ArrayList<Ordine> getOrdiniByEmail (final String email){
         ArrayList<Ordine> ordiniUtente = new ArrayList<>();
-        ArrayList<Piadina> piadineOrdine = new ArrayList<>();
+        ArrayList<Piadina> piadineOrdine;
 
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "Select id_ordine, telefono_utente, data_ordine, descrizione, prezzo, nota, updated_at from ordini where email_utente ='"+email+"'";
@@ -705,7 +746,8 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public ArrayList<Piadina> getPiadineFromDescrizioneOrdine(String descrizione){
         ArrayList<Piadina> piadineOrdine = new ArrayList<>();
-        ArrayList<Ingrediente> ingredientiPiadina = new ArrayList<>();
+        ArrayList<Ingrediente> ingredientiDescrizione = new ArrayList<>();
+
         // divido la descrizione delle piadine in singole piadine
         String[] strutturaPiadine = descrizione.split(" - ");
         for(int i = 0; i < strutturaPiadine.length; i++){
@@ -726,14 +768,16 @@ public class DBHelper extends SQLiteOpenHelper{
             String[] nomiIngredienti = printIngredientiPiadina.split(", ");
             for(String nome : nomiIngredienti){
                 Ingrediente ingrediente = getIngredienteByName(nome);
-                ingredientiPiadina.add(ingrediente);
+                ingredientiDescrizione.add(ingrediente);
             }
+            ArrayList<Ingrediente> ingredientiPiadina = new ArrayList<>();
+            ingredientiPiadina.addAll(ingredientiDescrizione);
             // Compongo la piadina con tutti gli elementi presi dalla descrizione
             Piadina piadina = new Piadina(nomePiadina, formatoPiadina, impastoPiadina, ingredientiPiadina, prezzoPiadina,
                     quantitaPiadina, ratingPiadina);
 
             piadineOrdine.add(piadina);
-            ingredientiPiadina.clear();
+            ingredientiDescrizione.clear();
         }
 
         return piadineOrdine;
@@ -761,5 +805,77 @@ public class DBHelper extends SQLiteOpenHelper{
         db.close();
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    public void insertPiadinaVotata(Piadina piadina, String emailUtente){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String piadinaIngredienti = piadina.printIngredienti();
+
+        values.put(COLUMN_RATED_EMAIL, emailUtente);
+        values.put(COLUMN_RATED_NOME, piadina.getNome());
+        values.put(COLUMN_RATED_DESCRIZIONE, piadinaIngredienti);
+        values.put(COLUMN_RATED_PREZZO, piadina.getPrice());
+        values.put(COLUMN_RATED_FORMATO, piadina.getFormato());
+        values.put(COLUMN_RATED_IMPASTO, piadina.getImpasto());
+        values.put(COLUMN_RATED_QUANTITA, piadina.getQuantita());
+        values.put(COLUMN_RATED_VOTO, piadina.getRating());
+        values.put(COLUMN_RATED_TIMESTAMP, piadina.getLastUpdated());
+
+        try {
+            long id = database.insert(TABLE_RATED_NAME, null, values);
+            piadina.setId(id);
+            //Log.d("DB/INSERT", "Piadina aggiunta al db interno!");
+        }catch(Exception e){
+            Log.d("DB/INSERT", e.toString());
+        }
+        database.close();
+    }
+
+    public ArrayList<Piadina> getLeMiePiadineByEmail(String emailUtente){
+        ArrayList<Piadina> leMiePiadine = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_RATED_NAME + " WHERE " + COLUMN_RATED_EMAIL +
+                " ='" + emailUtente + "'";
+        Cursor cursorPiadine = db.rawQuery(sql, null);
+
+        if (cursorPiadine.moveToFirst()){
+            do {
+                long idPiadina = cursorPiadine.getLong(0);
+                String nomePiadina = cursorPiadine.getString(2);
+                String ingredientiPiadina = cursorPiadine.getString(3);
+                double prezzoPiadina = cursorPiadine.getDouble(4);
+                String formatoPiadina = cursorPiadine.getString(5);
+                String impastoPiadina = cursorPiadine.getString(6);
+                int quantitaPiadina = cursorPiadine.getInt(7);
+                int ratingPiadina = cursorPiadine.getInt(8);
+                long lastUpdatePiadina = cursorPiadine.getLong(9);
+
+                ArrayList<Ingrediente> ingredienti = getIngredientiFromString(ingredientiPiadina);
+                Piadina piadina = new Piadina(idPiadina, nomePiadina, ingredienti, prezzoPiadina,
+                        formatoPiadina, impastoPiadina, quantitaPiadina, ratingPiadina, lastUpdatePiadina);
+
+                leMiePiadine.add(piadina);
+            } while (cursorPiadine.moveToNext());
+        }
+
+        return leMiePiadine;
+    }
+
+    public boolean existMiePiadineByEmail(String emailUtente){
+        boolean exist;
+
+        String query = "Select updated_at from le_mie_piadine where email_utente ='"+emailUtente+"'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursorPiadine = db.rawQuery(query, null);
+
+        if(cursorPiadine.moveToFirst()){
+            exist = true;
+        }else{
+            exist = false;
+        }
+
+        return exist;
+    }
 
 }

@@ -73,29 +73,18 @@ public class SplashActivity extends AppCompatActivity{
     }
 
     public void checkUpdatePiadine() {
-        Log.d("DB", "Controllo il timestamp della tabella piadine sul DB esterno");
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.GET, urlGetPiadine, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Database", response.toString());
                         try {
                             JSONArray piadine = response.getJSONArray("piadine");
                             long serverTimeStamp = response.getLong("timestamp");
-
-                            Log.d("DB", "Timestamp db esterno: "+serverTimeStamp);
 
                             long internalLastUpdateTimeStamp = helper.getInternalTimeStampPiadine();
                             long diff = serverTimeStamp-internalLastUpdateTimeStamp;
 
                             if (Math.abs(diff) > 0) {
-                                Log.d("DB", "Timestamp db interno: "+internalLastUpdateTimeStamp);
-                                //Toast.makeText(SplashActivity.this, "Aggiorno le tabelle interne", Toast.LENGTH_SHORT).show();
-
-                                Toast.makeText(SplashActivity.this, " "+diff, Toast.LENGTH_LONG).show();
-
-                                // TODO: da mettere nel db interno i dati scaricati dal db esterno.
-
                                 for (int i = 0; i < piadine.length(); i++) {
                                     JSONObject piadina = piadine.getJSONObject(i);
                                     long idPiadina = piadina.getLong("id_piadina");
@@ -113,8 +102,6 @@ public class SplashActivity extends AppCompatActivity{
                                             formatoPiadina, impastoPiadina, quantitaPiadina, ratingPiadina, serverTimeStamp);
                                     helper.insertPiadina(piadinaInterna);
                                 }
-                                Log.d("DB/INSERT", "Tutte le piadine sono state aggiornate");
-                                //checkPiadine = true;
 
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
@@ -152,27 +139,18 @@ public class SplashActivity extends AppCompatActivity{
     }
 
     public void checkUpdateIngredienti() {
-        Log.d("DB", "Controllo il timestamp della tabella ingredienti sul DB esterno");
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.GET, urlGetIngredienti, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Database", response.toString());
                         try {
                             JSONArray ingredienti = response.getJSONArray("ingredienti");
                             long serverTimeStamp = response.getLong("timestamp");
-
-                            Log.d("DB", "Timestamp db esterno: "+serverTimeStamp);
 
                             long internalLastUpdateTimeStamp = helper.getInternalTimeStampIngredienti();
                             long diff = serverTimeStamp-internalLastUpdateTimeStamp;
 
                             if (Math.abs(diff) > 0) {
-                                Log.d("DB", "Timestamp db interno: "+internalLastUpdateTimeStamp);
-                                //Toast.makeText(SplashActivity.this, "Aggiorno le tabelle interne", Toast.LENGTH_SHORT).show();
-
-                                Toast.makeText(SplashActivity.this, " "+diff, Toast.LENGTH_LONG).show();
-
                                 for (int i = 0; i < ingredienti.length(); i++) {
                                     JSONObject ingrediente = ingredienti.getJSONObject(i);
                                     long idIngrediente = ingrediente.getLong("id_ingrediente");
@@ -180,15 +158,11 @@ public class SplashActivity extends AppCompatActivity{
                                     Double prezzoIngrediente = ingrediente.getDouble("prezzo");
                                     String allergeniIngrediente = ingrediente.getString("allergeni");
                                     String categoriaIngrediente = ingrediente.getString("categoria");
-                                    //Log.d("ALLERGENI", allergeniIngrediente);
 
                                     Ingrediente ingredienteInterno = new Ingrediente(idIngrediente, nomeIngrediente, prezzoIngrediente, allergeniIngrediente,
                                             categoriaIngrediente, serverTimeStamp);
                                     helper.insertIngrediente(ingredienteInterno);
                                 }
-                                Log.d("DB/INSERT", "Tutte gli ingredienti sono stati aggiornati");
-                                //checkIngredienti = true;
-                                //helper.printIngredientiTable();
                             } else {
                                 Log.d("DB", "Stessa versione del DB, non aggiorno!");
                             }

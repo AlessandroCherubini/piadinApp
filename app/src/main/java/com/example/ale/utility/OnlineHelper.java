@@ -16,12 +16,17 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
 import com.android.volley.toolbox.Volley;
+import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Ordine;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.home.CustomizePiadinaActivity;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,19 +36,22 @@ public class OnlineHelper {
 
     String urlCreaOrdine = "http://piadinapp.altervista.org/create_order.php";
     private static final String URL_MANAGE_ORDER = "http://piadinapp.altervista.org/create_manage_order.php";
+    private static final String URL_GET_USER_ORDERS = "http://piadinapp.altervista.org/get_all_orders.php";
+    private static final String URL_GET_USER_PIADINE = "http://piadinapp.altervista.org/get_le_mie_piadine.php";
+
     VolleyCallback volleyCallbackUser;
     VolleyCallback volleyCallbackOrder;
+    VolleyCallback volleyCallbackUserOrders;
+    VolleyCallback volleyCallbackUserPiadine;
 
-    public OnlineHelper(){
-
-    }
+    DBHelper helper;
 
     public void addUserOrder(final Context context, final Ordine ordine){
 
         volleyCallbackUser = new VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                DBHelper helper = new DBHelper(context);
+                helper = new DBHelper(context);
                 helper.insertOrdine(ordine);
             }
 
@@ -73,10 +81,6 @@ public class OnlineHelper {
         }catch(Exception e){
             e.fillInStackTrace();
         }
-
-        //JSONObject parameters = new JSONObject(params);
-        //Log.d("JSON", parameters.toString());
-
 
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, urlCreaOrdine, params,
                 new Response.Listener<JSONObject>() {
@@ -198,4 +202,165 @@ public class OnlineHelper {
         VolleySingleton.getInstance(context).addToRequestQueue(jsObjRequest);
     }
 
+    public void getUserOrders(final Context context, final String emailUtente){
+        volleyCallbackUserOrders = new VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    Log.d("JSON", result);
+                    JSONObject jsonObject = new JSONObject(result);
+                    JSONArray ordini = jsonObject.getJSONArray("ordini");
+
+                    helper = new DBHelper(context);
+
+                    for(int i = 0; i < ordini.length(); i++){
+                        JSONObject ordine = ordini.getJSONObject(i);
+                        String phoneOrdine = ordine.getString("user_phone");
+                        String dataOrdine = ordine.getString("data_ordine");
+                        double totaleOrdine = ordine.getDouble("prezzo");
+                        String descrizioneOrdine = ordine.getString("descrizione");
+                        ArrayList<Piadina> piadineOrdine = helper.getPiadineFromDescrizioneOrdine(descrizioneOrdine);
+
+                        String notaOrdine = ordine.getString("nota");
+                        long lastUpdateOrdine = ordine.getLong("timestamp");
+
+                        Ordine ordineInterno = new Ordine(0, emailUtente, phoneOrdine, dataOrdine,
+                                totaleOrdine, piadineOrdine, notaOrdine, lastUpdateOrdine);
+
+                        helper.insertOrdine(ordineInterno);
+                    }
+                }catch (JSONException e ){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onSuccessMap(int duration) {
+
+            }
+        };
+
+        Map<String, String> params = new HashMap();
+        params.put("email", emailUtente);
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, URL_GET_USER_ORDERS, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            String success = response.getString("success");
+
+                            if(success.equals("1")){
+                                volleyCallbackUserOrders.onSuccess(response.toString());
+                            }
+                        }catch(JSONException e){
+                            e.fillInStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (error instanceof TimeoutError){
+                    Toast.makeText(context, "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof NoConnectionError) {
+                    Toast.makeText(context, "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(context, "Authentication Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(context, "Server Side Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(context, "Network Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(context, "Parse Error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        VolleySingleton.getInstance(context).addToRequestQueue(jsObjRequest);
+    }
+
+    public void getUserPiadine(final Context context, final String emailUtente){
+        volleyCallbackUserPiadine = new VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                try{
+                    JSONObject jsonObject = new JSONObject(result);
+                    JSONArray piadine = jsonObject.getJSONArray("piadine");
+
+                    helper = new DBHelper(context);
+                    long lastUpdatePiadine = jsonObject.getLong("timestamp");
+
+                    for(int i = 0; i < piadine.length(); i++) {
+                        JSONObject piadina = piadine.getJSONObject(i);
+                        String emailUtente = piadina.getString("email_utente");
+                        String nomePiadina = piadina.getString("nome");
+                        String descrizionePiadina = piadina.getString("descrizione");
+                        ArrayList<Ingrediente> ingredientiPiadina = helper.getIngredientiFromString(descrizionePiadina);
+                        double prezzoPiadina = piadina.getDouble("prezzo");
+                        String formatoPiadina = piadina.getString("formato");
+                        String impastoPiadina = piadina.getString("impasto");
+                        int quantitaPiadina = piadina.getInt("quantita");
+                        int votoPiadina = piadina.getInt("voto");
+
+                        Piadina piadinaVotata = new Piadina(0, nomePiadina, ingredientiPiadina, prezzoPiadina,
+                                formatoPiadina, impastoPiadina, quantitaPiadina, votoPiadina, lastUpdatePiadine);
+
+                        helper.insertPiadinaVotata(piadinaVotata, emailUtente);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onSuccessMap(int duration) {
+
+            }
+        };
+
+        Map<String, String> params = new HashMap();
+        params.put("email", emailUtente);
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, URL_GET_USER_PIADINE, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            String success = response.getString("success");
+
+                            if(success.equals("1")){
+                                volleyCallbackUserPiadine.onSuccess(response.toString());
+                            }
+                        }catch(JSONException e){
+                            e.fillInStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (error instanceof TimeoutError){
+                    Toast.makeText(context, "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof NoConnectionError) {
+                    Toast.makeText(context, "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(context, "Authentication Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(context, "Server Side Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(context, "Network Error!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(context, "Parse Error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        VolleySingleton.getInstance(context).addToRequestQueue(jsObjRequest);
+    }
 }

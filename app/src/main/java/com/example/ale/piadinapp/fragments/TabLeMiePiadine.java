@@ -1,17 +1,32 @@
 package com.example.ale.piadinapp.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.home.ClickListener;
+import com.example.ale.piadinapp.home.CustomizePiadinaActivity;
+import com.example.ale.piadinapp.home.LeMiePiadineAdapter;
+import com.example.ale.piadinapp.home.PiadineMenuAdapter;
+import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.SessionManager;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 
-public class TabLeTuePiadine extends Fragment {
+public class TabLeMiePiadine extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -21,10 +36,22 @@ public class TabLeTuePiadine extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    ArrayList<Piadina> piadinaList;
+    Map<String, String> utente;
+    String emailUtente;
+    Context mContext;
+
+
+    //Context mContext = getActivity();
+    DBHelper helper;
+
+    //the recyclerview
+    RecyclerView recyclerView;
+
 
     private OnFragmentInteractionListener mListener;
 
-    public TabLeTuePiadine() {
+    public TabLeMiePiadine() {
         // Required empty public constructor
     }
 
@@ -34,11 +61,11 @@ public class TabLeTuePiadine extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TabLeTuePiadine.
+     * @return A new instance of fragment TabLeMiePiadine.
      */
     // TODO: Rename and change types and number of parameters
-    public static TabLeTuePiadine newInstance(String param1, String param2) {
-        TabLeTuePiadine fragment = new TabLeTuePiadine();
+    public static TabLeMiePiadine newInstance(String param1, String param2) {
+        TabLeMiePiadine fragment = new TabLeMiePiadine();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -49,6 +76,12 @@ public class TabLeTuePiadine extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getContext();
+        utente = SessionManager.getUserDetails(mContext);
+        helper = new DBHelper(mContext);
+
+        emailUtente = utente.get("email");
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -101,17 +134,33 @@ public class TabLeTuePiadine extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    /*private String names[] = {"Dab", "Cheru"};
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
 
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(),
-            android.R.layout.simple_list_item_1, names);
-    ListView listView = (ListView) getView().findViewById(R.id.Voti);
+        recyclerView = getView().findViewById(R.id.recycler_miepiadine);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-    public void setAdapter(ArrayAdapter<String> adapter) {
-        this.adapter = adapter;
-    }*/
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.piadina_divider));
+        recyclerView.addItemDecoration(itemDecorator);
 
+        //initializing the productlist
+        piadinaList = helper.getLeMiePiadineByEmail(emailUtente);
 
+        //creating recyclerview adapter
+        LeMiePiadineAdapter adapter = new LeMiePiadineAdapter(getActivity(), piadinaList, new ClickListener() {
+            @Override public void onPositionClicked(View view, int position) {
+                // callback performed on click
 
+                // DA METTERE LA FINESTRA DI VOTAZIONE DELLA PIADINA
+                // DA AGGIORNARE POI LA PIADINA INTERNA E LA PIADINA SUL SERVER
+
+            }
+        });
+        //setting adapter to recyclerview
+        recyclerView.setAdapter(adapter);
+
+    }
 
 }

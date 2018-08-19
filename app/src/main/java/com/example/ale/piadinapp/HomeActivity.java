@@ -25,7 +25,7 @@ import com.example.ale.piadinapp.home.CartActivity;
 import com.example.ale.piadinapp.home.PagerAdapter;
 import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.piadinapp.fragments.TabCreaPiadina;
-import com.example.ale.piadinapp.fragments.TabLeTuePiadine;
+import com.example.ale.piadinapp.fragments.TabLeMiePiadine;
 import com.example.ale.piadinapp.fragments.TabMenu;
 import com.example.ale.utility.SessionManager;
 
@@ -35,7 +35,7 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TabMenu.OnFragmentInteractionListener,
-        TabCreaPiadina.OnFragmentInteractionListener, TabLeTuePiadine.OnFragmentInteractionListener {
+        TabCreaPiadina.OnFragmentInteractionListener, TabLeMiePiadine.OnFragmentInteractionListener {
 
     TextView textCartItemCount;
     Carteasy cs = new Carteasy();
@@ -46,21 +46,16 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#552d27")));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //session = new SessionManager(this);
-        /*DBHelper helper = new DBHelper(this);
-        helper.printIngredientiTable();*/
 
         data = cs.ViewAll(getApplicationContext());
-
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Menù"));
         tabLayout.addTab(tabLayout.newTab().setText("Crea Piadina"));
-        tabLayout.addTab(tabLayout.newTab().setText("Le tue Piadine"));
+        tabLayout.addTab(tabLayout.newTab().setText("Le mie Piadine"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
