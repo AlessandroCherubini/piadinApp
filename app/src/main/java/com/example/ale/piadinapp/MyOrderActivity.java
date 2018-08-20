@@ -13,18 +13,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +47,12 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.ale.piadinapp.classi.Ordine;
+import com.example.ale.piadinapp.home.CustomizePiadinaActivity;
+import com.example.ale.piadinapp.home.OrdiniAdapter;
 import com.example.ale.piadinapp.home.ShakerActivity;
 import com.example.ale.utility.CustomRequest;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 import com.example.ale.utility.VolleySingleton;
 import com.google.gson.JsonArray;
@@ -50,12 +62,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class MyOrderActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    SessionManager session;
+    DBHelper helper;
+    ArrayList<Ordine> ordiniUtente;
+    RecyclerView recyclerViewOrdini;
+    OrdiniAdapter adapterOrdini;
+    RelativeLayout layoutDettagli;
+    Context mContext;
 
 
     @Override
@@ -64,8 +83,8 @@ public class MyOrderActivity extends AppCompatActivity
         setContentView(R.layout.activity_my_order);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //session = new SessionManager(this);
-
+        helper = new DBHelper(this);
+        mContext = this;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -91,6 +110,38 @@ public class MyOrderActivity extends AppCompatActivity
             txtProfileEmail.setText(utente.get("email"));
             txtProfileName.setText(utente.get("name"));
         }
+
+        // Get ordini dell'utente dal DB interno
+        ordiniUtente = helper.getOrdiniByEmail(utente.get("email"));
+        Collections.reverse(ordiniUtente);
+
+        recyclerViewOrdini = findViewById(R.id.recycler_ordini);
+        recyclerViewOrdini.setHasFixedSize(true);
+        recyclerViewOrdini.setLayoutManager(new LinearLayoutManager(this));
+        adapterOrdini = new OrdiniAdapter(this, ordiniUtente);
+
+        adapterOrdini.setClickListener(new OrdiniAdapter.OrdineListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                layoutDettagli = view.findViewById(R.id.layout_dettagli);
+
+                if(layoutDettagli.getVisibility() == View.VISIBLE){
+
+                    layoutDettagli.setVisibility(View.GONE);
+                    layoutDettagli.animate().alpha(0.0f);
+                }else{
+
+                    layoutDettagli.setVisibility(View.VISIBLE);
+                    layoutDettagli.animate().alpha(1.0f);
+                }
+            }
+        });
+
+        recyclerViewOrdini.setAdapter(adapterOrdini);
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(MyOrderActivity.this, DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(MyOrderActivity.this, R.drawable.piadina_divider));
+        recyclerViewOrdini.addItemDecoration(itemDecorator);
     }
 
     @Override

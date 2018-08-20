@@ -15,7 +15,7 @@ import com.example.ale.piadinapp.classi.Piadina;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaViewHolder> {
+public class PiadineMenuAdapter extends RecyclerView.Adapter<PiadineMenuAdapter.PiadinaViewHolder> {
 
 
     //this context we will use to inflate the layout
@@ -27,7 +27,7 @@ public class PiadinaAdapter extends RecyclerView.Adapter<PiadinaAdapter.PiadinaV
     private final ClickListener listener;
 
     //getting the context and product list with constructor
-    public PiadinaAdapter(Context mCtx, List<Piadina> piadinaList,ClickListener listener ) {
+    public PiadineMenuAdapter(Context mCtx, List<Piadina> piadinaList, ClickListener listener ) {
         this.mCtx = mCtx;
         this.listener = listener;
         this.piadinaList = piadinaList;
