@@ -95,6 +95,7 @@
     <!-- Pagina modifica account -->
     <string name="username_hint">Nome Cognome</string>
     <string name="phone_hint">123456789</string>
+    <string name="btn_edit_confirm">Modifica Profilo</string>
 
 
 </resources>

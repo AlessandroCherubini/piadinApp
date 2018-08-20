@@ -383,8 +383,12 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         helper.insertOrdine(ordine);
         helper.printTabellaOrdine();
 
+        /*
         OnlineHelper onlineHelper = new OnlineHelper();
         onlineHelper.addOrderinExternalDB(mContext, ordine);
+        */
+        OnlineHelper onlineHelper = new OnlineHelper(mContext);
+        onlineHelper.addOrderInExternalDB(ordine,null);
 
         svuotaCarrello();
         finish();

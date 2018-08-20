@@ -23,6 +23,9 @@ import com.android.volley.VolleyError;
 import com.example.ale.piadinapp.BadgeActivity;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.GenericCallback;
+import com.example.ale.utility.JSONHelper;
+import com.example.ale.utility.OnlineHelper;
 import com.example.ale.utility.SessionManager;
 import com.example.ale.utility.VolleyCallback;
 import com.example.ale.utility.VolleySingleton;
@@ -39,7 +42,7 @@ public class BadgeUpdateService extends IntentService {
     //Usato per filtrare gli intent broadcast
     public static final String BROADCAST_ACTION = "com.example.ale.piadinapp.services.updatebadge";
 
-    private BadgeServiceCallback badgeCallback;
+    private GenericCallback badgeCallback;
 
     public BadgeUpdateService()
     {
@@ -50,38 +53,42 @@ public class BadgeUpdateService extends IntentService {
     protected void onHandleIntent(@Nullable final Intent intent)
     {
         Log.d("BADGE_SRV","Handle service");
-        badgeCallback = new BadgeServiceCallback() {
+        badgeCallback = new GenericCallback() {
             @Override
-            public void onSuccess(String email,int timbri, int omaggi)
-            {
+            public void onSuccess(JSONObject resultData) {
+                String email = JSONHelper.getStringFromObj(resultData,"timbro","email");
+                int numeroTimbri = JSONHelper.getIntFromObj(resultData,"timbro","numero_timbri");
+                int omaggiRicevuti = JSONHelper.getIntFromObj(resultData,"timbro","omaggi_ricevuti");
+
                 Log.d("BADGE_CALLBACK/SUCCESS",email);
                 //Recupero shared pref
                 HashMap<String,Integer> badgeData = SessionManager.getBadgeDetails(getApplicationContext());
                 int timbriLocal = badgeData.get(SessionManager.KEY_TIMBRI);
                 int omaggiLocal = badgeData.get(SessionManager.KEY_OMAGGI);
 
-                if(timbriLocal == timbri && omaggiLocal == omaggi) {
+                if(timbriLocal == numeroTimbri && omaggiLocal == omaggiRicevuti) {
                     Log.d("BADGE_CALLBACK/VALUES","Valori uguali, ripeto il service");
                 } else {
-                    Log.d("BADGE_CALLBACK/VALUES","Valori diversi, aggiorno i valori");
+                    Log.d("BADGE_CALLBACK/VALUES", "Valori diversi, aggiorno i valori");
                     DBHelper helper = new DBHelper(getApplicationContext());
-                    helper.updateTimbroByEmail(email,timbri,omaggi);
+                    helper.updateTimbroByEmail(email, numeroTimbri, omaggiRicevuti);
                     //Aggiorno shared preferences
-                    SessionManager.updateTimbriAndOmaggiValues(getApplicationContext(),timbri,omaggi);
+                    SessionManager.updateTimbriAndOmaggiValues(getApplicationContext(), numeroTimbri, omaggiRicevuti);
                     Intent broadcastIntent = new Intent(BROADCAST_ACTION);
                     sendBroadcast(broadcastIntent);
                 }
             }
 
             @Override
-            public void onFail(String result)
-            {
-                Log.d("BADGE_CALLBACK/ERROR",result);
+            public void onFail(String errorStr) {
+                Log.d("BADGE_CALLBACK/ERROR",errorStr);
             }
         };
 
         HashMap<String,String> userData = SessionManager.getUserDetails(getApplicationContext());
-        getBadgeDataRequest(userData.get("email"));
+        //getBadgeDataRequest(userData.get("email"));
+        OnlineHelper onlineHelper = new OnlineHelper(getApplicationContext());
+        onlineHelper.getBadgeDataFromExternalDB(userData.get("email"),badgeCallback);
     }
 
     @Override
@@ -89,59 +96,6 @@ public class BadgeUpdateService extends IntentService {
     {
         Log.d("BADGE_SRV","Destroy service");
     }
-
-    //PRIVATE FUNCTIONS----------------------------------------------------------
-    private void getBadgeDataRequest(String userEmail)
-    {
-        Map<String,String> params = new HashMap<>();
-        params.put("email",userEmail);
-
-        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST, URL_GET_BADGE, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            int success = response.getInt("success");
-
-                            if(success == 1) {
-                                JSONArray timbro = response.getJSONArray("timbro");
-                                JSONObject obj = timbro.getJSONObject(0);
-                                String email = obj.getString("email");
-                                int numeroTimbri = obj.getInt("numero_timbri");
-                                int omaggiRicevuti = obj.getInt("omaggi_ricevuti");
-
-                                badgeCallback.onSuccess(email,numeroTimbri,omaggiRicevuti);
-                            } else {
-                                badgeCallback.onFail(response.toString());
-                            }
-                        } catch(JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error instanceof TimeoutError){
-                            Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
-                        }else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof AuthFailureError) {
-                            Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof ServerError) {
-                            Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof NetworkError) {
-                            Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof ParseError) {
-                            Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-        );
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonRequest);
-    }
-    //---------------------------------------------------------------------------
 
     //CALLBACK INTERFACE---------------------------------------------------------
     private interface BadgeServiceCallback {

@@ -2,11 +2,14 @@ package com.example.ale.piadinapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.ale.piadinapp.R;
+import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
 import java.util.HashMap;
@@ -32,15 +35,30 @@ public class EditUserActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         //Get user informations
-        EditText editTextObj;
+        final EditText editUsername = (EditText) findViewById(R.id.username_edit);
+        final EditText editPhone = (EditText) findViewById(R.id.phone_edit);
         HashMap<String,String> userData = SessionManager.getUserDetails(this);
         if(userData != null) {
             //Username hint
-            editTextObj = (EditText) findViewById(R.id.username_edit);
-            editTextObj.setHint(userData.get(SessionManager.KEY_NAME));
+            editUsername.setHint(userData.get(SessionManager.KEY_NAME));
             //Phone hint
-            editTextObj = (EditText) findViewById(R.id.phone_edit);
-            editTextObj.setHint(userData.get(SessionManager.KEY_PHONE));
+            editPhone.setHint(userData.get(SessionManager.KEY_PHONE));
+        } else {
+            editUsername.setHint("Nome Cognome");
+            editPhone.setHint("1234567890");
         }
+
+        //Edit confirm button
+        Button editButton = (Button) findViewById(R.id.btn_edit_user_confirm);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DBHelper helper = new DBHelper(EditUserActivity.this);
+                //Toast.makeText(EditUserActivity.this,"Confirm edit user",Toast.LENGTH_SHORT).show();
+                if(!editUsername.getText().toString().isEmpty()) {
+                    //todo edit user data
+                }
+            }
+        });
     }
 }
