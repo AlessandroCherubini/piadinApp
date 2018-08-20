@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp">
+
+        <RelativeLayout
+            android:id="@+id/singola_fascia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/inizio_fascia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/museo_slab"
+                android:text="18:30:00"/>
+
+            <TextView
+                android:id="@+id/fine_fascia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/museo_slab"
+                android:text="18:45:00" />
+
+            <ImageButton
+                android:id="@+id/badge_selected"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="185dp"
+                android:background="@drawable/ic_check_circle_black_24dp"
+                android:visibility="gone"
+                android:elevation="4dp" />
+
+            <ImageButton
+                android:id="@+id/button_fascia_color"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="100dp"
+                android:background="@android:color/transparent"
+                android:elevation="4dp" />
+
+            <Button
+                android:id="@+id/button_rate_piadina_ordine"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/ic_timelapse_black_24dp"
+                android:elevation="4dp" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

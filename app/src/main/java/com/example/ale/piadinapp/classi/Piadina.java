@@ -17,6 +17,7 @@ public class Piadina{
     private String impasto;
     private int quantita;
     private int rating;
+    private int idEsterno;
     private long lastUpdated;
 
 
@@ -33,6 +34,7 @@ public class Piadina{
         this.lastUpdated = lastUpdated;
     }
 
+    // Costruttore per le piadine del menù e degli Ordini
     public Piadina(String nome, String formato, String impasto, ArrayList<Ingrediente> ingredienti,
                    double price, int quantita, int rating) {
         this.nome = nome;
@@ -42,6 +44,21 @@ public class Piadina{
         this.price = price;
         this.quantita = quantita;
         this.rating = rating;
+    }
+
+    // Costruttore per "Le mie Piadine"
+    public Piadina(long id, String nome, String formato, String impasto, ArrayList<Ingrediente> ingredienti,
+                   double price, int quantita, int rating, int idEsterno, long lastUpdated) {
+        this.id = id;
+        this.nome = nome;
+        this.ingredienti = ingredienti;
+        this.formato = formato;
+        this.impasto = impasto;
+        this.price = price;
+        this.quantita = quantita;
+        this.rating = rating;
+        this.idEsterno = idEsterno;
+        this.lastUpdated = lastUpdated;
     }
 
     public long getId() {
@@ -106,6 +123,14 @@ public class Piadina{
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public int getIdEsterno() {
+        return idEsterno;
+    }
+
+    public void setIdEsterno(int idEsterno) {
+        this.idEsterno = idEsterno;
     }
 
     public long getLastUpdated() {

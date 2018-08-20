@@ -12,6 +12,7 @@
     <color name="secondaryDarkColor">#9a0007</color>
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#ffffff</color>
+    <color name="spinnerBackground">#dddbdd</color>
 
  <!--   <color name="black">#000000</color>
     <color name="jet">#222222</color>

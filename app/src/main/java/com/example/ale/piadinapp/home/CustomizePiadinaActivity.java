@@ -25,6 +25,7 @@ import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.fragments.TabMenu;
 import com.example.ale.utility.DBHelper;
 import com.google.gson.Gson;
 

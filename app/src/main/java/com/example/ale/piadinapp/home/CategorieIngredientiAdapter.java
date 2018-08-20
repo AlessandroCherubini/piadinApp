@@ -30,8 +30,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     private List<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-    Context mContext;
-    Context superContext;
+    Context mContext;;
     View ingredientiView;
     AddIngredientAdapter addIngredientiAdapter;
     RecyclerView recyclerViewIngredienti;

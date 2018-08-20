@@ -1,8 +1,11 @@
 package com.example.ale.piadinapp.classi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class CartItem {
+public class CartItem implements Parcelable {
 
     private String nome;
     private String formato;
@@ -126,6 +129,43 @@ public class CartItem {
         this.ingredienti = ingredienti;
     }
 
+    private CartItem(Parcel in) {
+        nome = in.readString();
+        formato = in.readString();
+        impasto = in.readString();
+        ingredienti = in.readArrayList(null);
+        prezzo = in.readDouble();
+        quantita = in.readInt();
+        rating = in.readInt();
+        identifier = in.readString();
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nome);
+        dest.writeString(formato);
+        dest.writeString(impasto);
+        dest.writeList(ingredienti);
+        dest.writeDouble(prezzo);
+        dest.writeInt(quantita);
+        dest.writeInt(rating);
+        dest.writeString(identifier);
+    }
+
+    public static final Parcelable.Creator<CartItem> CREATOR = new Parcelable.Creator<CartItem>() {
+        public CartItem createFromParcel(Parcel in) {
+            return new CartItem(in);
+        }
+
+        public CartItem[] newArray(int size) {
+            return new CartItem[size];
+        }
+    };
 }
