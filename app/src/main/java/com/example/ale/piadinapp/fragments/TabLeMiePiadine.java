@@ -154,7 +154,7 @@ public class TabLeMiePiadine extends Fragment {
                 // callback performed on click
 
                 // DA METTERE LA FINESTRA DI VOTAZIONE DELLA PIADINA
-                // DA AGGIORNARE POI LA PIADINA INTERNA E LA PIADINA SUL SERVER
+                // DA AGGIORNARE POI LA/LE PIADINA SUL SERVER
 
             }
         });

@@ -295,6 +295,7 @@ public class OnlineHelper {
 
                     for(int i = 0; i < piadine.length(); i++) {
                         JSONObject piadina = piadine.getJSONObject(i);
+                        int idEsternoPiadina = piadina.getInt("id_piadina");
                         String emailUtente = piadina.getString("email_utente");
                         String nomePiadina = piadina.getString("nome");
                         String descrizionePiadina = piadina.getString("descrizione");
@@ -305,8 +306,8 @@ public class OnlineHelper {
                         int quantitaPiadina = piadina.getInt("quantita");
                         int votoPiadina = piadina.getInt("voto");
 
-                        Piadina piadinaVotata = new Piadina(0, nomePiadina, ingredientiPiadina, prezzoPiadina,
-                                formatoPiadina, impastoPiadina, quantitaPiadina, votoPiadina, lastUpdatePiadine);
+                        Piadina piadinaVotata = new Piadina(0, nomePiadina, formatoPiadina, impastoPiadina, ingredientiPiadina,
+                                prezzoPiadina, quantitaPiadina, votoPiadina, idEsternoPiadina, lastUpdatePiadine);
 
                         helper.insertPiadinaVotata(piadinaVotata, emailUtente);
                     }

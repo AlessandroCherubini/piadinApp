@@ -85,6 +85,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_RATED_IMPASTO = "impasto";
     public static final String COLUMN_RATED_QUANTITA = "quantita";
     public static final String COLUMN_RATED_VOTO = "voto";
+    public static final String COLUMN_RATED_ID_ESTERNO = "id_esterno";
     public static final String COLUMN_RATED_TIMESTAMP = "updated_at";
 
     // costruttore.
@@ -151,6 +152,7 @@ public class DBHelper extends SQLiteOpenHelper{
                 " VARCHAR, " + COLUMN_RATED_IMPASTO +
                 " VARCHAR, " + COLUMN_RATED_QUANTITA +
                 " INTEGER, " + COLUMN_RATED_VOTO +
+                " INTEGER, " + COLUMN_RATED_ID_ESTERNO +
                 " INTEGER, " + COLUMN_RATED_TIMESTAMP + " LONG);";
 
         // creazione tabella: users
@@ -849,11 +851,12 @@ public class DBHelper extends SQLiteOpenHelper{
                 String impastoPiadina = cursorPiadine.getString(6);
                 int quantitaPiadina = cursorPiadine.getInt(7);
                 int ratingPiadina = cursorPiadine.getInt(8);
-                long lastUpdatePiadina = cursorPiadine.getLong(9);
+                int idEsternoPiadina = cursorPiadine.getInt(9);
+                long lastUpdatePiadina = cursorPiadine.getLong(10);
 
                 ArrayList<Ingrediente> ingredienti = getIngredientiFromString(ingredientiPiadina);
-                Piadina piadina = new Piadina(idPiadina, nomePiadina, ingredienti, prezzoPiadina,
-                        formatoPiadina, impastoPiadina, quantitaPiadina, ratingPiadina, lastUpdatePiadina);
+                Piadina piadina = new Piadina(idPiadina, nomePiadina, formatoPiadina, impastoPiadina, ingredienti,
+                        prezzoPiadina, quantitaPiadina, ratingPiadina, idEsternoPiadina, lastUpdatePiadina);
 
                 leMiePiadine.add(piadina);
             } while (cursorPiadine.moveToNext());
@@ -876,6 +879,16 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
         return exist;
+    }
+
+    public void updateMiePiadineByID(int idEsterno, int nuovoVoto){
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_RATED_VOTO, nuovoVoto);
+
+        SQLiteDatabase database = this.getWritableDatabase();
+        database.update(TABLE_RATED_NAME, cv, "id_esterno="+idEsterno,null);
+
+        database.close();
     }
 
 }
