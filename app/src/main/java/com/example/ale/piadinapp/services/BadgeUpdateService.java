@@ -36,7 +36,6 @@ import java.util.Map;
 
 public class BadgeUpdateService extends IntentService {
     private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
-    private static final int SERVICE_INTERVAL = 10000;
     //Usato per filtrare gli intent broadcast
     public static final String BROADCAST_ACTION = "com.example.ale.piadinapp.services.updatebadge";
 
@@ -50,6 +49,7 @@ public class BadgeUpdateService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable final Intent intent)
     {
+        Log.d("BADGE_SRV","Handle service");
         badgeCallback = new BadgeServiceCallback() {
             @Override
             public void onSuccess(String email,int timbri, int omaggi)
@@ -62,14 +62,12 @@ public class BadgeUpdateService extends IntentService {
 
                 if(timbriLocal == timbri && omaggiLocal == omaggi) {
                     Log.d("BADGE_CALLBACK/VALUES","Valori uguali, ripeto il service");
-                    scheduleNextUpdate();
                 } else {
                     Log.d("BADGE_CALLBACK/VALUES","Valori diversi, aggiorno i valori");
                     DBHelper helper = new DBHelper(getApplicationContext());
                     helper.updateTimbroByEmail(email,timbri,omaggi);
                     //Aggiorno shared preferences
                     SessionManager.updateTimbriAndOmaggiValues(getApplicationContext(),timbri,omaggi);
-                    //todo: Update stringhe nell'activity badge
                     Intent broadcastIntent = new Intent(BROADCAST_ACTION);
                     sendBroadcast(broadcastIntent);
                 }
@@ -88,7 +86,9 @@ public class BadgeUpdateService extends IntentService {
 
     @Override
     public void onDestroy()
-    {}
+    {
+        Log.d("BADGE_SRV","Destroy service");
+    }
 
     //PRIVATE FUNCTIONS----------------------------------------------------------
     private void getBadgeDataRequest(String userEmail)
@@ -140,19 +140,6 @@ public class BadgeUpdateService extends IntentService {
         );
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonRequest);
-    }
-
-    private void scheduleNextUpdate()
-    {
-        Intent intent = new Intent(this,this.getClass());
-        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        /*
-         * Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
-         * SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
-         */
-        if(pendingIntent != null)
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), SERVICE_INTERVAL, pendingIntent);
     }
     //---------------------------------------------------------------------------
 

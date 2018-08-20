@@ -37,12 +37,15 @@ public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final char SEPARATOR_QR_STR = ';';
+    private static final int SERVICE_INTERVAL = 10000;
 
     //Broadcast receiver per update stringhe del badge------
     private BroadcastReceiver updateStringsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateBadgeValuesString();
+            //Dopo aver aggiornato le stringhe, annullo la ripetizione del service
+            stopUpdateService();
         }
     };
     //------------------------------------------------------
@@ -275,14 +278,25 @@ public class BadgeActivity extends AppCompatActivity
     {
         Log.d("START","SERVICE: Update badge service");
         startService(new Intent(this, BadgeUpdateService.class));
+
+        Intent intent = new Intent(this,BadgeUpdateService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
+         * Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
+         * SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
+         */
+        if(pendingIntent != null)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), SERVICE_INTERVAL, pendingIntent);
     }
 
     private void stopUpdateService()
     {
         Intent intent = new Intent(this,BadgeUpdateService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(),0,intent,0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,0);
+
         stopService(intent);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         pendingIntent.cancel();
         alarm.cancel(pendingIntent);
         stopService(new Intent(getApplicationContext(),BadgeUpdateService.class));
