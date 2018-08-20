@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -275,6 +276,13 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
                 if (EasyPermissions.hasPermissions(CartActivity.this, perms)) {
                     Log.d("PERMESSI","" + checkLocationPermission());
+
+                    LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+                   if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                   {
+                       Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                       startActivity(intent);
+                   }
                     startService(v);
 
                 }
