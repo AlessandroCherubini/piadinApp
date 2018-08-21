@@ -52,51 +52,69 @@ public class EditUserActivity extends AppCompatActivity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int result;
-                DBHelper helper = new DBHelper(EditUserActivity.this);
-                //Get user account data
-                User userAccount = helper.getUserByEmail(userData.get(SessionManager.KEY_EMAIL));
-                if(!editUsername.getText().toString().isEmpty()) {
-                    userAccount.nickname = editUsername.getText().toString();
-                    result = helper.updateUserName(userAccount);
-                    Log.d("UPDATE_USER","User name: " + editUsername.getText().toString() + ", rows changed: " + result);
-                }
-
-                if(!editPhone.getText().toString().isEmpty()) {
-                    userAccount.phone = editPhone.getText().toString();
-                    result = helper.updateUserPhone(userAccount);
-                    Log.d("UPDATE_USER","User phone: " + editPhone.getText().toString() + " , rows changed: " + result);
-                }
-
-                //todo update external DB and Shared Pref
-                //Update external db
-                //Setup callback
-                GenericCallback userCallback = new GenericCallback() {
-                    @Override
-                    public void onSuccess(JSONObject resultData)
-                    {
-                        boolean success = JSONHelper.getSuccessResponseValue(resultData);
-
-                        if(success) {
-                            Log.d("UPDATE_USER", "External DB update success!");
-                        } else {
-                            Log.d("UPDATE_USER", "External DB update failed! " + JSONHelper.getResultMessage(resultData));
-                        }
-                    }
-
-                    @Override
-                    public void onFail(String errorStr)
-                    {
-                        Log.d("UPDATE_USER","JSON request failed");
-                    }
-                };
-
-                //Do request
-                OnlineHelper onlineHelper = new OnlineHelper(EditUserActivity.this);
-                onlineHelper.updateUserInExternalDB(userAccount,userCallback);
-
-                //todo edit session manager
+                updateUserDataEverywhere(userData.get(SessionManager.KEY_EMAIL),
+                                         editUsername.getText().toString(),
+                                         editPhone.getText().toString());
             }
         });
     }
+
+    //PRIVATE FUNCTIONS-----------------------------------------------------------------------------
+    private void updateUserDataEverywhere(String email,String username,String phone)
+    {
+        if(username.isEmpty() && phone.isEmpty()) {
+            return;
+        }
+
+        int result;
+        DBHelper helper = new DBHelper(this);
+        //Get user account data
+        User userAccount = helper.getUserByEmail(email);
+        if(!username.isEmpty()) {
+            userAccount.nickname = username;
+            result = helper.updateUserName(userAccount);
+            Log.d("UPDATE_USER","User name: " + username + ", rows changed: " + result);
+        }
+
+        if(!phone.isEmpty()) {
+            userAccount.phone = phone;
+            result = helper.updateUserPhone(userAccount);
+            Log.d("UPDATE_USER","User phone: " + phone + " , rows changed: " + result);
+        }
+
+        //Update external DB
+        //Setup callback
+        GenericCallback userCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+
+                if(success) {
+                    Log.d("UPDATE_USER", "External DB update success!");
+                } else {
+                    Log.d("UPDATE_USER", "External DB update failed! " + JSONHelper.getResultMessage(resultData));
+                }
+            }
+
+            @Override
+            public void onFail(String errorStr)
+            {
+                Log.d("UPDATE_USER","JSON request failed");
+            }
+        };
+
+        //Do request
+        OnlineHelper onlineHelper = new OnlineHelper(this);
+        onlineHelper.updateUserInExternalDB(userAccount,userCallback);
+
+        //Update shared prefs
+        boolean res = SessionManager.updateUserData(this,username,phone);
+        if(!res) {
+            Log.d("UPDATE_USER","Update Shared Pref error!");
+        }
+
+        finish();
+    }
+    //----------------------------------------------------------------------------------------------
 }
