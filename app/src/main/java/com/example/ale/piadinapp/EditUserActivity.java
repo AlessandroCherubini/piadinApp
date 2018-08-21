@@ -2,6 +2,7 @@ package com.example.ale.piadinapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.SessionManager;
 
@@ -17,15 +19,6 @@ import java.util.HashMap;
 import butterknife.BindView;
 
 public class EditUserActivity extends AppCompatActivity {
-
-/*    @BindView(R.id.edit_name) EditText _nameText;
-    //@BindView(R.id.input_address) EditText _addressText;
-    @BindView(R.id.edit_email) EditText _emailText;
-    //@BindView(R.id.input_mobile) EditText _mobileText;
-    @BindView(R.id.edit_oldpassword) EditText _oldPasswordText;
-    @BindView(R.id.edit_password) EditText _passwordText;
-    @BindView(R.id.edit_reEnterPassword) EditText _reEnterPasswordText;
-    @BindView(R.id.btn_edit_user) Button _editUserButton;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +30,7 @@ public class EditUserActivity extends AppCompatActivity {
         //Get user informations
         final EditText editUsername = (EditText) findViewById(R.id.username_edit);
         final EditText editPhone = (EditText) findViewById(R.id.phone_edit);
-        HashMap<String,String> userData = SessionManager.getUserDetails(this);
+        final HashMap<String,String> userData = SessionManager.getUserDetails(this);
         if(userData != null) {
             //Username hint
             editUsername.setHint(userData.get(SessionManager.KEY_NAME));
@@ -53,11 +46,23 @@ public class EditUserActivity extends AppCompatActivity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int result;
                 DBHelper helper = new DBHelper(EditUserActivity.this);
-                //Toast.makeText(EditUserActivity.this,"Confirm edit user",Toast.LENGTH_SHORT).show();
+                //Get user account data
+                User userAccount = helper.getUserByEmail(userData.get(SessionManager.KEY_EMAIL));
                 if(!editUsername.getText().toString().isEmpty()) {
-                    //todo edit user data
+                    userAccount.nickname = editUsername.getText().toString();
+                    result = helper.updateUserName(userAccount);
+                    Log.d("UPDATE_USER","User name: " + editUsername.getText().toString() + ", rows changed: " + result);
                 }
+
+                if(!editPhone.getText().toString().isEmpty()) {
+                    userAccount.phone = editPhone.getText().toString();
+                    result = helper.updateUserPhone(userAccount);
+                    Log.d("UPDATE_USER","User phone: " + editPhone.getText().toString() + " , rows changed: " + result);
+                }
+
+                //todo update external DB and Shared Pref
             }
         });
     }

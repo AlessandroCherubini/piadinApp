@@ -184,6 +184,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public int updateUserPassword (User queryValues)
     {
+        /*
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("username", queryValues.nickname);
@@ -191,10 +192,35 @@ public class DBHelper extends SQLiteOpenHelper{
         queryValues.userId=database.insert("logins", null, values);
         database.close();
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
+        */
+
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("password",queryValues.password);
+
+        int rowsModified = database.update(TABLE_LOGINS_NAME,values,COLUMN_LOGINS_ID + " = ?",
+                                           new String[] {String.valueOf(queryValues.userId)});
+        database.close();
+
+        return rowsModified;
     }
 
-    public int updateUserEMail (User queryValues)
+    public int updateUserName(User queryValues)
     {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LOGINS_NAME,queryValues.nickname);
+
+        int rowsModified = database.update(TABLE_LOGINS_NAME,values,COLUMN_LOGINS_ID + " = ?",
+                                           new String[] {String.valueOf(queryValues.userId)});
+        database.close();
+
+        return rowsModified;
+    }
+
+    public int updateUserEmail (User queryValues)
+    {
+        //In teoria non si usa
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
@@ -206,6 +232,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public int updateUserPhone (User queryValues)
     {
+        /*
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGINS_NAME, queryValues.nickname);
@@ -213,6 +240,17 @@ public class DBHelper extends SQLiteOpenHelper{
         queryValues.userId = database.insert("logins", null, values);
         database.close();
         return database.update("logins", values, "userId = ?", new String[] {String.valueOf(queryValues.userId)});
+        */
+
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LOGINS_PHONE,queryValues.phone);
+
+        int rowsModified = database.update(TABLE_LOGINS_NAME,values,COLUMN_LOGINS_ID + " = ?",
+                                           new String[] {String.valueOf(queryValues.userId)});
+        database.close();
+
+        return rowsModified;
     }
 
     public User getUserByEmail (String email)
@@ -582,6 +620,8 @@ public class DBHelper extends SQLiteOpenHelper{
                                           value,
                                           COLUMN_TIMBRI_ID + " = ?",
                                           new String[] {String.valueOf(queryValues.timbroId)});
+
+        database.close();
 
         if(rowModifiedNumber == 0) {
             Log.d("Update Badge Values","No Row affected");

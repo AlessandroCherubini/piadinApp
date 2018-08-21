@@ -1,8 +1,6 @@
 package com.example.ale.utility;
 
-import android.app.VoiceInteractor;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,21 +15,26 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
 import com.example.ale.piadinapp.classi.Ordine;
+import com.example.ale.piadinapp.classi.User;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.ResponseCache;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class OnlineHelper {
 
     private static final String URL_CREA_ORDINE = "http://piadinapp.altervista.org/create_order.php";
     private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
+    private static final String URL_UPDATE_USER = "http://piadinapp.altervista.org/update_user_jimmy.php"; //todo cambiare quando verifico che funziona
+
+    //Update user fields
+    private static final String ID_USER_FIELD       = "user_id";
+    private static final String NAME_USER_FIELD     = "name";
+    private static final String PASSWORD_USER_FIELD = "password";
+    private static final String EMAIL_USER_FIELD    = "email";
+    private static final String PHONE_USER_FIELD    = "phone";
 
     private Response.ErrorListener errorListener;
     private Context m_context;
@@ -140,7 +143,34 @@ public class OnlineHelper {
         VolleySingleton.getInstance(m_context).addToRequestQueue(jsonRequest);
     }
 
-    /*
+    public void updateUserInExternalDB(User userData, final GenericCallback callback)
+    {
+        Map<String,String> params = new HashMap<>();
+        params.put(ID_USER_FIELD,String.valueOf(userData.userId));
+        params.put(NAME_USER_FIELD,userData.nickname);
+        params.put(PASSWORD_USER_FIELD,userData.password);
+        params.put(EMAIL_USER_FIELD,userData.email);
+        params.put(PHONE_USER_FIELD,userData.phone);
+
+        //Create response listener
+        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        };
+
+        //Create request
+        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST,
+                                                      URL_UPDATE_USER,
+                                                      params,
+                                                      responseListener,
+                                                      errorListener);
+
+        VolleySingleton.getInstance(m_context).addToRequestQueue(jsonRequest);
+    }
+
+    /* CHERU
     String urlCreaOrdine = "http://piadinapp.altervista.org/create_order.php";
     public OnlineHelper(){
 

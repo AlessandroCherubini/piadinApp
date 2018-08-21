@@ -32,7 +32,7 @@ public class JSONHelper {
             return obj.getInt(key);
         } catch (JSONException e) {
             e.printStackTrace();
-            return 0;
+            return -1;
         }
     }
 }
