@@ -80,6 +80,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     VolleyCallback durataCallBack;
     View v;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,12 +274,12 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
             public void onClick(final View v) {
 
+                LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
                 String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
                 if (EasyPermissions.hasPermissions(CartActivity.this, perms)) {
                     Log.d("PERMESSI","" + checkLocationPermission());
 
-                    LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
                    {
                        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -332,7 +334,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         totaleOrdine = tot;
         BigDecimal totale = new BigDecimal(tot);
-        tvTot.setText("Totale: " + totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+        totale= totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        tvTot.setText("Totale: " + totale.toPlainString() + " €");
     }
 
     public void svuotaCarrello (){
@@ -398,12 +401,19 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
         switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // Accessi consentiti!
+                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
                     startService(view);
                 } else {
                     // permission denied!
