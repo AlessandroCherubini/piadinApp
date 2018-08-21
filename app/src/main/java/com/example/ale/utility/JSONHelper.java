@@ -9,6 +9,9 @@ Classe utilizzata per estrapolare i dati dai JSONObject risultato delle CustomRe
  */
 public class JSONHelper {
 
+    private static final String SUCCESS_FIELD = "success";
+    private static final String MESSAGE_FIELD = "message";
+
     //Static class
     private JSONHelper() {}
 
@@ -33,6 +36,32 @@ public class JSONHelper {
         } catch (JSONException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public static boolean getSuccessResponseValue(JSONObject source)
+    {
+        int res;
+        try {
+            res = source.getInt(SUCCESS_FIELD);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if(res != 0)
+            return true;
+
+        return false;
+    }
+
+    public static String getResultMessage(JSONObject source)
+    {
+        try {
+            return source.getString(MESSAGE_FIELD);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
         }
     }
 }

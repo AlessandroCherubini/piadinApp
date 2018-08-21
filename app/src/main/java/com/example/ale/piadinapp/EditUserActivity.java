@@ -12,9 +12,15 @@ import android.widget.Toolbar;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.GenericCallback;
+import com.example.ale.utility.JSONHelper;
+import com.example.ale.utility.OnlineHelper;
 import com.example.ale.utility.SessionManager;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 
@@ -63,6 +69,33 @@ public class EditUserActivity extends AppCompatActivity {
                 }
 
                 //todo update external DB and Shared Pref
+                //Update external db
+                //Setup callback
+                GenericCallback userCallback = new GenericCallback() {
+                    @Override
+                    public void onSuccess(JSONObject resultData)
+                    {
+                        boolean success = JSONHelper.getSuccessResponseValue(resultData);
+
+                        if(success) {
+                            Log.d("UPDATE_USER", "External DB update success!");
+                        } else {
+                            Log.d("UPDATE_USER", "External DB update failed! " + JSONHelper.getResultMessage(resultData));
+                        }
+                    }
+
+                    @Override
+                    public void onFail(String errorStr)
+                    {
+                        Log.d("UPDATE_USER","JSON request failed");
+                    }
+                };
+
+                //Do request
+                OnlineHelper onlineHelper = new OnlineHelper(EditUserActivity.this);
+                onlineHelper.updateUserInExternalDB(userAccount,userCallback);
+
+                //todo edit session manager
             }
         });
     }
