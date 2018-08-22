@@ -191,6 +191,10 @@ public class ServiceNotification extends IntentService implements LocationListen
                 finalLoc = net_loc;
             }
         }
+        if(!gps_enabled && !network_enabled)
+        {
+            stopNotificationService();
+        }
         return finalLoc;
     }
 
