@@ -42,6 +42,8 @@ import com.example.ale.piadinapp.home.CartActivity;
 import com.example.ale.piadinapp.home.FasceOrarioAdapter;
 import com.example.ale.utility.CustomRequest;
 import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.GenericCallback;
+import com.example.ale.utility.JSONHelper;
 import com.example.ale.utility.OnlineHelper;
 import com.example.ale.utility.SessionManager;
 import com.example.ale.utility.VolleyCallback;
@@ -284,8 +286,32 @@ public class FasceOrarioFragment extends Fragment {
                 notaOrdine, lastlastUpdateOrdine);
 
         // Aggiunta db esterno ed interno
+        /*
         OnlineHelper onlineHelper = new OnlineHelper();
         onlineHelper.addManageOrder(mContext, ordine, dataRichiesta, idFasciaSelezionata, quantitaRichiesta, emailUtente);
+        */
+        GenericCallback manageOrderCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                Log.d("JSON", resultData.toString());
+
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp");
+                Log.d("JSON", "success: " + success);
+
+                if(success) {
+                    ordine.setTimestampOrdine(timestamp);
+                    addUserOrderRequest(ordine);
+                } else {
+                    Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        OnlineHelper onlineHelper = new OnlineHelper(mContext);
+        onlineHelper.addManageOrder(ordine,dataRichiesta,idFasciaSelezionata,quantitaRichiesta,
+                                    emailUtente,manageOrderCallback);
 
         ((CartActivity)getActivity()).svuotaCarrello();
         getActivity().finish();
@@ -371,6 +397,33 @@ public class FasceOrarioFragment extends Fragment {
         );
 
         VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
+    }
+
+    private void addUserOrderRequest(final Ordine ordine)
+    {
+        GenericCallback orderCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                Log.d("JSON", resultData.toString());
+
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp");
+
+                Log.d("JSON", "success: " + success);
+
+                if(success) {
+                    Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
+                    DBHelper helper = new DBHelper(mContext);
+                    helper.insertOrdine(ordine);
+                } else {
+                    Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        OnlineHelper onlineHelper = new OnlineHelper(mContext);
+        onlineHelper.addUserOrder(ordine,orderCallback);
     }
     //-----------------------------------------------------------
 

@@ -15,7 +15,7 @@ public class JSONHelper {
     //Static class
     private JSONHelper() {}
 
-    public static String getStringFromObj(JSONObject source,String arrayName,String key)
+    public static String getStringFromArrayObj(JSONObject source,String arrayName,String key)
     {
         try {
             JSONArray array = source.getJSONArray(arrayName);
@@ -27,7 +27,7 @@ public class JSONHelper {
         }
     }
 
-    public static int getIntFromObj(JSONObject source,String arrayName,String key)
+    public static int getIntFromArrayObj(JSONObject source,String arrayName,String key)
     {
         try {
             JSONArray array = source.getJSONArray(arrayName);
@@ -55,13 +55,25 @@ public class JSONHelper {
         return false;
     }
 
-    public static String getResultMessage(JSONObject source)
+    public static String getStringFromObj(JSONObject source,String field)
     {
         try {
-            return source.getString(MESSAGE_FIELD);
+            return source.getString(field);
         } catch (JSONException e) {
             e.printStackTrace();
-            return "";
         }
+
+        return "";
+    }
+
+    public static long getLongFromObj(JSONObject source,String field)
+    {
+        try {
+            return source.getLong(field);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 }

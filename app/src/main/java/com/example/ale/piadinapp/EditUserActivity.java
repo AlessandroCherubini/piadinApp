@@ -1,5 +1,7 @@
 package com.example.ale.piadinapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -93,14 +95,8 @@ public class EditUserActivity extends AppCompatActivity {
                 if(success) {
                     Log.d("UPDATE_USER", "External DB update success!");
                 } else {
-                    Log.d("UPDATE_USER", "External DB update failed! " + JSONHelper.getResultMessage(resultData));
+                    Log.d("UPDATE_USER", "External DB update failed! " + JSONHelper.getStringFromObj(resultData,"message"));
                 }
-            }
-
-            @Override
-            public void onFail(String errorStr)
-            {
-                Log.d("UPDATE_USER","JSON request failed");
             }
         };
 
@@ -113,6 +109,12 @@ public class EditUserActivity extends AppCompatActivity {
         if(!res) {
             Log.d("UPDATE_USER","Update Shared Pref error!");
         }
+
+        //Build result for parent activity
+        Intent resultData = new Intent();
+        String msg = "Success!";
+        resultData.setData(Uri.parse(msg));
+        setResult(RESULT_OK,resultData);
 
         finish();
     }

@@ -56,9 +56,9 @@ public class BadgeUpdateService extends IntentService {
         badgeCallback = new GenericCallback() {
             @Override
             public void onSuccess(JSONObject resultData) {
-                String email = JSONHelper.getStringFromObj(resultData,"timbro","email");
-                int numeroTimbri = JSONHelper.getIntFromObj(resultData,"timbro","numero_timbri");
-                int omaggiRicevuti = JSONHelper.getIntFromObj(resultData,"timbro","omaggi_ricevuti");
+                String email = JSONHelper.getStringFromArrayObj(resultData,"timbro","email");
+                int numeroTimbri = JSONHelper.getIntFromArrayObj(resultData,"timbro","numero_timbri");
+                int omaggiRicevuti = JSONHelper.getIntFromArrayObj(resultData,"timbro","omaggi_ricevuti");
 
                 Log.d("BADGE_CALLBACK/SUCCESS",email);
                 //Recupero shared pref
@@ -77,11 +77,6 @@ public class BadgeUpdateService extends IntentService {
                     Intent broadcastIntent = new Intent(BROADCAST_ACTION);
                     sendBroadcast(broadcastIntent);
                 }
-            }
-
-            @Override
-            public void onFail(String errorStr) {
-                Log.d("BADGE_CALLBACK/ERROR",errorStr);
             }
         };
 
