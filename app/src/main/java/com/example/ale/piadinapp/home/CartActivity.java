@@ -7,14 +7,13 @@ import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -26,13 +25,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -47,10 +44,10 @@ import com.android.volley.VolleyError;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
+import com.example.ale.piadinapp.classi.FasciaOraria;
 import com.example.ale.piadinapp.classi.Ingrediente;
-import com.example.ale.piadinapp.services.NotificationService;
-import com.example.ale.piadinapp.classi.Ordine;
-import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.classi.ServiceNotification;
+import com.example.ale.piadinapp.fragments.FasceOrarioFragment;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.VolleyCallback;
 import com.google.gson.Gson;
@@ -60,7 +57,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -74,11 +70,12 @@ import org.json.JSONObject;
 
 public class CartActivity extends AppCompatActivity implements LocationListener{
 
-    private final static String URL_GET_FASCE = "http://piadinapp.altervista.org/get_fasce.php";
 
     CartItemAdapter adapter;
-    ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
-    ArrayList<Ingrediente> ingredienti = new ArrayList<Ingrediente>();
+    ArrayList<CartItem> cartItems = new ArrayList<>();
+    ArrayList<Ingrediente> ingredienti = new ArrayList<>();
+    ArrayList<FasciaOraria> fasceOrarie = new ArrayList<>();
+
     Carteasy cs = new Carteasy();
     Map<Integer, Map> data;
     DBHelper helper;
@@ -86,30 +83,30 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     View view;
     static Context mContext;
     Calendar dateCalendar;
+
     String timestampOrdine;
     double totaleOrdine;
-    String notaOrdine;
-    long lastUpdateOrdine;
-    ArrayList<Piadina> piadineOrdine;
-    Ordine ordine;
-    SessionManager session;
-    HashMap<String, String> utente;
-    VolleyCallback durataCallBack;
 
-    public boolean checkLocationPermission() {
-        String permission = "android.permission.ACCESS_FINE_LOCATION";
-        int res = this.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
-    }
+    Bundle bundle;
+    FasceOrarioFragment fragmentFasce;
+
+
+    VolleyCallback durataCallBack;
+    View v;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setProgressBarIndeterminateVisibility(true);
         setContentView(R.layout.activity_cart);
+
+        bundle = new Bundle();
+
         mContext = this;
         helper = new DBHelper(this);
-        //utente = session.getUserDetails();
-        utente = SessionManager.getUserDetails(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,16 +126,17 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
             }
         });
 
-        cs.persistData(getApplicationContext(),true);
+        //cs.persistData(getApplicationContext(),true);
         // ricevo l'elemento inserito nel carrello
 
-        String id;
+
         if (data == null || data.size()==0) {
             Toast.makeText(getApplicationContext(), "Non ci sono elementi nel carrello", Toast.LENGTH_SHORT).show();
         } else {
             int k = 0;
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
                 Map map = entry.getValue();
+                String id;
 
                 int numero = k + 1;
                 id = "Piadina " + numero;
@@ -227,7 +225,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         itemDecorator.setDrawable(ContextCompat.getDrawable(CartActivity.this, R.drawable.piadina_divider));
         rv.addItemDecoration(itemDecorator);
 
-        Button notify = (Button) findViewById(R.id.effettua_ordine);
+        Button notify = findViewById(R.id.effettua_ordine);
         notify.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(final View v) {
@@ -245,51 +243,74 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                         @Override
                         public void onDateSet(DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
                             dateCalendar.set(year, monthOfYear, dayOfMonth);
-                            /*
-                            new TimePickerDialog(mContext, R.style.OrologioOrdini, new TimePickerDialog.OnTimeSetListener() {
-                                @Override
-                                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                    dateCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                    dateCalendar.set(Calendar.MINUTE, minute);
-                                    Log.v("ORARIO", "The choosen one "+ dateCalendar.getTimeInMillis());
 
-                                    //GregorianCalendar gregOrario = new GregorianCalendar(year, monthOfYear, dayOfMonth, hourOfDay, minute, 00);
-                                    //timestampOrdine = gregOrario.getTimeInMillis();
-                                    lastUpdateOrdine = dateCalendar.getTimeInMillis();
-                                    timestampOrdine = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateCalendar.getTime());
-                                    Log.d("ORARIO", "" + lastUpdateOrdine + "" + timestampOrdine);
+                            /*if(dateCalendar.getTimeInMillis() < currentDate.getTimeInMillis()){
+                                Toast.makeText(mContext, "Data selezionata antecedente la data corrente! Riprova!", Toast.LENGTH_SHORT ).show();
+                            }else{*/
+                                timestampOrdine = new SimpleDateFormat("yyyy-MM-dd").format(dateCalendar.getTime());
+                                bundle.putString("dataRichiesta", timestampOrdine);
+                                bundle.putInt("quantitaCarrello", cartItems.size());
+                                bundle.putDouble("totaleOrdine", totaleOrdine);
+                                bundle.putParcelableArrayList("cartItems", cartItems);
 
-                                    addNotaOrdine();
+                                //bundle.putParcelableArrayList("fasceOrarie", fasceOrarie);
+                                // set Fragmentclass Arguments
 
-                                }
-                            }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
-                            */
 
-                            //todo fare richista delle fasce
-                            timestampOrdine = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).format(dateCalendar.getTime());
-                            getDayFasceRequest(timestampOrdine,3);
+                                // Create new fragment and transaction
+                                fragmentFasce = new FasceOrarioFragment();
+                                fragmentFasce.setArguments(bundle);
+                                android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                                // Replace whatever is in the fragment_container view with this fragment,
+                                // and add the transaction to the back stack
+                                transaction.replace(R.id.container_fasce, fragmentFasce);
+                                transaction.addToBackStack(null);
+                                // Commit the transaction
+                                transaction.commit();
+                                // preparo per passarli nel fragment
+
+                                //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_fasce, fragmentFasce).commit();
+                            //}
+
+                            //addNotaOrdine();
                         }
-                    }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)
-               ).show();
+                    }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
             }
 
         });
 
+
+
+        /* START SERVICE */
         final Button startService = (Button) findViewById(R.id.start_service);
         startService.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(final View v) {
 
+                LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
                 String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
                 if (EasyPermissions.hasPermissions(CartActivity.this, perms)) {
                     Log.d("PERMESSI","" + checkLocationPermission());
 
+                   if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                   {
+                       Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                       startActivity(intent);
+                   }
                     startService(v);
+
                 }
                 else {
-                    view = v;
+
                     EasyPermissions.requestPermissions(CartActivity.this, "Richiesta permesso per l\'utilizzo della posizione",1, perms);
-                    startService(v);
+                    String [] permission = {"android.permission.ACCESS_FINE_LOCATION","android.permission.INTERNET"};
+                    int res [] = new int[2];
+                    res[0]= checkCallingOrSelfPermission(permission[0]);
+                    res[1]= checkCallingOrSelfPermission(permission[1]);
+                    onRequestPermissionsResult(1,perms,res);
+                    //startService(v);
                 }
             }
 
@@ -303,96 +324,9 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 stopNotificationService();
 
             }
-
         });
-
     }
 
-    public ArrayList<Piadina> creaPiadineOrdine(ArrayList<CartItem> cartItems){
-        ArrayList<Piadina> piadineOrdine = new ArrayList<>();
-
-        for(CartItem item: cartItems){
-            String nomePiadina = item.getNome();
-            String formatoPiadina = item.getFormato();
-            String impastoPiadina = item.getImpasto();
-            ArrayList<Ingrediente> ingredientiPiadina = item.getIngredienti();
-            double prezzoPiadina = item.getPrezzo();
-            int quantitaPiadina = item.getQuantita();
-            int ratingPiadina = item.getRating();
-
-            Piadina piadina = new Piadina(nomePiadina, formatoPiadina, impastoPiadina, ingredientiPiadina,
-                    prezzoPiadina, quantitaPiadina, ratingPiadina);
-
-            piadineOrdine.add(piadina);
-        }
-
-        return piadineOrdine;
-    }
-
-    public void addNotaOrdine(){
-
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.alert_nota, null);
-        dialogBuilder.setView(dialogView);
-
-        final EditText editText = dialogView.findViewById(R.id.testo_nota);
-
-        dialogBuilder.setTitle("Nota dell'ordine:");
-        dialogBuilder.setIcon(R.drawable.ic_note_add_black_24dp);
-        dialogBuilder.setMessage("È data la possibilità di scrivere una eventuale nota per il gestore.");
-        dialogBuilder.setPositiveButton("Ok, ordina", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                notaOrdine = editText.getText().toString().trim();
-
-                // Procediamo con l'ordine!!
-                final ProgressDialog progressDialog = new ProgressDialog(CartActivity.this,
-                        R.style.AppTheme_Dark_Dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Evasione dell'ordine...");
-                progressDialog.show();
-
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                // On complete call either onLoginSuccess or onLoginFailed
-                                finishOrder();
-                                progressDialog.dismiss();
-                            }
-                        }, 3000);
-            }
-        });
-
-        dialogBuilder.setNegativeButton("Annulla ordine", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
-
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-    }
-
-    public void finishOrder(){
-        String emailUtente = utente.get("email");
-        String telefonoUtente = utente.get("phone");
-        piadineOrdine = creaPiadineOrdine(cartItems);
-        ordine = new Ordine(0, emailUtente, telefonoUtente, timestampOrdine, totaleOrdine, piadineOrdine,
-                notaOrdine, lastUpdateOrdine);
-
-        helper.insertOrdine(ordine);
-        helper.printTabellaOrdine();
-
-        /*
-        OnlineHelper onlineHelper = new OnlineHelper();
-        onlineHelper.addOrderinExternalDB(mContext, ordine);
-        */
-        OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addOrderInExternalDB(ordine,null);
-
-        svuotaCarrello();
-        finish();
-    }
 
     public void stopNotificationService(){
         Intent intent = new Intent(CartActivity.this, NotificationService.class);
@@ -414,7 +348,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         totaleOrdine = tot;
         BigDecimal totale = new BigDecimal(tot);
-        tvTot.setText("Totale: " + totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+        totale= totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        tvTot.setText("Totale: " + totale.toPlainString() + " €");
     }
 
     public void svuotaCarrello (){
@@ -462,6 +397,15 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
     }
 
+
+    public boolean checkLocationPermission()
+    {
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = this.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+
     @Override
     public void onLocationChanged(Location location) {
 
@@ -471,13 +415,19 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-/*        switch (requestCode) {
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // Accessi consentiti!
-                    Log.d("ACCESSI", "" + grantResults[0]);
+                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
                     startService(view);
                 } else {
                     // permission denied!
@@ -485,10 +435,11 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 }
                 return;
             }
-        }*/
+        }
 
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        startService(v);
     }
 
     @Override
@@ -510,43 +461,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         return mContext;
     }
 
-    //PRIVATE FUNCTIONS------------------------------------------
-    private void getDayFasceRequest(String date,int itemCount)
-    {
-        Map<String,String> params = new HashMap<>();
-        params.put("data",date);
-        params.put("quantita",String.valueOf(itemCount));
 
-        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST, URL_GET_FASCE, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("FASCE/GET", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error instanceof TimeoutError){
-                            Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
-                        }else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnection Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof AuthFailureError) {
-                            Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof ServerError) {
-                            Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof NetworkError) {
-                            Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof ParseError) {
-                            Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-        );
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonRequest);
-    }
-    //-----------------------------------------------------------
 }
 
 

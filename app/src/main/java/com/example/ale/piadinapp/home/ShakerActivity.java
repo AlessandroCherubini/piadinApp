@@ -40,6 +40,7 @@ import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -94,7 +95,7 @@ public class ShakerActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 shake_button.setText("SCUOTI!");
-                    shakeDetector = new ShakeDetector(options).start(getApplicationContext(), new ShakeCallback() {
+                shakeDetector = new ShakeDetector(options).start(getApplicationContext(), new ShakeCallback() {
                     @Override
                     public void onShake() {
 
@@ -194,6 +195,51 @@ public class ShakerActivity extends AppCompatActivity
         }*/
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save UI state changes to the savedInstanceState.
+        final Button shake_button = (Button) findViewById(R.id.button_shake);
+        savedInstanceState.putCharSequence("button", shake_button.getText());
+        if(randPiadina!= null) {
+            savedInstanceState.putParcelable("piadina", randPiadina);
+
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        final Button shake_button = (Button) findViewById(R.id.button_shake);
+        shake_button.setText(savedInstanceState.getCharSequence("button"));
+
+        if(savedInstanceState.getParcelable("piadina")!= null) {
+            randPiadina = savedInstanceState.getParcelable("piadina");
+            final TextView tv_shake = (TextView) findViewById(R.id.tv_shake);
+            final CardView cv_piadina = (CardView) findViewById(R.id.cv_piadina);
+            final Button btn_personalizza = (Button) findViewById(R.id.btn_personalizza);
+            final TextView tv_4 = (TextView) findViewById(R.id.textView4);
+            final TextView titolo = (TextView) findViewById(R.id.textViewTitle);
+            final TextView price = (TextView) findViewById(R.id.textViewPrezzo);
+
+            final TextView tv_ingredienti = (TextView) findViewById(R.id.textViewIngredients);
+            final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+            String nome = randPiadina.getNome();
+            double prezzo = randPiadina.getPrice();
+            titolo.setText(nome);
+            price.setText(String.valueOf(prezzo));
+            tv_ingredienti.setText(randPiadina.printIngredienti());
+            tv_shake.setVisibility(View.GONE);
+            tv_4.setVisibility(View.VISIBLE);
+            cv_piadina.setVisibility(View.VISIBLE);
+            btn_personalizza.setVisibility(View.VISIBLE);
+
+        }
     }
 
     public Piadina getRandomPiadina()

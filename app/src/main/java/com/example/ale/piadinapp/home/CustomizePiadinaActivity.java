@@ -25,6 +25,7 @@ import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.Ingrediente;
 import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.fragments.TabMenu;
 import com.example.ale.utility.DBHelper;
 import com.google.gson.Gson;
 
@@ -113,7 +114,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
         nomePiadina.setText(chosenPiadina.getNome());
-        nomePiadina.setTypeface(null, Typeface.BOLD);
 
         // Radio Button
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
@@ -206,7 +206,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                                 TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
 
                                 BigDecimal totale = new BigDecimal(totalePiadina);
-                                prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+                                totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+                                prezzoPiadina.setText(totale.toPlainString() + " €");
+
 
                                 totaleIngredienti = totaleIngredienti - prezzoIngrediente;
                                 adapter.removeItem(position);

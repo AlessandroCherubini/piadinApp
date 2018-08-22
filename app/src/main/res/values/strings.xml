@@ -96,6 +96,8 @@
     <string name="username_hint">Nome Cognome</string>
     <string name="phone_hint">123456789</string>
     <string name="btn_edit_confirm">Modifica Profilo</string>
-
+    <!-- Pagina I miei Ordini -->
+    <string name="reorder">Ordina ancora!</string>
+    <string name="details_order">Dettagli Ordine</string>
 
 </resources>

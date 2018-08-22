@@ -30,8 +30,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     private List<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-    Context mContext;
-    Context superContext;
+    Context mContext;;
     View ingredientiView;
     AddIngredientAdapter addIngredientiAdapter;
     RecyclerView recyclerViewIngredienti;
@@ -62,18 +61,21 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
     public void onBindViewHolder(final ViewHolder holder, int position) {
         String categoria = mData.get(position);
         holder.myTextView.setText(categoria);
+
         holder.recyclerViewAddIngredienti.setVisibility(View.GONE);
-        holder.showButton.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch(holder.recyclerViewAddIngredienti.getVisibility()){
                     case View.GONE:
                         holder.recyclerViewAddIngredienti.setVisibility(View.VISIBLE);
-                        holder.showButton.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
+                        holder.recyclerViewAddIngredienti.animate().alpha(1.0f);
+                        holder.showButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
                         break;
                     case View.VISIBLE:
                         holder.recyclerViewAddIngredienti.setVisibility(View.GONE);
-                        holder.showButton.setImageResource(R.drawable.ic_categoria);
+                        holder.recyclerViewAddIngredienti.animate().alpha(0.0f);
+                        holder.showButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp);
                 }
 
             }
@@ -149,7 +151,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.categoria);
-            myTextView.setTypeface(null, Typeface.BOLD);
+
             showButton = itemView.findViewById(R.id.dropDownButton);
             // tutto l'elemento dell'adapter attiva il listener; se metto il pulsante show crasha!
             //showButton.setOnClickListener(this);

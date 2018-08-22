@@ -1,4 +1,4 @@
-package com.example.ale.piadinapp.home;
+package com.example.ale.piadinapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,24 +12,34 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.ale.piadinapp.MyOrderActivity;
-import com.example.ale.piadinapp.classi.Ingrediente;
-import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.classi.Piadina;
+import com.example.ale.piadinapp.home.ClickListener;
+import com.example.ale.piadinapp.home.CustomizePiadinaActivity;
+import com.example.ale.piadinapp.home.LeMiePiadineAdapter;
+import com.example.ale.piadinapp.home.PiadineMenuAdapter;
 import com.example.ale.utility.DBHelper;
+import com.example.ale.utility.SessionManager;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
-public class TabMenu extends Fragment{
+public class TabLeMiePiadine extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
     ArrayList<Piadina> piadinaList;
+    Map<String, String> utente;
+    String emailUtente;
+    Context mContext;
 
 
     //Context mContext = getActivity();
@@ -38,13 +48,10 @@ public class TabMenu extends Fragment{
     //the recyclerview
     RecyclerView recyclerView;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public TabMenu() {
+    public TabLeMiePiadine() {
         // Required empty public constructor
     }
 
@@ -54,11 +61,11 @@ public class TabMenu extends Fragment{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TabMenu.
+     * @return A new instance of fragment TabLeMiePiadine.
      */
     // TODO: Rename and change types and number of parameters
-    public static TabMenu newInstance(String param1, String param2) {
-        TabMenu fragment = new TabMenu();
+    public static TabLeMiePiadine newInstance(String param1, String param2) {
+        TabLeMiePiadine fragment = new TabLeMiePiadine();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -69,20 +76,23 @@ public class TabMenu extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getContext();
+        utente = SessionManager.getUserDetails(mContext);
+        helper = new DBHelper(mContext);
+
+        emailUtente = utente.get("email");
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-
-        return inflater.inflate(R.layout.fragment_menu, container, false);
+        return inflater.inflate(R.layout.fragment_mie_piadine, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -95,51 +105,12 @@ public class TabMenu extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        helper = new DBHelper(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onActivityCreated (Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-
-
-        recyclerView = getView().findViewById(R.id.recyclerViewMenu);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.piadina_divider));
-        recyclerView.addItemDecoration(itemDecorator);
-
-        //initializing the productlist
-
-        piadinaList = helper.getPiadine();
-
-
-
-        //creating recyclerview adapter
-        PiadinaAdapter adapter = new PiadinaAdapter(getActivity(), piadinaList, new ClickListener() {
-            @Override public void onPositionClicked(View view, int position) {
-                // callback performed on click
-
-
-                // Toast.makeText(getActivity(),nome+" "+"aggiunta al carrello",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(),CustomizePiadinaActivity.class);
-                intent.putExtra("indexPiadina",position);
-                startActivity(intent);
-
-            }
-        });
-        //setting adapter to recyclerview
-        recyclerView.setAdapter(adapter);
-
     }
 
     @Override
@@ -160,6 +131,36 @@ public class TabMenu extends Fragment{
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-            void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
+
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        recyclerView = getView().findViewById(R.id.recycler_miepiadine);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.piadina_divider));
+        recyclerView.addItemDecoration(itemDecorator);
+
+        //initializing the productlist
+        piadinaList = helper.getLeMiePiadineByEmail(emailUtente);
+
+        //creating recyclerview adapter
+        LeMiePiadineAdapter adapter = new LeMiePiadineAdapter(getActivity(), piadinaList, new ClickListener() {
+            @Override public void onPositionClicked(View view, int position) {
+                // callback performed on click
+
+                // DA METTERE LA FINESTRA DI VOTAZIONE DELLA PIADINA
+                // DA AGGIORNARE POI LA/LE PIADINA SUL SERVER
+
+            }
+        });
+        //setting adapter to recyclerview
+        recyclerView.setAdapter(adapter);
+
+    }
+
 }

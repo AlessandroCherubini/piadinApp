@@ -14,7 +14,8 @@ public class Ordine {
     private String notaOrdine;
     private long lastUpdated;
 
-    public Ordine(long idOrdine, String emailUtente, String telefonoUtente, String timestampData, double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
+    public Ordine(long idOrdine, String emailUtente, String telefonoUtente, String timestampData,
+                  double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
         this.idOrdine = idOrdine;
         this.emailUtente = emailUtente;
         this.telefonoUtente = telefonoUtente;

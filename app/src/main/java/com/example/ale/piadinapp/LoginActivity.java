@@ -4,6 +4,7 @@ import com.example.ale.piadinapp.classi.Timbro;
 import com.example.ale.piadinapp.classi.User;
 import com.example.ale.utility.*;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
     String email, password;
     DBHelper helper;
+    OnlineHelper onlineHelper;
+    Context mContext;
 
     final String getUserURL = "http://piadinapp.altervista.org/get_user.php";
     final String getUserBadge = "http://piadinapp.altervista.org/get_timbri.php";
@@ -58,6 +61,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        mContext = this;
+
+        onlineHelper = new OnlineHelper();
 
         //session = new SessionManager(this);
 
@@ -97,12 +103,6 @@ public class LoginActivity extends AppCompatActivity {
 
         helper = new DBHelper(this);
         User internalUser = helper.getUserByEmail(email);
-        Log.d("UTENTE/PASSWORD1", "password interna: " + internalUser.password);
-        Log.d("UTENTE/PASSWORD2", "password immessa: " + password);
-        Log.d("UTENTE/EMAIL1", "email interna: " + internalUser.email);
-        Log.d("UTENTE/EMAIL2", "email inserita: " + email);
-
-        Log.d("UTENTE", internalUser.toString());
 
         // controllo che l'utente esista nel dB interno.
         if(!internalUser.password.isEmpty()){
@@ -132,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }else{
             // Utente inesistente!
-            Log.d("UTENTE/INESISTENTE", "Utente inesistente nel dB interno!");
             // cerco nel dB esterno: se esiste allora lo aggiungo nel DB interno e loggo.
             addUserIfInExternalDBExists(email);
             _loginButton.setEnabled(true);
@@ -164,20 +163,15 @@ public class LoginActivity extends AppCompatActivity {
 
         User utente = helper.getUserByEmail(_emailText.getText().toString());
         Timbro timbri = helper.getTimbroByEmail(utente.email);
-        Log.d("TIMBRI/USERDATA", "Recupero tessera utente: " + timbri.toString());
 
-        helper.printLoginsTable();
         helper.close();
 
-        //SessionManager.setLoggedIn(this,true);
         SessionManager.createLoginSession(this,
                                           utente.nickname,
                                           utente.email,
                                           utente.phone,
                                           timbri.numberTimbri,
                                           timbri.numberOmaggi);
-
-        //SessionManager.printSharedPreferences();
 
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
@@ -221,21 +215,13 @@ public class LoginActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        Log.d("UTENTE/CONTROLLO_UTENTE", response.toString());
                         try{
-                            Log.d("UTENTE/DENTRO", "Sono dentro il try");
                             JSONArray success = response.getJSONArray("user");
 
-                            Log.d("UTENTE/DENTRO", success.toString());
                             JSONObject obj = success.getJSONObject(0);
                             String username = obj.getString("name");
                             String passwordEsterna = obj.getString("password");
                             String phoneEsterno = obj.getString("phone");
-
-                            Log.d("UTENTE/NomeEsterno", username);
-
-                            Log.d("UTENTE/DBESTERNO", "Ho cercato nel dB esterno l'utente");
 
                             if(!username.isEmpty()){
                                 // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
@@ -244,10 +230,18 @@ public class LoginActivity extends AppCompatActivity {
 
                                     User newUser = new User(0, username, password, email, phoneEsterno);
                                     helper.insertUser(newUser);
-                                    Log.d("UTENTE/DBINTERNO", "Ho aggiunto l'utente al db interno perché esiste nel db esterno");
-
                                     // Gestione della Tessera dell'utente.
                                     addUserBadgeExternalDB(email);
+
+                                    // todo: gestione della connessione lenta o assente da problemi!
+                                    if(!helper.existOrdersByEmail(email)){
+                                        onlineHelper.getUserOrders(mContext, email);
+                                    }
+
+                                    // todo: gestione della connessione lenta o assente da problemi!
+                                    if(!helper.existMiePiadineByEmail(email)){
+                                        onlineHelper.getUserPiadine(mContext, email);
+                                    }
 
                                     // Procediamo con il login!
                                     final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
@@ -305,7 +299,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
-
     }
 
     public void addUserBadgeExternalDB(final String emailUtente){
@@ -313,38 +306,28 @@ public class LoginActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap();
         params.put("email", emailUtente);
 
-        Log.d("BADGE/CONTROLLO", emailUtente);
-
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, getUserBadge, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        Log.d("BADGE/CONTROLLO_UTENTE", response.toString());
                         try {
-                            Log.d("BADGE/DENTRO", "Sono dentro il try");
                             int success = response.getInt("success");
 
                             if(success == 1) {
                                 JSONArray timbro = response.getJSONArray("timbro");
 
-                                Log.d("BADGE/DENTRO", timbro.toString());
                                 JSONObject obj = timbro.getJSONObject(0);
                                 int numeroTimbri = obj.getInt("numero_timbri");
                                 int omaggiRicevuti = obj.getInt("omaggi_ricevuti");
 
                                 Timbro newTimbro = new Timbro(0, email, numeroTimbri, omaggiRicevuti);
                                 helper.insertTimbro(newTimbro);
-                                Log.d("BADGE/TIMBRO", newTimbro.toString());
                             }
                             else{
 
                                 Timbro newTimbro = new Timbro(0, email, 0, 0);
                                 helper.insertTimbro(newTimbro);
-                                Log.d("BADGE/TIMBRO", newTimbro.toString());
                             }
-
-                            helper.printTimbriTable();
                         }catch(JSONException e){
                             e.printStackTrace();
                         }
@@ -370,8 +353,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
-
     }
 }
