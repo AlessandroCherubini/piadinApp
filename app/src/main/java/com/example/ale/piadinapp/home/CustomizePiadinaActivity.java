@@ -114,7 +114,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
         nomePiadina.setText(chosenPiadina.getNome());
-        nomePiadina.setTypeface(null, Typeface.BOLD);
 
         // Radio Button
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);

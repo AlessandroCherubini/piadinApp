@@ -46,7 +46,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/buttons">
+        android:layout_above="@id/buttons"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp">
         <!--Scrollable content here-->
 
         <LinearLayout
@@ -58,21 +61,22 @@
                 android:id="@+id/nome_piadina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="70dp"
+                android:layout_marginBottom="20dp"
                 android:fontFamily="@font/museo_slab"
                 android:text="@string/personalizza_piadina"
-                android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/formato"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/museo_slab"
                 android:text="@string/formato"
-                android:textAlignment="inherit"
+                android:textColor="@color/secondaryDarkColor"
                 android:textSize="18sp" />
 
             <RadioGroup
@@ -81,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
                 android:orientation="horizontal"
-                android:paddingLeft="40dp"
+                android:layout_gravity="center_horizontal"
                 android:paddingTop="15dp">
 
                 <RadioButton
@@ -112,20 +116,22 @@
 
             <TextView
                 android:id="@+id/impasto"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/museo_slab"
                 android:text="@string/impasto"
                 android:textAlignment="inherit"
+                android:textColor="@color/secondaryDarkColor"
                 android:textSize="18sp" />
 
             <RadioGroup
                 android:id="@+id/rg2"
-                android:layout_width="match_parent"
-                android:layout_height="59dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingLeft="40dp"
+                android:layout_gravity="center_horizontal"
                 android:paddingTop="15dp">
 
                 <RadioButton
@@ -148,58 +154,65 @@
 
             </RadioGroup>
 
-            <include layout="@layout/item_divider"></include>
+            <Button
+                android:layout_width="300dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/ic_greca" />
 
             <TextView
                 android:id="@+id/ingredienti"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="40dp"
                 android:text="@string/ingredienti"
-                android:textAlignment="center"
                 android:textSize="24sp"
+                android:textColor="@color/secondaryDarkColor"
                 android:textStyle="bold" />
 
             <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/scroll_ingredienti"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
                 android:layout_marginBottom="25dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="15dp">
+                android:padding="0dp">
 
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/ingredients"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginRight="0dp"
                     tools:itemCount="3" />
 
             </ScrollView>
 
-            <include layout="@layout/item_divider"></include>
+            <Button
+                android:layout_width="300dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/ic_greca" />
 
             <TextView
                 android:id="@+id/add_ingredienti"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginEnd="10dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="40dp"
                 android:text="@string/add_ingredienti"
-                android:textAlignment="center"
                 android:textSize="24sp"
+                android:textColor="@color/secondaryDarkColor"
                 android:textStyle="bold" />
-<!--            <Button
+            <!--            <Button
                 android:id="@+id/buttonAddIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="33dp"
@@ -213,7 +226,7 @@
                 android:fontFamily="@font/museo_slab"
                 android:text="AGGIUNGI ALTRI INGREDIENTI"
                 android:textColor="@color/primaryTextColor" />-->
-<!--            <Spinner
+            <!--            <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -227,8 +240,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="25dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
                 android:layout_weight="1"
                 tools:itemCount="4" />
 

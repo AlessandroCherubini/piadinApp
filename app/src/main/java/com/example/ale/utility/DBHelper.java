@@ -821,6 +821,7 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put(COLUMN_RATED_IMPASTO, piadina.getImpasto());
         values.put(COLUMN_RATED_QUANTITA, piadina.getQuantita());
         values.put(COLUMN_RATED_VOTO, piadina.getRating());
+        values.put(COLUMN_RATED_ID_ESTERNO, piadina.getIdEsterno());
         values.put(COLUMN_RATED_TIMESTAMP, piadina.getLastUpdated());
 
         try {
