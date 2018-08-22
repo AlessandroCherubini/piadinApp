@@ -70,7 +70,7 @@ public class ServiceNotification extends IntentService implements LocationListen
                 GregorianCalendar now = new GregorianCalendar();
                 Date oraAttuale = now.getTime();
 
-                GregorianCalendar oraRitiro= new GregorianCalendar(2018, Calendar.AUGUST,13,13,25,00);
+                GregorianCalendar oraRitiro= new GregorianCalendar(2018, Calendar.AUGUST,14,8,45,00);
                 Date oraRitiroDate = oraRitiro.getTime();
 
                 long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(oraRitiroDate.getTime() - oraAttuale.getTime());
@@ -94,9 +94,7 @@ public class ServiceNotification extends IntentService implements LocationListen
             final double longitude = location.getLongitude();
             travelTimeRequest(latitude,longitude);
         }
-        else{
-            Toast.makeText(CartActivity.getAppContext(), "Localizzazione spenta.", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     @Override
@@ -114,6 +112,7 @@ public class ServiceNotification extends IntentService implements LocationListen
         pintent.cancel();
         alarm.cancel(pintent);
         stopService(new Intent(getApplicationContext(),ServiceNotification.class));
+        Log.d("SERVICE", "Servizio stoppato!");
     }
 
     private void sendNotification(){
@@ -191,6 +190,10 @@ public class ServiceNotification extends IntentService implements LocationListen
             } else if (net_loc != null) {
                 finalLoc = net_loc;
             }
+        }
+        if(!gps_enabled && !network_enabled)
+        {
+            stopNotificationService();
         }
         return finalLoc;
     }

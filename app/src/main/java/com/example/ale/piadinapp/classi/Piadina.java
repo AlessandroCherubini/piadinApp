@@ -7,7 +7,7 @@ import android.util.Log;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Piadina{
+public class Piadina implements Parcelable{
 
     private long id;
     private String nome;
@@ -164,4 +164,13 @@ public class Piadina{
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 }

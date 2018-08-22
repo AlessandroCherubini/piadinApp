@@ -206,7 +206,9 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                                 TextView prezzoPiadina = (TextView)findViewById(R.id.prezzoTotalePiadina);
 
                                 BigDecimal totale = new BigDecimal(totalePiadina);
-                                prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+                                totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+                                prezzoPiadina.setText(totale.toPlainString() + " €");
+
 
                                 totaleIngredienti = totaleIngredienti - prezzoIngrediente;
                                 adapter.removeItem(position);
