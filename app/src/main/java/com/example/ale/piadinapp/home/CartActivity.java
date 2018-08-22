@@ -32,13 +32,22 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.carteasy.v1.lib.Carteasy;
 import com.example.ale.piadinapp.R;
 import com.example.ale.piadinapp.classi.CartItem;
 import com.example.ale.piadinapp.classi.FasciaOraria;
 import com.example.ale.piadinapp.classi.Ingrediente;
-import com.example.ale.piadinapp.classi.ServiceNotification;
 import com.example.ale.piadinapp.fragments.FasceOrarioFragment;
+import com.example.ale.piadinapp.services.NotificationService;
 import com.example.ale.utility.DBHelper;
 import com.example.ale.utility.VolleyCallback;
 import com.google.gson.Gson;
@@ -49,10 +58,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import pub.devrel.easypermissions.EasyPermissions;
 import com.example.ale.utility.*;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CartActivity extends AppCompatActivity implements LocationListener{
 
@@ -315,13 +329,13 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
 
     public void stopNotificationService(){
-        Intent intent = new Intent(CartActivity.this, ServiceNotification.class);
+        Intent intent = new Intent(CartActivity.this, NotificationService.class);
         PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         stopService(intent);
         pintent.cancel();
         alarm.cancel(pintent);
-        stopService(new Intent(getApplicationContext(),ServiceNotification.class));
+        stopService(new Intent(getApplicationContext(),NotificationService.class));
         Log.d("SERVICE", "Servizio stoppato!");
     }
 
@@ -374,8 +388,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
     public void startService(View v) {
         Log.d("START","SERVICE: Start Service");
-        startService(new Intent(this,ServiceNotification.class));
-        Intent notificationIntent = new Intent(this, ServiceNotification.class);
+        startService(new Intent(this,NotificationService.class));
+        Intent notificationIntent = new Intent(this, NotificationService.class);
         PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
         AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
