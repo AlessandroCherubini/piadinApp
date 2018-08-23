@@ -51,6 +51,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import com.example.ale.utility.*;
 
@@ -276,7 +277,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
                 LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-                String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
+               /* String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
                 if (EasyPermissions.hasPermissions(CartActivity.this, perms)) {
                     Log.d("PERMESSI","" + checkLocationPermission());
 
@@ -285,7 +286,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                        startActivity(intent);
                    }
-                    startService(v);
+                    else{startService(v);};
 
                 }
                 else {
@@ -296,8 +297,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                     res[0]= checkCallingOrSelfPermission(permission[0]);
                     res[1]= checkCallingOrSelfPermission(permission[1]);
                     onRequestPermissionsResult(1,perms,res);
-                    //startService(v);
-                }
+                }*/
+               locationAndNotification();
             }
 
         });
@@ -372,15 +373,19 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     @SuppressLint("MissingPermission")
 
 
-    public void startService(View v) {
-        Log.d("START","SERVICE: Start Service");
-        startService(new Intent(this,ServiceNotification.class));
-        Intent notificationIntent = new Intent(this, ServiceNotification.class);
-        PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
-        AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
-        //SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
+    public void startService() {
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d("START", "SERVICE: Start Service");
+            startService(new Intent(this, ServiceNotification.class));
+            Intent notificationIntent = new Intent(this, ServiceNotification.class);
+            PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
+            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
+            //SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 10000, pintent);
+        }
     }
 
 
@@ -401,20 +406,19 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        /*LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
                     // Accessi consentiti!
                     if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
                     {
                         Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(intent);
                     }
-                    startService(view);
+
                 } else {
                     // permission denied!
                     Toast.makeText(this, "Permessi negati per la posizione!", Toast.LENGTH_SHORT).show();
@@ -422,10 +426,9 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                 return;
             }
         }
-
+*/
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-        startService(v);
     }
 
     @Override
@@ -445,6 +448,37 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
     public static Context getAppContext() {
         return mContext;
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        {
+            startService();
+
+        }
+    }
+
+    @AfterPermissionGranted(1)
+    public void locationAndNotification() {
+        if (checkLocationPermission()) {
+            // Have permissions, do the thing!
+            LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            {
+                Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+            else{startService();}
+        } else {
+            // Ask for both permissions
+            String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
+            EasyPermissions.requestPermissions(CartActivity.this, "Richiesta permesso per l\'utilizzo della posizione",1, perms);
+        }
     }
 
 

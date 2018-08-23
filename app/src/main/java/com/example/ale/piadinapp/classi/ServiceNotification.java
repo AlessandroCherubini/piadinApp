@@ -42,6 +42,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ServiceNotification extends IntentService implements LocationListener{
@@ -167,8 +168,10 @@ public class ServiceNotification extends IntentService implements LocationListen
 
         if (gps_enabled){
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,100,this);
-            lm.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
-            gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            //gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            gps_loc = getLastKnownLocation();
+            Log.d("GPS ","GPS STATUS: " + gps_loc);
         }
 
         if (network_enabled) {
@@ -194,6 +197,10 @@ public class ServiceNotification extends IntentService implements LocationListen
         if(!gps_enabled && !network_enabled)
         {
             stopNotificationService();
+        }
+        if (finalLoc == null)
+        {
+            Log.d("LOCATION","LOCATION = "+ finalLoc);
         }
         return finalLoc;
     }
@@ -245,6 +252,24 @@ public class ServiceNotification extends IntentService implements LocationListen
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
 
+    }
+
+    private Location getLastKnownLocation() {
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        List<String> providers = lm.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l = lm.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     @Override
