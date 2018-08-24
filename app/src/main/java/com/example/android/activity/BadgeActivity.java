@@ -112,16 +112,24 @@ public class BadgeActivity extends AppCompatActivity
     {
         super.onDestroy();
 
-        //Stop update badge service
-        stopUpdateService();
-        unregisterReceiver(updateStringsReceiver);
+        try {
+            //Stop update badge service
+            stopUpdateService();
+            unregisterReceiver(updateStringsReceiver);
+        } catch (IllegalArgumentException e) {
+            //Ignore: Receiver already unregistered
+        }
     }
 
     public void onPause()
     {
         super.onPause();
-        stopUpdateService();
-        unregisterReceiver(updateStringsReceiver);
+        try {
+            stopUpdateService();
+            unregisterReceiver(updateStringsReceiver);
+        } catch (IllegalArgumentException e) {
+            //Ignore: Receiver already unregistered
+        }
     }
 
     @Override

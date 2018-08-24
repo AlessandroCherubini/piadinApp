@@ -59,7 +59,7 @@ public class SplashActivity extends AppCompatActivity{
                     }
 
                     @Override
-                    public void onSuccessMap(int duration, String orarioRitiro) {
+                    public void onSuccessMap(int duration) {
 
                     }
                 };
@@ -67,7 +67,7 @@ public class SplashActivity extends AppCompatActivity{
             }
 
             @Override
-            public void onSuccessMap(int duration, String orarioRitiro) {
+            public void onSuccessMap(int duration) {
 
             }
         };

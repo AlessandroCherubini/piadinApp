@@ -155,7 +155,7 @@ public class FasceOrarioFragment extends Fragment {
             }
 
             @Override
-            public void onSuccessMap(int duration, String orarioRitiro) {
+            public void onSuccessMap(int duration) {
 
             }
         };
@@ -292,11 +292,12 @@ public class FasceOrarioFragment extends Fragment {
                 Log.d("JSON", resultData.toString());
 
                 boolean success = JSONHelper.getSuccessResponseValue(resultData);
-                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp");
+                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp_fine");
+                ((CartActivity) mContext).setOrarioRitiro(timestamp);
+
                 Log.d("JSON", "success: " + success);
 
                 if(success) {
-                    ordine.setTimestampOrdine(timestamp);
                     addUserOrderRequest(ordine);
                 } else {
                     Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
@@ -306,10 +307,7 @@ public class FasceOrarioFragment extends Fragment {
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
         onlineHelper.addManageOrder(ordine,dataRichiesta,idFasciaSelezionata,quantitaRichiesta,
-                emailUtente,manageOrderCallback);
-        ((CartActivity) mContext).locationAndNotification();
-
-        ((CartActivity) mContext).svuotaCarrello();
+                emailUtente, manageOrderCallback);
         //getActivity().finish();
 
     }
@@ -396,8 +394,7 @@ public class FasceOrarioFragment extends Fragment {
     }
     //-----------------------------------------------------------
 
-    private void addUserOrderRequest(final Ordine ordine)
-    {
+    private void addUserOrderRequest(final Ordine ordine) {
         GenericCallback orderCallback = new GenericCallback() {
             @Override
             public void onSuccess(JSONObject resultData)
@@ -406,6 +403,7 @@ public class FasceOrarioFragment extends Fragment {
 
                 boolean success = JSONHelper.getSuccessResponseValue(resultData);
                 String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp");
+                ordine.setTimestampOrdine(timestamp);
 
                 Log.d("JSON", "success: " + success);
 
@@ -413,6 +411,10 @@ public class FasceOrarioFragment extends Fragment {
                     Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
                     DBHelper helper = new DBHelper(mContext);
                     helper.insertOrdine(ordine);
+
+                    // Notifica
+                    ((CartActivity) mContext).locationAndNotification();
+                    ((CartActivity) mContext).svuotaCarrello();
                 } else {
                     Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
                 }

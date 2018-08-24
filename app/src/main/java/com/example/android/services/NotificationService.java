@@ -6,6 +6,7 @@ import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -39,6 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -48,6 +52,8 @@ import java.util.concurrent.TimeUnit;
 public class NotificationService extends IntentService implements LocationListener{
 
     VolleyCallback durataCallBack;
+    String orarioRitiro;
+    String dataRitiro;
 
 
     public NotificationService(){
@@ -55,37 +61,50 @@ public class NotificationService extends IntentService implements LocationListen
         super("ServiceNotification");
     }
 
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId){
+//        orarioRitiro = (String) intent.getExtras().get("orarioRitiro");
+//        //Log.d("ORARIO_STARTCOMMAND", orarioRitiro);
+//
+//        return START_STICKY;
+//    }
 
     @Override
     protected void onHandleIntent(Intent i)
     {
+        dataRitiro = (String) i.getExtras().get("dataRitiro");
+        orarioRitiro = (String) i.getExtras().get("orarioRitiro");
+
         durataCallBack = new VolleyCallback() {
             @Override
             public void onSuccess(String result) {}
 
             @Override
-            public void onSuccessMap(int duration, String orarioRitiro) {
+            public void onSuccessMap(int duration) {
 
                 Log.d("DISTANZA",""+duration);
 
                 GregorianCalendar now = new GregorianCalendar();
                 Date oraAttuale = now.getTime();
 
-                GregorianCalendar oraRitiro= new GregorianCalendar(2018, Calendar.AUGUST,14,8,45,00);
-                Date oraRitiroDate = oraRitiro.getTime();
 
-                long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(oraRitiroDate.getTime() - oraAttuale.getTime());
+                DateFormat orarioDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date orarioDate = orarioDateFormat.parse(dataRitiro + " " + orarioRitiro);
+                    long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(orarioDate.getTime() - oraAttuale.getTime());
 
+                    Log.d("ORARIO", "" + timeBeforePick);
+                    //TODO IDEARE BENE LE CONDIZIONI DEL METODO
+                    if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(5)) <= 0){
 
-                //TODO IDEARE BENE LE CONDIZIONI DEL METODO
-                if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(5)) <= 0){
+                        sendNotification();
+                        stopNotificationService();
 
-                    sendNotification();
+                    }
 
-                    stopNotificationService();
-
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-
             }
         };
 
@@ -223,7 +242,7 @@ public class NotificationService extends IntentService implements LocationListen
                             JSONObject durationObject = leg.getJSONObject("duration");
                             int duration = durationObject.getInt("value");
 
-                            durataCallBack.onSuccessMap(duration, "");
+                            durataCallBack.onSuccessMap(duration);
 
                         } catch (JSONException e) {
                             e.printStackTrace();

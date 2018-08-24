@@ -1,7 +1,6 @@
 package com.example.android.utility;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,23 +14,14 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
-import com.android.volley.toolbox.Volley;
-import com.example.android.classi.Ingrediente;
 import com.example.android.classi.Ordine;
-import com.example.android.classi.Piadina;
 import com.example.android.classi.User;
-import com.example.android.activity.CustomizePiadinaActivity;
-import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class OnlineHelper {
 
@@ -51,27 +41,27 @@ public class OnlineHelper {
     private static final String PHONE_USER_FIELD    = "phone";
 
     private Response.ErrorListener errorListener;
-    private Context m_context;
+    private Context mContext;
 
     public OnlineHelper(final Context context)
     {
-        m_context = context;
+        mContext = context;
 
         errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (error instanceof TimeoutError){
-                    Toast.makeText(m_context, "TimeOut Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "TimeOut Error!", Toast.LENGTH_SHORT).show();
                 }else if (error instanceof NoConnectionError) {
-                    Toast.makeText(m_context, "NoConnection Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "NoConnection Error!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {
-                    Toast.makeText(m_context, "Authentication Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Authentication Error!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof ServerError) {
-                    Toast.makeText(m_context, "Server Side Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Server Side Error!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof NetworkError) {
-                    Toast.makeText(m_context, "Network Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Network Error!", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof ParseError) {
-                    Toast.makeText(m_context, "Parse Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Parse Error!", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -111,7 +101,7 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsObjRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsObjRequest);
     }
 
     public void addManageOrder(final Ordine ordine, final String dataOrdine, final int idFascia,
@@ -141,7 +131,7 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsObjRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsObjRequest);
     }
 
     public void getUserData(final String email,final GenericCallback callback)
@@ -163,7 +153,7 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsonRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
     }
 
     public void getUserOrders(final String emailUtente, final GenericCallback callback)
@@ -185,7 +175,7 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsObjRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsObjRequest);
     }
 
     public void getUserPiadine(final String emailUtente, final GenericCallback callback)
@@ -207,10 +197,10 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsObjRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsObjRequest);
     }
 
-    public void addOrderInExternalDB(Ordine ordine, final GenericCallback callback)
+    /*public void addOrderInExternalDB(Ordine ordine, final GenericCallback callback)
     {
         //Fill data
         Map<String,String> params = new HashMap<>();
@@ -241,10 +231,10 @@ public class OnlineHelper {
                     String success = response.getString("success");
                     Log.d("JSON", "success: " + success);
                     if(success.equals("1")){
-                        Toast.makeText(m_context, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(m_context, "Oh no :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
                     }
 
                     if(callback != null)
@@ -262,8 +252,8 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsonRequest);
-    }
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
+    }*/
 
     public void getBadgeDataFromExternalDB(String userEmail, final GenericCallback callback)
     {
@@ -285,7 +275,7 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsonRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
     }
 
     public void updateUserInExternalDB(User userData, final GenericCallback callback)
@@ -312,6 +302,6 @@ public class OnlineHelper {
                 responseListener,
                 errorListener);
 
-        VolleySingleton.getInstance(m_context).addToRequestQueue(jsonRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
     }
 }

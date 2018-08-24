@@ -382,11 +382,12 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Log.d("START", "SERVICE: Start Service");
-            Intent intentService = new Intent(this, NotificationService.class);
+            Intent intentService = new Intent(mContext, NotificationService.class);
             intentService.putExtra("orarioRitiro", orarioRitiro);
+            intentService.putExtra("dataRitiro", timestampOrdine);
             startService(intentService);
 
-            Intent notificationIntent = new Intent(this, NotificationService.class);
+            Intent notificationIntent = new Intent(mContext, NotificationService.class);
             PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
             AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
