@@ -29,11 +29,30 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/formato_piadina_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_below="@id/nome_piadina_ordine"
+                android:fontFamily="@font/museo_slab"
+                android:text="Formato" />
+
+            <TextView
+                android:id="@+id/impasto_piadina_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/formato_piadina_ordine"
+                android:layout_below="@id/nome_piadina_ordine"
+                android:fontFamily="@font/museo_slab"
+                android:text="Impasto" />
+
+            <TextView
                 android:id="@+id/descrizione_piadina_ordine"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="30dp"
+                android:layout_below="@id/formato_piadina_ordine"
                 android:fontFamily="@font/museo_slab"
                 android:text="Descrizione" />
 
@@ -62,16 +81,23 @@
                 android:text="@string/euro"
                 android:textSize="15sp" />
 
-            <Button
-                android:id="@+id/button_rate_piadina_ordine"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="11dp"
-                android:background="@drawable/ic_stars_black_24dp"
-                android:elevation="4dp" />
+            <TextView
+                android:id="@+id/text_quantita_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantità: "
+                android:layout_below="@id/descrizione_piadina_ordine"
+                android:fontFamily="@font/museo_slab"
+                android:layout_marginStart="5dp"/>
 
+            <TextView
+                android:id="@+id/quantita_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:layout_below="@id/descrizione_piadina_ordine"
+                android:fontFamily="@font/museo_slab"
+                android:layout_toEndOf="@id/text_quantita_ordine"/>
         </RelativeLayout>
 
 <!--        <include layout="@layout/item_divider"

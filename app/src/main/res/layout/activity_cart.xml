@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.CartActivity">
+    tools:context="com.example.android.activity.CartActivity">
 
     <include layout="@layout/content_cart" />
 
