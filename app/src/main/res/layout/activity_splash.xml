@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/primaryLightColor"
     android:fitsSystemWindows="true"
-    tools:context=".SplashActivity">
+    tools:context="com.example.android.activity.SplashActivity">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.302"
         app:srcCompat="@drawable/standard" />
 
-    <com.example.ale.utility.ToolDotProgress
+    <com.example.android.utility.ToolDotProgress
         android:id="@+id/dots_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.773"
-        app:timeout="300"></com.example.ale.utility.ToolDotProgress>
+        app:timeout="300"></com.example.android.utility.ToolDotProgress>
 
 
 </android.support.constraint.ConstraintLayout>

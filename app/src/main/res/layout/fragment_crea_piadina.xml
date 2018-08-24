@@ -1,19 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:id="@+id/layout_fragment_crea_piadina"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true">
+
+    <LinearLayout
+        android:id="@+id/buttons_crea_piadina"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="?actionBarSize"
+        android:background="@color/primaryLightColor">
+
+        <Button
+            android:id="@+id/addKart_crea_piadina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/primaryDarkColor"
+            android:drawableLeft="@drawable/ic_add_shopping_cart_black_24dp"
+            android:drawablePadding="20dp"
+            android:fontFamily="@font/museo_slab"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp"
+            android:text="@string/aggiungi_carrello"
+            android:textColor="@color/primaryTextColor" />
+
+        <TextView
+            android:id="@+id/prezzoTotalePiadina_crea_piadina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/addKart"
+            android:text="totale:"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp">
+        android:layout_above="@id/buttons_crea_piadina"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp">
+        <!--Scrollable content here-->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+<!--            <EditText
+                android:id="@+id/nome_piadina_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/museo_slab"
+                android:textSize="20sp" />-->
+
+            <TextView
+                android:id="@+id/formato_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/museo_slab"
+                android:text="@string/formato"
+                android:textColor="@color/secondaryDarkColor"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/rg1_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="15dp">
+
+                <RadioButton
+                    android:id="@+id/rb_normale_crea_piadina"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="on"
+                    android:paddingRight="10dp"
+                    android:text="@string/normale" />
+
+                <RadioButton
+                    android:id="@+id/rb_rotolo_crea_piadina"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:paddingRight="10dp"
+                    android:text="@string/rotolo" />
+
+                <RadioButton
+                    android:id="@+id/rb_baby_crea_piadina"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:paddingRight="10dp"
+                    android:text="@string/baby" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/impasto_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/museo_slab"
+                android:text="@string/impasto"
+                android:textAlignment="inherit"
+                android:textColor="@color/secondaryDarkColor"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/rg2_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="15dp">
+
+                <RadioButton
+                    android:id="@+id/rb_impasto_normale_crea_piadina"
+                    android:layout_width="154dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="onRadioButtonClicked"
+                    android:paddingRight="10dp"
+                    android:text="@string/impasto_normale" />
+
+                <RadioButton
+                    android:id="@+id/rb_integrale_crea_piadina"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/rg2_crea_piadina"
+                    android:onClick="onRadioButtonClicked"
+                    android:paddingRight="10dp"
+                    android:text="@string/integrale" />
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/greca_ingredienti_crea_piadina"
+                android:layout_width="300dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                android:background="@drawable/ic_greca" />
+
+            <TextView
+                android:id="@+id/ingredienti_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="40dp"
+                android:text="@string/ingredienti"
+                android:textSize="24sp"
+                android:visibility="gone"
+                android:textColor="@color/secondaryDarkColor"
+                android:textStyle="bold" />
+
+            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/scroll_ingredienti_crea_piadina"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="25dp"
+                android:padding="0dp">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/ingredients_crea_piadina"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginRight="0dp"
+                    android:visibility="visible"
+                    tools:itemCount="3" />
+
+            </ScrollView>
+
+            <Button
+                android:layout_width="300dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/ic_greca" />
+
+            <TextView
+                android:id="@+id/add_ingredienti_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="40dp"
+                android:text="@string/add_ingredienti"
+                android:textSize="24sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/categorie_ingredienti_crea_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_weight="1"
+                tools:itemCount="4" />
+
+        </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>
