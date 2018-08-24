@@ -1,6 +1,5 @@
 package com.example.android.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,6 +42,8 @@ import com.example.android.activity.CartActivity;
 import com.example.android.adapters.FasceOrarioAdapter;
 import com.example.android.utility.CustomRequest;
 import com.example.android.utility.DBHelper;
+import com.example.android.utility.GenericCallback;
+import com.example.android.utility.JSONHelper;
 import com.example.android.utility.OnlineHelper;
 import com.example.android.utility.SessionManager;
 import com.example.android.utility.VolleyCallback;
@@ -117,7 +118,6 @@ public class FasceOrarioFragment extends Fragment {
                         fasceOrarioAdapter.notifyItemRangeChanged(0, fasceOrarie.size());
 
                         getActivity().setProgressBarIndeterminateVisibility(false);
-                        Toast.makeText(mContext, "N", Toast.LENGTH_SHORT).show();
 
                         fasceOrarioAdapter.notifyDataSetChanged();
                         getActivity().setProgressBarIndeterminateVisibility(false);
@@ -285,9 +285,28 @@ public class FasceOrarioFragment extends Fragment {
                 notaOrdine, lastlastUpdateOrdine);
 
         // Aggiunta db esterno ed interno
-        OnlineHelper onlineHelper = new OnlineHelper();
-        onlineHelper.addManageOrder(mContext, ordine, dataRichiesta, idFasciaSelezionata, quantitaRichiesta, emailUtente);
+        GenericCallback manageOrderCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                Log.d("JSON", resultData.toString());
 
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp");
+                Log.d("JSON", "success: " + success);
+
+                if(success) {
+                    ordine.setTimestampOrdine(timestamp);
+                    addUserOrderRequest(ordine);
+                } else {
+                    Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        OnlineHelper onlineHelper = new OnlineHelper(mContext);
+        onlineHelper.addManageOrder(ordine,dataRichiesta,idFasciaSelezionata,quantitaRichiesta,
+                emailUtente,manageOrderCallback);
         ((CartActivity) mContext).locationAndNotification();
 
         ((CartActivity) mContext).svuotaCarrello();
@@ -374,6 +393,34 @@ public class FasceOrarioFragment extends Fragment {
         );
 
         VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
+    }
+    //-----------------------------------------------------------
+
+    private void addUserOrderRequest(final Ordine ordine)
+    {
+        GenericCallback orderCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                Log.d("JSON", resultData.toString());
+
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp");
+
+                Log.d("JSON", "success: " + success);
+
+                if(success) {
+                    Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
+                    DBHelper helper = new DBHelper(mContext);
+                    helper.insertOrdine(ordine);
+                } else {
+                    Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        OnlineHelper onlineHelper = new OnlineHelper(mContext);
+        onlineHelper.addUserOrder(ordine,orderCallback);
     }
     //-----------------------------------------------------------
 

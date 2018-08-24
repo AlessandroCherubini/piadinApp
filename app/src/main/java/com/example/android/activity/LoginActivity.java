@@ -1,6 +1,8 @@
 package com.example.android.activity;
 
-import com.example.android.R;
+import com.example.android.classi.Ingrediente;
+import com.example.android.classi.Ordine;
+import com.example.android.classi.Piadina;
 import com.example.android.classi.Timbro;
 import com.example.android.classi.User;
 import com.example.android.utility.*;
@@ -9,6 +11,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import com.example.android.R;
 
 import android.content.Intent;
 import android.view.View;
@@ -31,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mContext = this;
 
-        onlineHelper = new OnlineHelper();
+        //onlineHelper = new OnlineHelper();
+        onlineHelper = new OnlineHelper(mContext);
 
         //session = new SessionManager(this);
 
@@ -168,11 +173,11 @@ public class LoginActivity extends AppCompatActivity {
         helper.close();
 
         SessionManager.createLoginSession(this,
-                                          utente.nickname,
-                                          utente.email,
-                                          utente.phone,
-                                          timbri.numberTimbri,
-                                          timbri.numberOmaggi);
+                utente.nickname,
+                utente.email,
+                utente.phone,
+                timbri.numberTimbri,
+                timbri.numberOmaggi);
 
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
@@ -207,50 +212,104 @@ public class LoginActivity extends AppCompatActivity {
         return valid;
     }
 
-    public void addUserIfInExternalDBExists(final String emailUtente){
+    public void addUserIfInExternalDBExists(final String emailUtente)
+    {
+        GenericCallback getUserCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                String username = JSONHelper.getStringFromArrayObj(resultData,"user","name");
+                String passwordExt = JSONHelper.getStringFromArrayObj(resultData,"user","password");
+                String phoneExt = JSONHelper.getStringFromArrayObj(resultData,"user","phone");
 
+                if(!username.isEmpty()) {
+                    // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
+                    // se la password trovata è identica a quella immessa, allora proseguo.
+                    if(passwordExt.equals(password)) {
+                        User newUser = new User(0, username, password, email, phoneExt);
+                        helper.insertUser(newUser);
+                        // Gestione della Tessera dell'utente.
+                        addUserBadgeExternalDB(email);
+
+                        // todo: gestione della connessione lenta o assente da problemi!
+                        if(!helper.existOrdersByEmail(email)){
+                            //onlineHelper.getUserOrders(mContext, email);
+                            getUserOrdersRequest(email);
+                        }
+
+                        // todo: gestione della connessione lenta o assente da problemi!
+                        if(!helper.existMiePiadineByEmail(email)){
+                            //onlineHelper.getUserPiadine(mContext, email);
+                            getUserPiadineRequest(email);
+                        }
+
+                        // Procediamo con il login!
+                        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                                R.style.AppTheme_Dark_Dialog);
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setMessage("Autenticazione in corso...");
+                        progressDialog.show();
+
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        // On complete call either onLoginSuccess or onLoginFailed
+                                        onLoginSuccess();
+                                        // onLoginFailed();
+                                        progressDialog.dismiss();
+                                    }
+                                }, 3000);
+                    } else {
+                        Toast.makeText(getBaseContext(), "Password errata!", Toast.LENGTH_SHORT).show();
+                        _passwordText.setError("Password errata. Riprova!");
+                        _loginButton.setEnabled(true);
+                    }
+                } else {
+                    Toast.makeText(getBaseContext(), "Utente inesistente: ti devi prima registrare!", Toast.LENGTH_LONG).show();
+                    _emailText.setError("Utente inesistente");
+                    _loginButton.setEnabled(true);
+                }
+            }
+        };
+
+        onlineHelper.getUserData(email,getUserCallback);
+
+        //todo delete--------------------------------------------------
+        /*
         Map<String, String> params = new HashMap();
         params.put("email", emailUtente);
-
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, getUserURL, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try{
                             JSONArray success = response.getJSONArray("user");
-
                             JSONObject obj = success.getJSONObject(0);
                             String username = obj.getString("name");
                             String passwordEsterna = obj.getString("password");
                             String phoneEsterno = obj.getString("phone");
-
                             if(!username.isEmpty()){
                                 // l'utente esiste nel dB esterno: lo aggiungo al dB interno e loggo.
                                 // se la password trovata è identica a quella immessa, allora proseguo.
                                 if(passwordEsterna.equals(password)) {
-
                                     User newUser = new User(0, username, password, email, phoneEsterno);
                                     helper.insertUser(newUser);
                                     // Gestione della Tessera dell'utente.
                                     addUserBadgeExternalDB(email);
-
                                     // todo: gestione della connessione lenta o assente da problemi!
                                     if(!helper.existOrdersByEmail(email)){
                                         onlineHelper.getUserOrders(mContext, email);
                                     }
-
                                     // todo: gestione della connessione lenta o assente da problemi!
                                     if(!helper.existMiePiadineByEmail(email)){
                                         onlineHelper.getUserPiadine(mContext, email);
                                     }
-
                                     // Procediamo con il login!
                                     final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                                             R.style.AppTheme_Dark_Dialog);
                                     progressDialog.setIndeterminate(true);
                                     progressDialog.setMessage("Autenticazione in corso...");
                                     progressDialog.show();
-
                                     new android.os.Handler().postDelayed(
                                             new Runnable() {
                                                 public void run() {
@@ -272,17 +331,13 @@ public class LoginActivity extends AppCompatActivity {
                                 _loginButton.setEnabled(true);
                                 return;
                             }
-
                         }catch(JSONException e){
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 if (error instanceof TimeoutError){
                     Toast.makeText(getApplicationContext(), "TimeOut Error!", Toast.LENGTH_SHORT).show();
                 }else if (error instanceof NoConnectionError) {
@@ -298,8 +353,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+        */
     }
 
     public void addUserBadgeExternalDB(final String emailUtente){
@@ -356,4 +411,89 @@ public class LoginActivity extends AppCompatActivity {
         });
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
     }
+
+    //PRIVATE FUNCTIONS-------------------------------------------------------------
+    private void getUserOrdersRequest(final String userEmail)
+    {
+        GenericCallback getUserOrdersCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData) {
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+
+                if(!success)
+                    return;
+
+                //Come usare JSONHelper?
+                try {
+                    JSONArray ordini = resultData.getJSONArray("ordini");
+                    for(int i = 0; i < ordini.length(); i++) {
+                        JSONObject ordine = ordini.getJSONObject(i);
+                        String phoneOrdine = ordine.getString("user_phone");
+                        String dataOrdine = ordine.getString("data_ordine");
+                        double totaleOrdine = ordine.getDouble("prezzo");
+                        String descrizioneOrdine = ordine.getString("descrizione");
+                        ArrayList<Piadina> piadineOrdine = helper.getPiadineFromDescrizioneOrdine(descrizioneOrdine);
+
+                        String notaOrdine = ordine.getString("nota");
+                        long lastUpdateOrdine = ordine.getLong("timestamp");
+
+                        Ordine ordineInterno = new Ordine(0,userEmail,phoneOrdine,dataOrdine,
+                                totaleOrdine,piadineOrdine,notaOrdine,lastUpdateOrdine);
+
+                        helper.insertOrdine(ordineInterno);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        onlineHelper.getUserOrders(userEmail,getUserOrdersCallback);
+    }
+
+    private void getUserPiadineRequest(String userEmail)
+    {
+        GenericCallback getUserPiadineCallback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData)
+            {
+                boolean succes = JSONHelper.getSuccessResponseValue(resultData);
+
+                if(!succes)
+                    return;
+
+                //Come usare JSONHelper?
+                try {
+                    JSONArray piadine = resultData.getJSONArray("piadine");
+
+                    long lastUpdatePiadine = JSONHelper.getLongFromObj(resultData,"timestamp");
+
+                    for(int i = 0; i < piadine.length(); i++) {
+                        JSONObject piadina = piadine.getJSONObject(i);
+                        int idEsternoPiadina = piadina.getInt("id_piadina");
+                        String emailUtente = piadina.getString("email_utente");
+                        String nomePiadina = piadina.getString("nome");
+                        String descrizionePiadina = piadina.getString("descrizione");
+                        ArrayList<Ingrediente> ingredientiPiadina = helper.getIngredientiFromString(descrizionePiadina);
+                        double prezzoPiadina = piadina.getDouble("prezzo");
+                        String formatoPiadina = piadina.getString("formato");
+                        String impastoPiadina = piadina.getString("impasto");
+                        int quantitaPiadina = piadina.getInt("quantita");
+                        int votoPiadina = piadina.getInt("voto");
+
+                        Piadina piadinaVotata = new Piadina(0,nomePiadina,formatoPiadina,impastoPiadina,
+                                ingredientiPiadina,prezzoPiadina,quantitaPiadina,
+                                votoPiadina,idEsternoPiadina,lastUpdatePiadine);
+
+                        helper.insertPiadinaVotata(piadinaVotata,emailUtente);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        onlineHelper.getUserPiadine(userEmail,getUserPiadineCallback);
+    }
+    //------------------------------------------------------------------------------
 }

@@ -38,7 +38,7 @@ import com.example.android.adapters.CartItemAdapter;
 import com.example.android.classi.CartItem;
 import com.example.android.classi.FasciaOraria;
 import com.example.android.classi.Ingrediente;
-import com.example.android.classi.ServiceNotification;
+import com.example.android.services.NotificationService;
 import com.example.android.fragments.FasceOrarioFragment;
 import com.example.android.home.ClickListener;
 import com.example.android.utility.DBHelper;
@@ -320,13 +320,13 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
 
     public void stopNotificationService(){
-        Intent intent = new Intent(CartActivity.this, ServiceNotification.class);
+        Intent intent = new Intent(CartActivity.this, NotificationService.class);
         PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         stopService(intent);
         pintent.cancel();
         alarm.cancel(pintent);
-        stopService(new Intent(mContext,ServiceNotification.class));
+        stopService(new Intent(mContext, NotificationService.class));
         Log.d("SERVICE", "Servizio stoppato!");
     }
 
@@ -382,11 +382,11 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Log.d("START", "SERVICE: Start Service");
-            Intent intentService = new Intent(this, ServiceNotification.class);
+            Intent intentService = new Intent(this, NotificationService.class);
             intentService.putExtra("orarioRitiro", orarioRitiro);
             startService(intentService);
 
-            Intent notificationIntent = new Intent(this, ServiceNotification.class);
+            Intent notificationIntent = new Intent(this, NotificationService.class);
             PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
             AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
