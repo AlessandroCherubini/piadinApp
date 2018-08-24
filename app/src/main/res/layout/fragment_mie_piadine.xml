@@ -1,14 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_miepiadine"
+    android:scrollbarStyle="insideInset">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="?android:attr/actionBarSize" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/la_mia_classifica"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="La mia classifica:"
+            android:fontFamily="@font/museo_slab"
+            android:textSize="20sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="15dp"/>
 
-</RelativeLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_miepiadine"
+            android:layout_below="@id/la_mia_classifica"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/greca_le_mie_piadine"
+            android:layout_width="300dp"
+            android:layout_height="24dp"
+            android:layout_below="@id/recycler_miepiadine"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/ic_greca" />
+
+        <TextView
+            android:id="@+id/le_piadine_non_votate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Le piadine non votate:"
+            android:fontFamily="@font/museo_slab"
+            android:layout_below="@id/greca_le_mie_piadine"
+            android:textSize="20sp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="15dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyler_piadine_non_votate"
+            android:layout_below="@id/greca_le_mie_piadine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"/>
+
+    </RelativeLayout>
+</ScrollView>

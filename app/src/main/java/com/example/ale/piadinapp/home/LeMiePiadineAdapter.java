@@ -1,6 +1,7 @@
 package com.example.ale.piadinapp.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import com.example.ale.piadinapp.classi.Piadina;
 import com.example.ale.utility.DBHelper;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapter.PiadinaViewHolder> {
@@ -26,6 +29,7 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
     //this context we will use to inflate the layout
     private Context mCtx;
     private DBHelper helper;
+    String[][] piadineDaModificare;
 
     //we are storing all the products in a list
     private List<Piadina> piadinaList;
@@ -54,15 +58,19 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
 
         holder.textViewTitle.setText(piadina.getNome());
         holder.impastoPiadina.setText(piadina.getImpasto());
+        if(piadina.getImpasto() == "Normale"){
+
+        }
         holder.formatoPiadina.setText(piadina.getFormato());
         holder.textViewIngredients.setText(piadina.printIngredienti());
         holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
         holder.ratingBar.setRating(piadina.getRating());
+        holder.ratingBar.setIsIndicator(true);
         // todo: da sistemare il listener: non funziona il click!!!
-        holder.ratingBar.setOnClickListener(new View.OnClickListener() {
+        holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mCtx, "Click", Toast.LENGTH_SHORT).show();
+
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mCtx);
                 LayoutInflater inflater = (LayoutInflater)mCtx.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
                 View dialogView = inflater.inflate(R.layout.alert_rating, null);
@@ -80,8 +88,11 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                         piadina.setRating((int) rating);
                         ratingBar.setRating(rating);
+                        holder.ratingBar.setRating(rating);
+                        //ratingBar.setNumStars((int) rating);
                         // Aggiorno il voto della piadina nel DB interno, così da memorizzarla.
                         helper.updateMiePiadineByID(piadina.getIdEsterno(), (int)rating);
+
                         // todo: da fare il meccanismo per l'aggiornamento delle piadine votate sul db esterno
                         // todo: pensavo di memorizzare IDESTERNO, VOTO per ogni piadina cambiata e poi quando si chiude la tab
                         // todo: far partire la richiesta di aggiornamento per tutte le piadine memorizzate nel vettore.
@@ -95,17 +106,27 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
             }
         });
 
+        holder.orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Intent intent = new Intent(mCtx, CustomizePiadinaActivity.class);
+                intent.putExtra("indexPiadina",position);
+                (intent);*/
+                Toast.makeText(mCtx, "Redirect da fare", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch(holder.orderButton.getVisibility()){
+                switch(holder.buttonsPiadina.getVisibility()){
                     case View.GONE:
-                        holder.orderButton.setVisibility(View.VISIBLE);
-                        holder.orderButton.animate().alpha(1.0f);
+                        holder.buttonsPiadina.setVisibility(View.VISIBLE);
+                        holder.buttonsPiadina.animate().alpha(1.0f);
                         break;
                     case View.VISIBLE:
-                        holder.orderButton.setVisibility(View.GONE);
-                        holder.orderButton.animate().alpha(0.0f);
+                        holder.buttonsPiadina.setVisibility(View.GONE);
+                        holder.buttonsPiadina.animate().alpha(0.0f);
                         break;
                 }
             }
@@ -126,7 +147,10 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
         TextView textViewTitle, textViewIngredients, textViewRating, textViewPrezzo;
         TextView formatoPiadina, impastoPiadina;
         Button orderButton;
+        Button rateButton;
+        Button impastoButton, formatoButton;
         RatingBar ratingBar;
+        LinearLayout buttonsPiadina;
         private WeakReference<ClickListener> listenerRef;
 
         public PiadinaViewHolder(View itemView) {
@@ -137,9 +161,11 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
             impastoPiadina = itemView.findViewById(R.id.impasto_la_mia_piadina);
             textViewIngredients = itemView.findViewById(R.id.descrizione_la_mia_piadina);
             textViewPrezzo = itemView.findViewById(R.id.prezzo_la_mia_piadina);
-            //rateButton = itemView.findViewById(R.id.button_rate_la_mia_piadina);
             ratingBar = itemView.findViewById(R.id.voto_la_mia_piadina);
+
+            rateButton = itemView.findViewById(R.id.button_vota);
             orderButton = itemView.findViewById(R.id.button_ordina_la_mia_piadina);
+            buttonsPiadina = itemView.findViewById(R.id.layout_button_le_mie_piadine);
             listenerRef = new WeakReference<>(listener);
 
             ratingBar.setOnClickListener(this);

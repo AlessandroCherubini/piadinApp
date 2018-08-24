@@ -1,11 +1,14 @@
 package com.example.ale.piadinapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,25 +22,33 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.ale.piadinapp.home.ShakerActivity;
-import com.example.ale.piadinapp.classi.Timbro;
-import com.example.ale.utility.DBHelper;
+import com.example.ale.piadinapp.services.BadgeUpdateService;
 import com.example.ale.utility.SessionManager;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
 
 public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final char SEPARATOR_QR_STR = ';';
+    private static final int SERVICE_INTERVAL = 10000;
+
+    //Broadcast receiver per update stringhe del badge------
+    private BroadcastReceiver updateStringsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateBadgeValuesString();
+            //Dopo aver aggiornato le stringhe, annullo la ripetizione del service
+            stopUpdateService();
+        }
+    };
+    //------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,54 +78,50 @@ public class BadgeActivity extends AppCompatActivity
         txtProfileEmail.setText(utente.get("email"));
 
         //Recupero email dell'utente
-        String userEmail = utente.get("email");
+        final String userEmail = utente.get("email");
+        //todo: recuperare numero di piadine dall'ordine più recente
+        String timbriNumberStr = Integer.toString(1);
         //Creazione dell'immagine del QR code
         try {
             BarcodeEncoder qrEncoder = new BarcodeEncoder();
-            Bitmap qrImage = qrEncoder.encodeBitmap(userEmail, BarcodeFormat.QR_CODE,200,200);
+            String msgToEncode = userEmail + SEPARATOR_QR_STR + timbriNumberStr;
+            Bitmap qrImage = qrEncoder.encodeBitmap(msgToEncode, BarcodeFormat.QR_CODE,200,200);
             ImageView qrImageView = findViewById(R.id.qrCodeImageView);
             qrImageView.setImageBitmap(qrImage);
         } catch (Exception e) {
             Log.d("Create QR code image",e.getMessage());
         }
 
-        TextView timbriTV = findViewById(R.id.timbriTextView);
-        TextView omaggiTV = findViewById(R.id.omaggiTextView);
-        ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
-        badgePB.setMax(10);//todo: inserire costante valore max di timbri
-        int timbriNum = 0;
+        updateBadgeValuesString();
 
-        //Get badge infos
-        final HashMap<String,Integer> badgeData;
-        badgeData = SessionManager.getBadgeDetails(this);
-        if(badgeData == null) {
-            Log.d("Shared Data Error", "Cannot get Badge shared prefs");
-            timbriTV.setText(getTimbriStr(0));
-            omaggiTV.setText(getOmaggiStr(0));
-        } else {
-            //Inserimento numero di timbri
-            timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
-            //Inserimento numero di omaggi
-            omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
-            //Update progress bar
-            timbriNum = badgeData.get("timbri");
-        }
+        startUpdateService();
+        //Registro il receiver
+        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+    }
 
-        badgePB.setProgress(timbriNum);
-        //Percentage string
-        TextView percentText = findViewById(R.id.percentageTextView);
-        percentText.setText(Integer.toString(timbriNum * 10) + "%");
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        startUpdateService();
+        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+    }
 
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
 
-        //Bottone per passare all'Activity per leggere il QR code
-        Button readQRBtn = findViewById(R.id.readQRBtn);
-        readQRBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Start scanning QR code
-                beginScanQRCode();
-            }
-        });
+        //Stop update badge service
+        stopUpdateService();
+        unregisterReceiver(updateStringsReceiver);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        stopUpdateService();
+        unregisterReceiver(updateStringsReceiver);
     }
 
     @Override
@@ -236,81 +243,10 @@ public class BadgeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-
-        if(result == null) {
-            super.onActivityResult(requestCode,resultCode,data);
-        } else {
-            if(result.getContents() == null) {
-                Log.d("READQR","Scan action cancelled");
-            } else {
-                //Update timbri and omaggi values
-                //Get shared pref
-                /*
-                session = new SessionManager(this);
-                final HashMap<String,Integer> badgeData;
-                badgeData = session.getBadgeDetails();
-
-                int timbriNumber = badgeData.get("timbri");
-                int omaggiNumber = badgeData.get("omaggi");
-                */
-                SharedPreferences preferences = getSharedPreferences("piadinApp",Context.MODE_PRIVATE);
-                int timbriNumber = preferences.getInt(SessionManager.KEY_TIMBRI,-1);
-                int omaggiNumber = preferences.getInt(SessionManager.KEY_OMAGGI,-1);
-                if(timbriNumber < 0 || omaggiNumber < 0) {
-                    Log.d("READQR","Cannot retrieve shared preferences");
-                    return;
-                }
-                //todo: inserire costante valore max di timbri
-                //todo: manca inserimento numero piadine in base all'ordine
-                timbriNumber++;
-                if(timbriNumber >= 10) {
-                    omaggiNumber++;
-                    timbriNumber = timbriNumber - 10;
-                }
-
-                //Insert new values in DB
-                DBHelper helper = new DBHelper(getApplicationContext());
-                Timbro timbro = helper.getTimbroByEmail(result.getContents());
-                if(timbro == null) {
-                    Log.d("UPDATE_TIMBRI","No row found in table Timbri with mail: " + result.getContents());
-                    return;
-                }
-                timbro.numberTimbri = timbriNumber;
-                timbro.numberOmaggi = omaggiNumber;
-                helper.updateTimbriNumber(timbro);
-
-                //Insert new data in shared pref
-                if(!SessionManager.updateTimbriAndOmaggiValues(this,timbriNumber,omaggiNumber)) {
-                    Log.d("Shared Pref Error","Failed to save timbri and omaggi values!");
-                }
-
-                //Update labels strings
-                TextView badgeText = findViewById(R.id.timbriTextView);
-                badgeText.setText(getTimbriStr(timbriNumber));
-                badgeText = findViewById(R.id.omaggiTextView);
-                badgeText.setText(getOmaggiStr(omaggiNumber));
-
-                //Update progress bar
-                ProgressBar badgePB = findViewById(R.id.omaggioProgressBar);
-                badgePB.setMax(10);//todo: inserire costante valore max di timbri
-                badgePB.setProgress(timbriNumber);
-                //Percentage string
-                badgeText = findViewById(R.id.percentageTextView);
-                badgeText.setText(Integer.toString(timbriNumber*10) + "%");
-            }
-        }
-    }
-
     //PRIVATE FUNCTIONS-----------------------------------------------------------
     private String getTimbriStr(int timbriNumber)
     {
-        //todo inserire costante valore max di timbri
-        return "Numero di timbri: " + Integer.toString(timbriNumber) + "/10";
+        return "Numero di timbri: " + Integer.toString(timbriNumber);
     }
 
     private String getOmaggiStr(int omaggiNumber)
@@ -318,9 +254,53 @@ public class BadgeActivity extends AppCompatActivity
         return "Piadine omaggio guadagnate: " + Integer.toString(omaggiNumber);
     }
 
-    private void beginScanQRCode()
+    private void updateBadgeValuesString()
     {
-        new IntentIntegrator(this).initiateScan();
+        TextView timbriTV = findViewById(R.id.timbriTextView);
+        TextView omaggiTV = findViewById(R.id.omaggiTextView);
+
+        //Get badge infos
+        final HashMap<String,Integer> badgeData;
+        badgeData = SessionManager.getBadgeDetails(this);
+        if(badgeData == null) {
+            Log.d("Shared Data Error", "Cannot get Badge shared prefs");
+            timbriTV.setText(getTimbriStr(0));
+            omaggiTV.setText(getOmaggiStr(0));
+        } else {
+            //Inserimento numero di timbri
+            timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
+            //Inserimento numero di omaggi
+            omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
+        }
+    }
+
+    private void startUpdateService()
+    {
+        Log.d("START","SERVICE: Update badge service");
+        startService(new Intent(this, BadgeUpdateService.class));
+
+        Intent intent = new Intent(this,BadgeUpdateService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
+         * Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
+         * SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
+         */
+        if(pendingIntent != null)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), SERVICE_INTERVAL, pendingIntent);
+    }
+
+    private void stopUpdateService()
+    {
+        Intent intent = new Intent(this,BadgeUpdateService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this,0,intent,0);
+
+        stopService(intent);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        pendingIntent.cancel();
+        alarm.cancel(pendingIntent);
+        stopService(new Intent(getApplicationContext(),BadgeUpdateService.class));
+        Log.d("SERVICE","Update Badge stopped");
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
