@@ -135,7 +135,9 @@
                 android:value="com.example.android.activity.HomeActivity" />
         </activity>
 
-        <service android:name="com.example.android.classi.ServiceNotification"/>
+        <!-- SERVICES -->
+        <service android:name=".services.NotificationService"/>
+        <service android:name=".services.BadgeUpdateService"/>
         
     </application>
 

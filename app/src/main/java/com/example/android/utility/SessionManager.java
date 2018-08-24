@@ -205,6 +205,28 @@ public class SessionManager {
         return editor.commit();
     }
 
+    /**
+     * Update user editable values (only name and phone)
+     * @param context Application context
+     * @param username New username, could be empty
+     * @param phone New phone, could be empty
+     * @return Update data result
+     */
+    public static boolean updateUserData(Context context,String username,String phone)
+    {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
+        if(!username.isEmpty()) {
+            editor.putString(KEY_NAME,username);
+        }
+        if(!phone.isEmpty()) {
+            editor.putString(KEY_PHONE,phone);
+        }
+
+        return editor.commit();
+    }
+
     //PRIVATE FUNCTIONS------------------------------------------------------------------
 
     /**

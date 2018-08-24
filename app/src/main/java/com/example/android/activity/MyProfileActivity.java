@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 public class MyProfileActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    SessionManager session;
+    private static final int UPDATE_USER_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,34 +46,7 @@ public class MyProfileActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
-        HashMap<String, String> utente;
-        //utente = session.getUserDetails();
-        utente = SessionManager.getUserDetails(this);
-
-        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.username_nav);
-        TextView txtProfileEmail = navigationView.getHeaderView(0).findViewById(R.id.email_nav);
-        TextView emailText = findViewById(R.id.profile_email);
-        TextView nameText = findViewById(R.id.profile_username);
-        TextView phoneText = findViewById(R.id.profile_phone);
-
-        if(utente == null) {
-            txtProfileName.setText("");
-            txtProfileEmail.setText("");
-            emailText.setText("");
-            nameText.setText("");
-            phoneText.setText("");
-        } else {
-            String nome = utente.get("name");
-            String mail = utente.get("email");
-            String telefono = utente.get("phone");
-
-            txtProfileName.setText(nome);
-            txtProfileEmail.setText(mail);
-            emailText.setText(mail);
-            nameText.setText(nome);
-            phoneText.setText(telefono);
-        }
+        updateUserDataStrings();
     }
 
     @Override
@@ -193,8 +167,56 @@ public class MyProfileActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data)
+    {
+        //Check if is the right request
+        if(requestCode == UPDATE_USER_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                //Log.d("PROFILE","Update user data strings");
+                //todo update user strings
+                updateUserDataStrings();
+            }
+        }
+    }
+
     public void editUserInfos(View view) {
         Intent intent = new Intent(this, EditUserActivity.class);
-        startActivity(intent);
+        //startActivity(intent);
+        startActivityForResult(intent,UPDATE_USER_REQUEST);
     }
+
+    //PRIVATE FUNCTIONS--------------------------------------------------------
+    private void updateUserDataStrings()
+    {
+        // ottengo le informazioni dall'utente dalle preferenze condivise e le imposto nella barra.
+        HashMap<String, String> utente;
+        utente = SessionManager.getUserDetails(this);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.username_nav);
+        TextView txtProfileEmail = navigationView.getHeaderView(0).findViewById(R.id.email_nav);
+        TextView emailText = findViewById(R.id.profile_email);
+        TextView nameText = findViewById(R.id.profile_username);
+        TextView phoneText = findViewById(R.id.profile_phone);
+
+        if(utente == null) {
+            txtProfileName.setText("");
+            txtProfileEmail.setText("");
+            emailText.setText("");
+            nameText.setText("");
+            phoneText.setText("");
+        } else {
+            String nome = utente.get("name");
+            String mail = utente.get("email");
+            String telefono = utente.get("phone");
+
+            txtProfileName.setText(nome);
+            txtProfileEmail.setText(mail);
+            emailText.setText(mail);
+            nameText.setText(nome);
+            phoneText.setText(telefono);
+        }
+    }
+    //-------------------------------------------------------------------------
 }

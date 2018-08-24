@@ -1,4 +1,4 @@
-package com.example.android.classi;
+package com.example.ale.piadinapp.services;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,12 +28,12 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.example.android.activity.MyOrderActivity;
-import com.example.android.R;
-import com.example.android.activity.CartActivity;
-import com.example.android.utility.CustomRequest;
-import com.example.android.utility.VolleyCallback;
-import com.example.android.utility.VolleySingleton;
+import com.example.ale.piadinapp.MyOrderActivity;
+import com.example.ale.piadinapp.R;
+import com.example.ale.piadinapp.home.CartActivity;
+import com.example.ale.utility.CustomRequest;
+import com.example.ale.utility.VolleyCallback;
+import com.example.ale.utility.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,27 +42,28 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ServiceNotification extends IntentService implements LocationListener{
+public class NotificationService extends IntentService implements LocationListener {
 
     VolleyCallback durataCallBack;
 
-    public ServiceNotification(){
 
-        super("ServiceNotification");
+    public NotificationService(){
+
+        super("NotificationService");
     }
 
 
     @Override
-    protected void onHandleIntent(Intent i) {
+    protected void onHandleIntent(Intent i)
+    {
         durataCallBack = new VolleyCallback() {
             @Override
             public void onSuccess(String result) {}
 
             @Override
-            public void onSuccessMap(int duration, String orarioRitiro) {
+            public void onSuccessMap(int duration) {
 
                 Log.d("DISTANZA",""+duration);
 
@@ -103,13 +105,13 @@ public class ServiceNotification extends IntentService implements LocationListen
 
     public void stopNotificationService(){
 
-        Intent intent = new Intent(CartActivity.getAppContext(), ServiceNotification.class);
+        Intent intent = new Intent(CartActivity.getAppContext(), NotificationService.class);
         PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         stopService(intent);
         pintent.cancel();
         alarm.cancel(pintent);
-        stopService(new Intent(getApplicationContext(),ServiceNotification.class));
+        stopService(new Intent(getApplicationContext(),NotificationService.class));
         Log.d("SERVICE", "Servizio stoppato!");
     }
 
@@ -165,10 +167,8 @@ public class ServiceNotification extends IntentService implements LocationListen
 
         if (gps_enabled){
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,100,this);
-
-            //gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            gps_loc = getLastKnownLocation();
-            Log.d("GPS ","GPS STATUS: " + gps_loc);
+            lm.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
+            gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
         if (network_enabled) {
@@ -195,10 +195,6 @@ public class ServiceNotification extends IntentService implements LocationListen
         {
             stopNotificationService();
         }
-        if (finalLoc == null)
-        {
-            Log.d("LOCATION","LOCATION = "+ finalLoc);
-        }
         return finalLoc;
     }
 
@@ -220,7 +216,7 @@ public class ServiceNotification extends IntentService implements LocationListen
                             JSONObject durationObject = leg.getJSONObject("duration");
                             int duration = durationObject.getInt("value");
 
-                            //durataCallBack.onSuccessMap(duration);
+                            durataCallBack.onSuccessMap(duration);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -249,24 +245,6 @@ public class ServiceNotification extends IntentService implements LocationListen
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
 
-    }
-
-    private Location getLastKnownLocation() {
-        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-        List<String> providers = lm.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            @SuppressLint("MissingPermission") Location l = lm.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
-        }
-        return bestLocation;
     }
 
     @Override

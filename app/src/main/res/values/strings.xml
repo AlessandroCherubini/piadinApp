@@ -81,9 +81,11 @@
     <string name="messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
     <!-- Pagina Tessera -->
     <string name="qr_image_description">QR code image</string>
-    <string name="numero_timbri_str">Numero di timbri: 0/10</string>
+    <string name="numero_timbri_str">Numero di timbri: 0</string>
     <string name="omaggi_ricevuti_str">Piadine omaggio guadagnate: 0</string>
-    <string name="read_qr_btn_str">Read QR code</string>
+    <!--<string name="btn_update_badge_str">Update badge values</string>-->
+    <string name="btn_start_service_badge_str">Start badge service</string>
+    <string name="btn_stop_service_badge_str">Stop badge service</string>
     <!-- Pagina QR scanner -->
     <string name="title_activity_qrreader">Tessera Personale</string>
     <string name="scan_btn_str">Scan</string>
@@ -93,6 +95,7 @@
     <!-- Pagina modifica account -->
     <string name="username_hint">Nome Cognome</string>
     <string name="phone_hint">123456789</string>
+    <string name="btn_edit_confirm">Modifica Profilo</string>
     <!-- Pagina I miei Ordini -->
     <string name="reorder">Ordina ancora!</string>
     <string name="details_order">Dettagli Ordine</string>
