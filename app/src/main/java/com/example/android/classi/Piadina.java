@@ -1,4 +1,4 @@
-package com.example.android.piadinapp.classi;
+package com.example.android.classi;
 
 import android.os.Parcel;
 import android.os.Parcelable;
