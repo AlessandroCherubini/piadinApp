@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.activity.EditUserActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false">
+
+                <TextView
+                    android:id="@+id/edit_user_name_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/username_edit"
+                    android:text="@string/username_label"
+                    android:textColor="@color/secondaryColor" />
+
+                <EditText
+                    android:id="@+id/username_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/edit_user_name_title"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="4dp"
+                    android:width="300dp"
+                    android:ems="10"
+                    android:hint="@string/username_hint"
+                    android:inputType="textPersonName" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false">
+
+                <TextView
+                    android:id="@+id/edit_user_phone_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/phone_edit"
+                    android:text="@string/phone_label"
+                    android:textColor="@color/secondaryColor" />
+
+                <EditText
+                    android:id="@+id/phone_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/edit_user_phone_title"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="4dp"
+                    android:width="300dp"
+                    android:ems="10"
+                    android:hint="@string/phone_hint"
+                    android:inputType="phone" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_edit_user_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="288dp"
+        android:layout_marginStart="118dp"
+        android:text="@string/btn_edit_confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

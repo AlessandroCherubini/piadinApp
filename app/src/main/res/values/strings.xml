@@ -2,27 +2,102 @@
     <string name="app_name">PiadinApp</string>
     <string name="main_top_cover">Main Top</string>
     <string name="main_title">GianGusto</string>
-    <string name="login">LOGIN</string>
+    <string name="login">Login</string>
     <string name="signup">Registrazione</string>
-    <string name="title_activity_login">Login</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Login</string>
-    <string name="action_sign_in_short">Login</string>
-    <string name="error_invalid_email">Questa email è incorretta.</string>
-    <string name="error_invalid_password">Questa password è troppo corta.</string>
-    <string name="error_incorrect_password">Password errata.</string>
-    <string name="error_field_required">Campo obbligatorio richiesto.</string>
-    <string name="permission_rationale">"Sono richiesti i permessi dei contatti per
-        inviare una email al fine di completare l'operazione."
-    </string>
-    <string name="confirm_registry">Email non trovata.
-        Vuoi creare un nuovo utente con questa email e password?</string>
-    <string name="yes">Sì</string>
-    <string name="no">No</string>
-    <string name="updatingReport">Login effettuato con successo.</string>
-    <string name="title_activity_http">HTTPActivity</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_home">GianGusto - Ciliverghe</string>
+    <string name="title_activity_badge">Tessera</string>
+    <string name="title_activity_my_profile">Profilo Personale</string>
+    <string name="title_activity_my_orders">Ordini</string>
+    <string name="title_activity_my_order">Ordini</string>
+    <string name="title_activity_customize_piadina">Personalizza la Piadina</string>
+    <string name="title_activity_we_are_here">Dove Siamo</string>
+
+    <!-- Strings related to registration -->
+    <string name="link_registrazione">Non hai un account? Creane uno!</string>
+    <!-- String Login -->
+    <string name="auth">"Autenticazione in corso..."</string>
+
+    <string name="nome">Nome</string>
+    <string name="email">Email</string>
+    <string name="mobile">Telefono</string>
+    <string name="password">Password</string>
+    <string name="toggle_password">occhio</string>
+    <string name="re_enter_password">Reinserisci la password</string>
+    <string name="registrazione_btn">Registra l\'account</string>
+    <string name="login_swap">Hai già un account? Login!</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Impostazioni</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+
+    <string name="profilo">Il mio Profilo</string>
+    <string name="ordini">I miei Ordini</string>
+    <string name="tessera">Tessera</string>
+    <string name="shaker">Shake Me!</string>
+
+    <string name="logout">Logout</string>
+    <string name="dove_siamo">Dove Siamo</string>
+
+    <!-- Pagina di Personalizzazione -->
+    <string name="euro">€</string>
+    <string name="prefisso_personalizza">Piadina selezionata:</string>
+    <string name="personalizza_piadina">Personalizza</string>
+    <string name="formato">Che formato desideri?</string>
+    <string name="impasto">Che impasto preferisci?</string>
+    <string name="normale">Piadina</string>
+    <string name="rotolo">Rotolo\u00A0\u00A0 +2€</string>
+    <string name="baby">Baby\u00A0\u00A0 -1€</string>
+    <string name="impasto_normale">Normale</string>
+    <string name="integrale">Integrale\u00A0\u00A0 +0,30€</string>
+    <string name="ingredienti">Ingredienti:</string>
+    <string name="add_ingredienti">Aggiungi Ingredienti:</string>
+    <string name="aggiungi_carrello">Aggiungi al carrello</string>
+    <!-- Pagina del Carrello -->
+    <string name="svuota_carrello">Svuota Carrello</string>
+    <string name="effettua_ordine">Effettua Ordine</string>
+    <!-- Pagina Il mio Profilo -->
+    <string name="change_password">Cambia password</string>
+    <string name="username_label">Nome account</string>
+    <string name="email_label">Email account</string>
+    <string name="phone_label">Cellulare</string>
+    <string name="title_activity_cart">Riepilogo Ordine</string>
+    <!-- Pagina di Personalizzazione -->
+    <string name="form">Formato:\u00A0</string>
+    <string name="imp">Impasto:\u00A0</string>
+    <string name="ings">Ingredienti:\u00A0</string>
+    <!-- Pagina Shaker Piadina -->
+    <string name="title_activity_shaker">Shake Piadina</string>
+    <string name="shake_button">"Non sai che piadina scegliere? \n Ci pensiamo noi! \n Premi il pulsante e scuoti lo smartphone!"</string>
+    <string name="messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
+    <!-- Pagina Tessera -->
+    <string name="qr_image_description">QR code image</string>
+    <string name="numero_timbri_str">Numero di timbri: 0</string>
+    <string name="omaggi_ricevuti_str">Piadine omaggio guadagnate: 0</string>
+    <!--<string name="btn_update_badge_str">Update badge values</string>-->
+    <string name="btn_start_service_badge_str">Start badge service</string>
+    <string name="btn_stop_service_badge_str">Stop badge service</string>
+    <!-- Pagina QR scanner -->
+    <string name="title_activity_qrreader">Tessera Personale</string>
+    <string name="scan_btn_str">Scan</string>
+    <string name="result_str">No result</string>
+    <string name="timbri_percentage_str">0%</string>
+    <string name="title_activity_edit_account">EditAccountActivity</string>
+    <!-- Pagina modifica account -->
+    <string name="username_hint">Nome Cognome</string>
+    <string name="phone_hint">123456789</string>
+    <string name="btn_edit_confirm">Modifica Profilo</string>
+    <!-- Pagina I miei Ordini -->
+    <string name="reorder">Ordina ancora!</string>
+    <string name="details_order">Dettagli Ordine</string>
 
 </resources>

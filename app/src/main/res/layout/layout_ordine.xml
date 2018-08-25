@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp">
+
+        <RelativeLayout
+            android:id="@+id/layout_data_ordine"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/data_ordine_text"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/museo_slab"
+                android:text="Data Ordine: "
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/data_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/data_ordine_text"
+                android:fontFamily="@font/museo_slab"
+                android:text="Data Ordine"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_dettagli"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="55dp"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:paddingRight="5dp"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/button_dettagli_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginStart="10dp"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/ic_info_black_24dp"
+                android:drawablePadding="5dp"
+                android:text="@string/details_order"
+                android:textColor="@color/primaryDarkColor" />
+
+            <Button
+                android:id="@+id/button_ri_ordina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:drawableRight="@drawable/ic_arrow_forward_black_24dp"
+                android:drawablePadding="5dp"
+                android:text="@string/reorder"
+                android:textColor="@color/primaryDarkColor" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_dettagli_piadine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="102dp"
+            android:background="@android:color/transparent"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/totale_riepilogo_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/museo_slab"
+                android:text="Totale Ordine: "/>
+
+            <TextView
+                android:id="@+id/prezzo_piadine_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="170dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/totale_riepilogo_ordine"
+                android:fontFamily="@font/museo_slab"
+                android:text="5.9"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/prezzo_euro_ordine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/prezzo_piadine_ordine"
+                android:fontFamily="@font/museo_slab"
+                android:text="@string/euro"
+                android:textSize="15sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_piadine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/totale_riepilogo_ordine"
+                android:visibility="visible">
+
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

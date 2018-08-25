@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/profile"
+            android:checked="true"
+            android:icon="@drawable/ic_person_24dp"
+            android:title="@string/profilo" />
+        <item
+            android:id="@+id/ordini"
+            android:icon="@drawable/ic_receipt_24dp"
+            android:title="@string/ordini" />
+        <item
+            android:id="@+id/tessera"
+            android:icon="@drawable/ic_style_24dp"
+            android:title="@string/tessera" />
+        <item
+            android:id="@+id/shaker"
+            android:icon="@drawable/ic_shaker_black_24dp"
+            android:title="@string/shaker" />
+
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_input_24dp"
+            android:title="@string/logout" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/call"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Chiamaci" />
+            <item
+                android:id="@+id/where"
+                android:icon="@drawable/ic_map_black_24dp"
+                android:title="@string/dove_siamo" />
+        </menu>
+    </item>
+
+</menu>

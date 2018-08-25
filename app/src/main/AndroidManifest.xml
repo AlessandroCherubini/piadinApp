@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ale.piadinapp">
+    package="com.example.android">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,31 +9,136 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- Internet Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Geolocation Permission -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.location.network" />
+    <!-- Accelerometro e Vibrazione -->
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+
 
     <application
-        android:name=".PiadinApp"
+        android:name="com.example.android.classi.PiadinApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name="com.example.android.activity.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.android.activity.MainActivity" />
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.android.activity.LoginActivity"
+            android:label="@string/login"
+            android:parentActivityName="com.example.android.activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.example.android.activity.MainActivity" />
         </activity>
-        <activity android:name=".HomeActivity" />
+        <activity
+            android:name="com.example.android.activity.SignUpActivity"
+            android:label="@string/signup"
+            android:parentActivityName="com.example.android.activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.android.activity.HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.example.android.activity.MyOrderActivity"
+            android:label="@string/title_activity_my_order"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.example.android.activity.BadgeActivity"
+            android:label="@string/title_activity_badge"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.example.android.activity.MyProfileActivity"
+            android:label="@string/title_activity_my_profile"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.example.android.activity.CustomizePiadinaActivity"
+            android:label="@string/title_activity_customize_piadina"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.example.android.activity.EditUserActivity"
+            android:label="@string/title_activity_my_profile"
+            android:parentActivityName="com.example.android.activity.MyProfileActivity" />
+        <activity
+            android:name="com.example.android.activity.WeAreHereActivity"
+            android:label="@string/title_activity_we_are_here"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo" />
+
+        <activity
+            android:name="com.example.android.activity.CartActivity"
+            android:label="@string/title_activity_cart"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.example.android.activity.ShakerActivity"
+            android:label="@string/title_activity_shaker"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.activity.HomeActivity" />
+        </activity>
+
+        <!-- SERVICES -->
+        <service android:name=".services.NotificationService"/>
+        <service android:name=".services.BadgeUpdateService"/>
+        
     </application>
 
 </manifest>
