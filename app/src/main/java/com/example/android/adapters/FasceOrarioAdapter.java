@@ -52,6 +52,7 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
             holder.buttonSelectedFascia.setVisibility(View.VISIBLE);
             holder.singolaFascia.setBackgroundColor(Color.parseColor("#dddbdd"));
         }else{
+
             switch(fasciaOraria.getColoreBadge()){
                 case 1:
                     holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_brightness_1_green_24dp);

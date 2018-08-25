@@ -228,7 +228,7 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
         ingredientiCreaPiadina.addItemDecoration(itemDecorator);
 
         View homeView = getView().findViewById(android.R.id.content);
-        adapterIngredienti = new IngredientsAdapter(mContext, ingredientiPiadina, homeView, this);
+        adapterIngredienti = new IngredientsAdapter(mContext, ingredientiPiadina, this);
         ingredientiCreaPiadina.setAdapter(adapterIngredienti);
         totaleIngredienti = adapterIngredienti.getPrezzoIngredienti(ingredientiPiadina);
 

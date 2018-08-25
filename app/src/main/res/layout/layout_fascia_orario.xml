@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -14,7 +12,8 @@
             android:id="@+id/singola_fascia"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/inizio_fascia"
@@ -23,7 +22,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="3dp"
                 android:fontFamily="@font/museo_slab"
-                android:text="18:30:00"/>
+                android:text="18:30:00" />
 
             <TextView
                 android:id="@+id/fine_fascia"
@@ -42,8 +41,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="185dp"
                 android:background="@drawable/ic_check_circle_black_24dp"
-                android:visibility="gone"
-                android:elevation="4dp" />
+                android:elevation="4dp"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/button_fascia_color"

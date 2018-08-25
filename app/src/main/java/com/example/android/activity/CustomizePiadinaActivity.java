@@ -60,8 +60,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public static double totalePiadina = 0;
     static double totaleImpastoEFormato = 0;
     public static double totaleIngredienti = 0;
+    TextView prezzoPiadina;
     public Context mContext;
     String identificatore;
+    boolean isEdit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         setContentView(R.layout.activity_customize_piadina);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mContext = CustomizePiadinaActivity.this;
+        mContext = getApplicationContext();
 
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
@@ -79,18 +81,23 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         if (intent.getExtras().get("indexPiadina")!= null){
 
             int position = intent.getIntExtra("indexPiadina",0);
-            chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+            chosenPiadina = helper.getPiadinaByPosition((long) position + 1);
         }
-        else if (intent.getExtras().get("randomPiadina")!= null){
+        else if (intent.getExtras().get("randomPiadina") != null){
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
             chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
         }
-        else if (intent.getExtras().get("modificaPiadina")!= null) {
+        else if (intent.getExtras().get("modificaPiadina") != null) {
+            isEdit = true;
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
             chosenPiadina = cartItem.cartItemToPiadina();
+            ingredientiPiadina = chosenPiadina.getIngredienti();
+            totalePiadina = chosenPiadina.getPrice();
+            quantitaPiadina = chosenPiadina.getQuantita();
+            ratingPiadina = chosenPiadina.getRating();
             // Set dei radio button per Formato e Impasto
             setRadioButtons(chosenPiadina);
 
@@ -111,7 +118,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         totaleImpastoEFormato = chosenPiadina.getPrice();
         totalePiadina = totaleImpastoEFormato;
 
-        final TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+        prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
         prezzoPiadina.setText(totalePiadina + " €");
 
         TextView nomePiadina = findViewById(R.id.nome_piadina);
@@ -128,7 +135,13 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_SHORT);
                 toast.show();
-                aggiungiAlCarrello();
+
+                if(isEdit){
+                    editItemCarrello();
+                }else{
+                    aggiungiAlCarrello();
+                }
+
                 finish();
             }
         });
@@ -229,8 +242,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
                 break;
         }
-
-        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -359,11 +370,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         else if ((cs.get(identificatore,"nome",getApplicationContext())) != null && identificatore != null){
 
             id = identificatore;
-
         }
         else {
-
             int k = 0;
+
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
                 k++;
             }
@@ -381,6 +391,18 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         cs.add(id, "rating", ratingPiadina);
         cs.add(id,"identifier", id);
         cs.commit(getApplicationContext());
+    }
+
+    private void editItemCarrello(){
+        String idPiadina = cartItem.getIdentifier();
+
+        cs.update(idPiadina, "nome", nomePiadina, mContext);
+        cs.update(idPiadina, "formato", formatoPiadina, mContext);
+        cs.update(idPiadina, "impasto", impastoPiadina, mContext);
+        cs.update(idPiadina, "prezzo", totalePiadina, mContext);
+        cs.update(idPiadina, "ingredienti", ingredientiPiadina.toString(), mContext);
+        cs.update(idPiadina, "quantita", quantitaPiadina, mContext);
+        cs.update(idPiadina, "rating", ratingPiadina, mContext);
     }
 
     public void onFragmentInteraction(Uri uri){}
@@ -414,6 +436,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     private void setRadioButtons(Piadina piadina){
         String formato = piadina.getFormato();
         String impasto = piadina.getImpasto();
+        double prezzoFormato;
+        double prezzoImpasto;
 
         RadioGroup radioFormato = findViewById(R.id.rg1);
         RadioGroup radioImpasto = findViewById(R.id.rg2);
@@ -428,10 +452,12 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             case "Piadina":
                 radioFormato.check(R.id.rb_normale);
                 rb1.setTypeface(null, Typeface.BOLD_ITALIC);
+                prezzoFormato = 2.5;
                 break;
             case "Rotolo":
                 radioFormato.check(R.id.rb_rotolo);
                 rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+                prezzoFormato =  + FORMATO_ROTOLO;
                 break;
             case "Baby":
                 radioFormato.check(R.id.rb_baby);
@@ -458,18 +484,25 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                 break;
         }
     }
-    // Funzione utilizzata per stampare gli ingredienti da ArrayList a String per i log.
-/*    private String printIngredienti(ArrayList<Ingrediente> ingredienti){
-        String ingredientiStringa="";
 
-        for(Ingrediente ingrediente:ingredienti){
-            String parziale;
+    public double getTotaleImpastoEFormato(){
+        return totaleImpastoEFormato;
+    }
 
-            parziale = ingrediente.getIdIngrediente() + ingrediente.getName() + ingrediente.getPrice() +
-                    ingrediente.getCategoria() + ingrediente.getLastUpdated();
+    public double getTotalePiadina(){
+        return totalePiadina;
+    }
 
-            ingredientiStringa = ingredientiStringa + " " + parziale;
-        }
-        return ingredientiStringa;
-    }*/
+    public void setTotalePiadina(double nuovoTotale){
+        totalePiadina = nuovoTotale;
+        prezzoPiadina.setText(new BigDecimal(totalePiadina).setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+
+    }
+
+    public void setTotaleIngredienti(double nuovoTotale){
+        totaleIngredienti = nuovoTotale;
+    }
+
+    public double getTotaleIngredienti(){ return totaleIngredienti; }
+
 }

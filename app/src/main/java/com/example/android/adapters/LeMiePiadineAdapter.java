@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.android.R;
 import com.example.android.classi.Piadina;
+import com.example.android.fragments.TabLeMiePiadine;
 import com.example.android.home.ClickListener;
 import com.example.android.utility.DBHelper;
 
@@ -27,18 +28,17 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
     //this context we will use to inflate the layout
     private Context mCtx;
     private DBHelper helper;
-    String[][] piadineDaModificare;
+    TabLeMiePiadine fragmentPiadine;
+    
 
     //we are storing all the products in a list
     private List<Piadina> piadinaList;
-    //Listener for buttons
-    private final ClickListener listener;
 
     //getting the context and product list with constructor
-    public LeMiePiadineAdapter(Context mCtx, List<Piadina> piadinaList, ClickListener listener ) {
+    public LeMiePiadineAdapter(Context mCtx, List<Piadina> piadinaList, TabLeMiePiadine fragmentPiadine) {
         this.mCtx = mCtx;
-        this.listener = listener;
         this.piadinaList = piadinaList;
+        this.fragmentPiadine = fragmentPiadine;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
         holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
         holder.ratingBar.setRating(piadina.getRating());
         holder.ratingBar.setIsIndicator(true);
-        // todo: da sistemare il listener: non funziona il click!!!
+
         holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,9 +87,11 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
                         piadina.setRating((int) rating);
                         ratingBar.setRating(rating);
                         holder.ratingBar.setRating(rating);
-                        //ratingBar.setNumStars((int) rating);
+
                         // Aggiorno il voto della piadina nel DB interno, così da memorizzarla.
                         helper.updateMiePiadineByID(piadina.getIdEsterno(), (int)rating);
+                        // todo: non funziona
+                        fragmentPiadine.riordinaClassifica();
 
                         // todo: da fare il meccanismo per l'aggiornamento delle piadine votate sul db esterno
                         // todo: pensavo di memorizzare IDESTERNO, VOTO per ogni piadina cambiata e poi quando si chiude la tab
@@ -140,9 +142,9 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
     }
 
 
-    class PiadinaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class PiadinaViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewTitle, textViewIngredients, textViewRating, textViewPrezzo;
+        TextView textViewTitle, textViewIngredients, textViewPrezzo;
         TextView formatoPiadina, impastoPiadina;
         Button orderButton;
         Button rateButton;
@@ -164,15 +166,7 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
             rateButton = itemView.findViewById(R.id.button_vota);
             orderButton = itemView.findViewById(R.id.button_ordina_la_mia_piadina);
             buttonsPiadina = itemView.findViewById(R.id.layout_button_le_mie_piadine);
-            listenerRef = new WeakReference<>(listener);
 
-            ratingBar.setOnClickListener(this);
-        }
-
-        public void onClick(View v) {
-            listenerRef.get().onPositionClicked(v, getAdapterPosition());
         }
     }
-
-
 }

@@ -118,9 +118,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         });
 
         //cs.persistData(getApplicationContext(),true);
+
         // ricevo l'elemento inserito nel carrello
-
-
         if (data == null || data.size()==0) {
             Toast.makeText(mContext, "Non ci sono elementi nel carrello", Toast.LENGTH_SHORT).show();
         } else {

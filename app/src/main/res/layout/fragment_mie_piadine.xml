@@ -2,8 +2,8 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbarStyle="insideInset">
+    android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,9 +19,22 @@
             android:layout_marginBottom="10dp"
             android:layout_marginStart="15dp"/>
 
+        <TextView
+            android:id="@+id/text_voto_piadina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/la_mia_classifica"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="17sp"
+            android:textColor="@color/secondaryDarkColor"
+            android:fontFamily="@font/museo_slab"
+            android:text="Non hai ancora votato nessuna piadina!"
+            android:visibility="gone"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_miepiadine"
-            android:layout_below="@id/la_mia_classifica"
+            android:layout_below="@id/text_voto_piadina"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"/>
@@ -47,11 +60,27 @@
             android:layout_marginBottom="10dp"
             android:layout_marginStart="15dp"/>
 
+        <TextView
+            android:id="@+id/text_ordini_vuoti_classifica"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/le_piadine_non_votate"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="17sp"
+            android:textColor="@color/secondaryDarkColor"
+            android:fontFamily="@font/museo_slab"
+            android:text="Non hai ancora effettuato nessun ordine! Crea o scegli la piadina dal menù e ordina subito!"
+            android:visibility="gone"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyler_piadine_non_votate"
-            android:layout_below="@id/greca_le_mie_piadine"
+            android:layout_below="@id/text_ordini_vuoti_classifica"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="?actionBarSize"
             android:layout_marginTop="10dp"/>
 
     </RelativeLayout>
