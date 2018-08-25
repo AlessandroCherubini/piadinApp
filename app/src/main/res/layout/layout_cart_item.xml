@@ -97,6 +97,28 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/primaryDarkColor" />
 
+            <TextView
+                android:id="@+id/text_quantita_piadina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_nome"
+                android:layout_below="@id/tv_ingredienti"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="Quantità: "
+                android:textColor="@color/primaryDarkColor" />
+
+            <TextView
+                android:id="@+id/tv_quantita"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_ingredienti"
+                android:layout_toEndOf="@id/text_quantita_piadina"
+                android:fontFamily="@font/museo_slab"
+                android:paddingBottom="5dp"
+                android:text="1"
+                android:textColor="@color/primaryDarkColor" />
 
             <TextView
                 android:id="@+id/tv_prezzo"

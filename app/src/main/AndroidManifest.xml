@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ale.piadinapp">
+    package="com.example.android">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -22,7 +22,7 @@
 
 
     <application
-        android:name=".classi.PiadinApp"
+        android:name="com.example.android.classi.PiadinApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,7 +30,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashActivity"
+            android:name="com.example.android.activity.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,75 +38,75 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name="com.example.android.activity.MainActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.android.activity.LoginActivity"
             android:label="@string/login"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.example.android.activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.example.android.activity.MainActivity" />
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name="com.example.android.activity.SignUpActivity"
             android:label="@string/signup"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.example.android.activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.example.android.activity.MainActivity" />
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name="com.example.android.activity.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MyOrderActivity"
+            android:name="com.example.android.activity.MyOrderActivity"
             android:label="@string/title_activity_my_order"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
         <activity
-            android:name=".BadgeActivity"
+            android:name="com.example.android.activity.BadgeActivity"
             android:label="@string/title_activity_badge"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
         <activity
-            android:name=".MyProfileActivity"
+            android:name="com.example.android.activity.MyProfileActivity"
             android:label="@string/title_activity_my_profile"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
         <activity
-            android:name=".home.CustomizePiadinaActivity"
+            android:name="com.example.android.activity.CustomizePiadinaActivity"
             android:label="@string/title_activity_customize_piadina"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
         <activity
-            android:name=".EditUserActivity"
+            android:name="com.example.android.activity.EditUserActivity"
             android:label="@string/title_activity_my_profile"
-            android:parentActivityName=".MyProfileActivity" />
+            android:parentActivityName="com.example.android.activity.MyProfileActivity" />
         <activity
-            android:name=".WeAreHereActivity"
+            android:name="com.example.android.activity.WeAreHereActivity"
             android:label="@string/title_activity_we_are_here"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
 
         <meta-data
@@ -117,22 +117,22 @@
             android:value="AIzaSyAbdXgZxMLG8Y5ju-1J9qqaoEhYAF5gDNo" />
 
         <activity
-            android:name=".home.CartActivity"
+            android:name="com.example.android.activity.CartActivity"
             android:label="@string/title_activity_cart"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
         <activity
-            android:name=".home.ShakerActivity"
+            android:name="com.example.android.activity.ShakerActivity"
             android:label="@string/title_activity_shaker"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.example.android.activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ale.piadinapp.HomeActivity" />
+                android:value="com.example.android.activity.HomeActivity" />
         </activity>
 
         <!-- SERVICES -->
