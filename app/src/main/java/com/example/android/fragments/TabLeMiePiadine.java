@@ -1,18 +1,25 @@
 package com.example.android.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,13 +31,20 @@ import com.example.android.classi.Piadina;
 import com.example.android.home.ClickListener;
 import com.example.android.adapters.LeMiePiadineAdapter;
 import com.example.android.utility.DBHelper;
+import com.example.android.utility.GenericCallback;
+import com.example.android.utility.JSONHelper;
+import com.example.android.utility.OnlineHelper;
 import com.example.android.utility.SessionManager;
+
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 
 public class TabLeMiePiadine extends Fragment {
@@ -52,6 +66,7 @@ public class TabLeMiePiadine extends Fragment {
     String emailUtente;
     Context mContext;
     DBHelper helper;
+    OnlineHelper onlineHelper;
 
     TextView testoPiadineVuote;
     TextView testoPiadineVuoteNonVotate;
@@ -91,6 +106,7 @@ public class TabLeMiePiadine extends Fragment {
         mContext = getContext();
         utente = SessionManager.getUserDetails(mContext);
         helper = new DBHelper(mContext);
+        onlineHelper = new OnlineHelper(mContext);
 
         emailUtente = utente.get("email");
 
@@ -151,6 +167,47 @@ public class TabLeMiePiadine extends Fragment {
         testoPiadineVuote = getView().findViewById(R.id.text_voto_piadina);
         testoPiadineVuoteNonVotate = getView().findViewById(R.id.text_ordini_vuoti_classifica);
 
+        // Spiegazione Pagina
+        final Button infoButton = getView().findViewById(R.id.info_le_mie_piadine);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.alert_info_le_mie_piadine, null);
+                dialogBuilder.setView(dialogView);
+
+                final TextView testoDialogo = dialogView.findViewById(R.id.text_info_le_mie_piadine);
+
+                dialogBuilder.setTitle("Informazioni aggiuntive");
+                dialogBuilder.setIcon(R.drawable.ic_info_black_24dp);
+                testoDialogo.setText("Vota le piadine preferite per avercele sempre a portata di mano!" +
+                        "\nLa classifica è totalmente privata e personale.\nTrascina verso sinistra o destra le piadine votate per toglierle dalla classifica.");
+
+                dialogBuilder.setNeutralButton("Ok, ho capito!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                              dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();*/
+                new MaterialShowcaseView.Builder((Activity) mContext).withCircleShape()
+                        .setTarget(infoButton)
+                        .setTitleText("Informazioni")
+                        .setDismissText("OK! HO CAPITO!")
+                        .setContentTextColor(Color.parseColor("#ffffff"))
+                        .setContentText("Vota le piadine preferite per avercele sempre a portata di mano!" +
+                                "\nLa classifica è totalmente privata e personale." +
+                                "\nTrascina verso sinistra o destra le piadine votate per toglierle dalla classifica.")
+                        .setDelay(200)
+                        .useFadeAnimation()
+                        .show();
+            }
+        });
+
+        // La Mia Classifica RecyclerView
         recyclerViewPiadineVotate = getView().findViewById(R.id.recycler_miepiadine);
         recyclerViewPiadineVotate.setHasFixedSize(true);
         recyclerViewPiadineVotate.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -170,16 +227,32 @@ public class TabLeMiePiadine extends Fragment {
         //setting adapter to recyclerview
         recyclerViewPiadineVotate.setAdapter(adapterPiadineVotate);
 
+
+        // Eliminazione delle piadine dalla Classifica
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
-                int posizione = viewHolder.getAdapterPosition();
+                final int posizione = viewHolder.getAdapterPosition();
                 Piadina piadinaRimossa = piadineVotate.get(posizione);
                 piadinaRimossa.setRating(0);
                 piadineVotate.remove(posizione);
-                helper.deletePiadinaVotata(piadinaRimossa, emailUtente);
+
+                GenericCallback callback = new GenericCallback() {
+                    @Override
+                    public void onSuccess(JSONObject resultData) {
+
+                        boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                        if(success){
+                            helper.deletePiadinaVotata(posizione);
+                        }else{
+                            Log.d("ERRORE", resultData.toString());
+                        }
+
+                    }
+                };
+                onlineHelper.deleteRatedPiadinaInExternalDB(piadinaRimossa.getIdEsterno(), callback);
 
                 adapterPiadineVotate.notifyItemRemoved(viewHolder.getAdapterPosition());
                 recyclerViewPiadineVotate.swapAdapter(adapterPiadineVotate,true);
@@ -293,6 +366,14 @@ public class TabLeMiePiadine extends Fragment {
         }else{
             ((RelativeLayout.LayoutParams) recyclerViewPiadineNonVotate.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.le_piadine_non_votate);
         }
+    }
 
+    public void setEmptyPiadineNonVotate(){
+        if(piadineNonVotate.isEmpty()){
+            testoPiadineVuoteNonVotate.setVisibility(View.VISIBLE);
+            testoPiadineVuoteNonVotate.setText("Greeeat!! Hai dato un voto a tutte le piadine! Fantastico!");
+        }else{
+            ((RelativeLayout.LayoutParams) recyclerViewPiadineNonVotate.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.le_piadine_non_votate);
+        }
     }
 }

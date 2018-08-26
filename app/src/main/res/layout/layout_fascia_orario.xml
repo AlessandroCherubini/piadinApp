@@ -44,7 +44,7 @@
                 android:elevation="4dp"
                 android:visibility="gone" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/button_fascia_color"
                 android:layout_width="30dp"
                 android:layout_height="30dp"

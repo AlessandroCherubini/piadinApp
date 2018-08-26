@@ -2,6 +2,7 @@ package com.example.android.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +18,12 @@ import com.example.android.R;
 import com.example.android.classi.Piadina;
 import com.example.android.fragments.TabLeMiePiadine;
 import com.example.android.utility.DBHelper;
+import com.example.android.utility.GenericCallback;
+import com.example.android.utility.JSONHelper;
+import com.example.android.utility.OnlineHelper;
 import com.example.android.utility.SessionManager;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,6 +32,8 @@ public class LeMiePiadineNonVotateAdapter extends RecyclerView.Adapter<LeMiePiad
 
     private Context mContext;
     private DBHelper helper;
+    private OnlineHelper onlineHelper;
+    private GenericCallback callback;
     private ArrayList<Piadina> piadineNonVotate;
     private Map<String, String> utente;
     private TabLeMiePiadine fragmentLeMiePiadine;
@@ -41,6 +49,7 @@ public class LeMiePiadineNonVotateAdapter extends RecyclerView.Adapter<LeMiePiad
     public PiadinaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         helper = new DBHelper(mContext);
+        onlineHelper = new OnlineHelper(mContext);
         utente = SessionManager.getUserDetails(mContext);
 
         View view = inflater.inflate(R.layout.layout_piadina_non_votata, null);
@@ -77,6 +86,20 @@ public class LeMiePiadineNonVotateAdapter extends RecyclerView.Adapter<LeMiePiad
             }
         });
 
+        callback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData) {
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                if(success){
+                    int idEsterno = JSONHelper.getIntFromObj(resultData, "id_esterno");
+                    piadina.setIdEsterno(idEsterno);
+                    helper.insertPiadinaVotata(piadina, utente.get("email"));
+                }else{
+                    Snackbar.make(holder.itemView, "Errore nel salvataggio della piadina", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        };
+
         holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,23 +115,26 @@ public class LeMiePiadineNonVotateAdapter extends RecyclerView.Adapter<LeMiePiad
                 dialogBuilder.setIcon(R.drawable.ic_stars_black_24dp);
                 dialogBuilder.setMessage("Verrà poi aggiunta ne 'La mia classifica' per ritrovarla velocemente!");
 
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
+
                 ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                         piadina.setRating((int) rating);
                         ratingBar.setRating(rating);
 
-                        // Memorizzo la piadina nelle Piadine Votate!
-                        helper.insertPiadinaVotata(piadina, utente.get("email"));
+                        // Memorizzo la piadina nelle Piadine Votate prima sull'esterno e poi interno.
+                        onlineHelper.addRatedPiadinaInExternalDB(piadina, utente.get("email"), callback);
+
                         fragmentLeMiePiadine.addPiadinaVotataInAdapter(piadina);
                         fragmentLeMiePiadine.removePiadinaNonVotataInAdapter(position);
-                        fragmentLeMiePiadine.setEmptyMessage();
+                        fragmentLeMiePiadine.setEmptyPiadineNonVotate();
 
-                        Toast.makeText(mContext, "Hai votato!", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(holder.itemView, "Hai votato! La piadina ora è in classifica!", Snackbar.LENGTH_LONG).show();
+                        alertDialog.dismiss();
                     }
                 });
-                AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.show();
             }
         });
     }

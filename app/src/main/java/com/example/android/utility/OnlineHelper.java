@@ -15,6 +15,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
 import com.example.android.classi.Ordine;
+import com.example.android.classi.Piadina;
 import com.example.android.classi.User;
 
 import org.json.JSONException;
@@ -32,6 +33,9 @@ public class OnlineHelper {
     private static final String URL_CREA_ORDINE = "http://piadinapp.altervista.org/create_order.php";
     private static final String URL_GET_BADGE = "http://piadinapp.altervista.org/get_timbri.php";
     private static final String URL_UPDATE_USER = "http://piadinapp.altervista.org/update_user_jimmy.php"; //todo cambiare quando verifico che funziona
+    private static final String URL_UPDATE_RATING_PIADINE = "http://piadinapp.altervista.org/update_la_mia_piadina.php";
+    private static final String URL_CREA_RATING_PIADINA = "http://piadinapp.altervista.org/create_la_mia_piadina.php";
+    private static final String URL_DELETE_RATING_PIADINA = "http://piadinapp.altervista.org/delete_la_mia_piadina.php";
 
     //Update user fields
     private static final String ID_USER_FIELD       = "user_id";
@@ -43,8 +47,7 @@ public class OnlineHelper {
     private Response.ErrorListener errorListener;
     private Context mContext;
 
-    public OnlineHelper(final Context context)
-    {
+    public OnlineHelper(final Context context) {
         mContext = context;
 
         errorListener = new Response.ErrorListener() {
@@ -200,61 +203,6 @@ public class OnlineHelper {
         VolleySingleton.getInstance(mContext).addToRequestQueue(jsObjRequest);
     }
 
-    /*public void addOrderInExternalDB(Ordine ordine, final GenericCallback callback)
-    {
-        //Fill data
-        Map<String,String> params = new HashMap<>();
-        String email       = ordine.getEmailUtente();
-        String telefono    = ordine.getTelefonoUtente();
-        String data        = ordine.getTimestampOrdine();
-        double totale      = ordine.getPrezzoOrdine();
-        String descrizione = ordine.printPiadine();
-        String nota        = ordine.getNotaOrdine();
-
-        try {
-            params.put("email",email);
-            params.put("phone",telefono);
-            params.put("data_ordine",data);
-            params.put("descrizione",descrizione);
-            params.put("nota",nota);
-            params.put("prezzo",String.valueOf(totale));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //Create response listener
-        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d("JSON", response.toString());
-                try{
-                    String success = response.getString("success");
-                    Log.d("JSON", "success: " + success);
-                    if(success.equals("1")){
-                        Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
-                    }
-
-                    if(callback != null)
-                        callback.onSuccess(response);
-                }catch(JSONException e){
-                    e.fillInStackTrace();
-                }
-            }
-        };
-
-        //Create request
-        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST,
-                URL_CREA_ORDINE,
-                params,
-                responseListener,
-                errorListener);
-
-        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
-    }*/
-
     public void getBadgeDataFromExternalDB(String userEmail, final GenericCallback callback)
     {
         Map<String,String> params = new HashMap<>();
@@ -298,6 +246,82 @@ public class OnlineHelper {
         //Create request
         CustomRequest jsonRequest = new CustomRequest(Request.Method.POST,
                 URL_UPDATE_USER,
+                params,
+                responseListener,
+                errorListener);
+
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
+    }
+
+    public void updateRatedPiadinaInExternalDB(Piadina piadina, int nuovoVoto, final GenericCallback callback){
+        int idEsterno = piadina.getIdEsterno();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("id_esterno", String.valueOf(idEsterno));
+        params.put("voto", String.valueOf(nuovoVoto));
+
+        //Create response listener
+        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        };
+
+        //Create request
+        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST,
+                URL_UPDATE_RATING_PIADINE,
+                params,
+                responseListener,
+                errorListener);
+
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
+
+    }
+    public void addRatedPiadinaInExternalDB(Piadina piadina, String emailUtente, final GenericCallback callback){
+        Map<String,String> params = new HashMap<>();
+        params.put("email", emailUtente);
+        params.put("nome", piadina.getNome());
+        params.put("descrizione", piadina.printIngredienti());
+        params.put("prezzo", String.valueOf(piadina.getPrice()));
+        params.put("formato", piadina.getFormato());
+        params.put("impasto", piadina.getImpasto());
+        params.put("quantita", String.valueOf(piadina.getQuantita()));
+        params.put("voto", String.valueOf(piadina.getRating()));
+
+        //Create response listener
+        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        };
+
+        //Create request
+        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST,
+                URL_CREA_RATING_PIADINA,
+                params,
+                responseListener,
+                errorListener);
+
+        VolleySingleton.getInstance(mContext).addToRequestQueue(jsonRequest);
+    }
+
+    public void deleteRatedPiadinaInExternalDB(int idEsterno, final GenericCallback callback){
+        Map<String, String> params = new HashMap<>();
+        params.put("id_esterno", String.valueOf(idEsterno));
+
+        //Create response listener
+        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        };
+
+        //Create request
+        CustomRequest jsonRequest = new CustomRequest(Request.Method.POST,
+                URL_DELETE_RATING_PIADINA,
                 params,
                 responseListener,
                 errorListener);
