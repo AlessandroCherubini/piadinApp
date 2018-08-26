@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -864,6 +865,15 @@ public class DBHelper extends SQLiteOpenHelper{
         database.close();
     }
 
+    public void deletePiadinaVotata(int idEsterno){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        boolean result = database.delete(TABLE_RATED_NAME, "id_esterno=" + idEsterno, null) > 0;
+        if(result == false){
+            Log.d("DELETEVOTO", "Errore nel cancellare la piadina interna");
+        }
+    }
+
     public ArrayList<Piadina> getLeMiePiadineByEmail(String emailUtente){
         ArrayList<Piadina> leMiePiadine = new ArrayList<>();
 
@@ -893,6 +903,7 @@ public class DBHelper extends SQLiteOpenHelper{
             } while (cursorPiadine.moveToNext());
         }
 
+        db.close();
         return leMiePiadine;
     }
 
@@ -908,6 +919,8 @@ public class DBHelper extends SQLiteOpenHelper{
         }else{
             exist = false;
         }
+
+        db.close();
 
         return exist;
     }

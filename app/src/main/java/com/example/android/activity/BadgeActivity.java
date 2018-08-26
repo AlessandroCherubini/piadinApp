@@ -96,7 +96,7 @@ public class BadgeActivity extends AppCompatActivity
 
         startUpdateService();
         //Registro il receiver
-        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+        registerReceiver(updateStringsReceiver, new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
     }
 
     @Override
@@ -104,7 +104,7 @@ public class BadgeActivity extends AppCompatActivity
     {
         super.onResume();
         startUpdateService();
-        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+        registerReceiver(updateStringsReceiver, new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
     }
 
     @Override

@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -57,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class FasceOrarioFragment extends Fragment {
 
     private final static String URL_GET_FASCE = "http://piadinapp.altervista.org/get_fasce.php";
@@ -67,9 +69,11 @@ public class FasceOrarioFragment extends Fragment {
     LinearLayout linlaHeaderProgress;
     RelativeLayout layoutFasce;
     Button buttonOrder;
+    Button tempoFascia;
 
     // Attributi ordine
     HashMap<String, String> utente;
+    ArrayList<FasciaOraria> fasceOrarie;
     String dataRichiesta;
     int quantitaRichiesta;
     double totaleOrdine;
@@ -78,12 +82,24 @@ public class FasceOrarioFragment extends Fragment {
     long lastlastUpdateOrdine;
     Ordine ordine;
     int idFasciaSelezionata;
-    String orarioRitiro;
+
+    private android.support.v7.widget.Toolbar toolbarFragment;
+    private CartActivity cartActivity;
 
     DBHelper helper;
-    ArrayList<FasciaOraria> fasceOrarie;
     Context mContext;
     VolleyCallback fasceCallBack;
+
+    public FasceOrarioFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        cartActivity = ((CartActivity) context);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +114,6 @@ public class FasceOrarioFragment extends Fragment {
             fasceOrarie = getArguments().getParcelableArrayList("fasceOrarie");
             cartItems = getArguments().getParcelableArrayList("cartItems");
             totaleOrdine = getArguments().getDouble("totaleOrdine");
-            Log.d("QUANTITA", "" + quantitaRichiesta);
         }
 
         linlaHeaderProgress = getActivity().findViewById(R.id.linear_spinner);
@@ -127,7 +142,7 @@ public class FasceOrarioFragment extends Fragment {
                         fasceOrarioAdapter.notifyItemRemoved(0);
                         fasceOrarioAdapter.notifyItemRangeChanged(0, fasceOrarie.size());
 
-                        getActivity().setTitle("Scegli una fascia d'orario");
+                        //getActivity().setTitle("Scegli una fascia d'orario");
                         JSONArray fasce = response.getJSONArray("fasce");
                         for(int i = 0; i < fasce.length(); i++){
                             JSONObject fascia = fasce.getJSONObject(i);
@@ -139,7 +154,6 @@ public class FasceOrarioFragment extends Fragment {
                             int coloreFascia = fascia.getInt("colore");
 
                             FasciaOraria fasciaOraria = new FasciaOraria(idFascia, inizioFascia, fineFascia, isOccupata, coloreFascia);
-                            Log.d("FASCIA", fasciaOraria.toString());
                             fasceOrarie.add(fasciaOraria);
                         }
 
@@ -147,6 +161,7 @@ public class FasceOrarioFragment extends Fragment {
                         getActivity().setProgressBarIndeterminateVisibility(false);
                         linlaHeaderProgress.setVisibility(View.GONE);
                         recyclerViewFasce.setVisibility(View.VISIBLE);
+
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -164,7 +179,11 @@ public class FasceOrarioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fasce_orarie_layout, container, false);
+        View v = inflater.inflate(R.layout.fasce_orarie_layout, container, false);
+        toolbarFragment = (android.support.v7.widget.Toolbar) v.findViewById(R.id.toolbar123);
+        setupToolbar();
+
+        return v;
     }
 
     @Override
@@ -184,16 +203,7 @@ public class FasceOrarioFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-/*        android.support.v7.widget.Toolbar toolbar = getView().findViewById(R.id.fragment_fasce_toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().onBackPressed();
-            }
-        });*/
-
-        fasceOrarie = new ArrayList<FasciaOraria>();
+        fasceOrarie = new ArrayList<>();
 
         recyclerViewFasce = getView().findViewById(R.id.recycler_fasce);
         recyclerViewFasce.setHasFixedSize(true);
@@ -228,6 +238,15 @@ public class FasceOrarioFragment extends Fragment {
                 }
             }
         });
+
+        final Button infoButton = getView().findViewById(R.id.info_fasce);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fasceOrarioAdapter.infoButtonFasce(infoButton);
+            }
+        });
+
 
     }
 
@@ -425,5 +444,11 @@ public class FasceOrarioFragment extends Fragment {
         onlineHelper.addUserOrder(ordine,orderCallback);
     }
     //-----------------------------------------------------------
+
+    private void setupToolbar(){
+        toolbarFragment.setTitle("Scegli una fascia oraria");
+        cartActivity.getSupportActionBar().hide();
+        cartActivity.setSupportActionBar(toolbarFragment);
+    }
 
 }

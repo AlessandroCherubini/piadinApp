@@ -35,10 +35,17 @@ public class AddIngredientAdapter extends RecyclerView.Adapter<AddIngredientAdap
     @Override
     public void onBindViewHolder(AddIngredientAdapter.ViewHolder holder, int position) {
         Ingrediente ingrediente = mData.get(position);
-        Log.d("RECYCLER", ingrediente.toString());
+
         holder.myTextView.setText(ingrediente.getName());
         Double prezzo = new Double(ingrediente.getPrice());
         holder.textPrice.setText(prezzo.toString() + " €");
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     // total number of rows

@@ -212,29 +212,7 @@
                 android:textSize="24sp"
                 android:textColor="@color/secondaryDarkColor"
                 android:textStyle="bold" />
-            <!--            <Button
-                android:id="@+id/buttonAddIngredients"
-                android:layout_width="match_parent"
-                android:layout_height="33dp"
-                android:layout_alignTop="@+id/scroll_ingredienti"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/primaryColor"
-                android:drawableLeft="@android:drawable/ic_menu_add"
-                android:fontFamily="@font/museo_slab"
-                android:text="AGGIUNGI ALTRI INGREDIENTI"
-                android:textColor="@color/primaryTextColor" />-->
-            <!--            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="15dp">
-            </Spinner>-->
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/categorie_ingredienti"
                 android:layout_width="wrap_content"
@@ -242,6 +220,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 tools:itemCount="4" />
 

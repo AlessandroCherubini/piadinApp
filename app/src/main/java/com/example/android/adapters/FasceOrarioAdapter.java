@@ -1,5 +1,6 @@
 package com.example.android.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -7,14 +8,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.R;
+import com.example.android.activity.CartActivity;
 import com.example.android.classi.FasciaOraria;
 
 import java.util.ArrayList;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.ViewHolder> {
 
@@ -22,6 +27,7 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
     private LayoutInflater mInflater;
     private fasciaOrarioListener mClickListener;
     private Context mContext;
+    Button infoButton;
     int checkPosition = 99;
     boolean isChecked = false;
     ViewHolder checkedView;
@@ -36,6 +42,7 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.layout_fascia_orario, parent, false);
         mContext = parent.getContext();
+        infoButton = ((CartActivity) mContext).findViewById(R.id.info_fasce);
         return new FasceOrarioAdapter.ViewHolder(view);
     }
 
@@ -52,15 +59,16 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
             holder.buttonSelectedFascia.setVisibility(View.VISIBLE);
             holder.singolaFascia.setBackgroundColor(Color.parseColor("#dddbdd"));
         }else{
+
             switch(fasciaOraria.getColoreBadge()){
                 case 1:
-                    holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_brightness_1_green_24dp);
+                    holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_looks_one_black_24dp);
                     break;
                 case 2:
-                    holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_brightness_1_yellow_24dp);
+                    holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_looks_two_black_24dp);
                     break;
                 case 3:
-                    holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_brightness_1_red_24dp);
+                    holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_looks_3_black_24dp);
                     break;
                 default:
                     break;
@@ -92,6 +100,7 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
             });
         }
 
+        createInfoFasce(holder.buttonColoreFascia);
     }
 
     @Override
@@ -114,7 +123,9 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
 
         TextView inizioFascia;
         TextView fineFascia;
-        ImageButton buttonColoreFascia;
+
+        Button buttonColoreFascia;
+        Button buttonInfoColoreFascia;
         ImageButton buttonSelectedFascia;
         RelativeLayout singolaFascia;
 
@@ -123,9 +134,10 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
 
             inizioFascia = itemView.findViewById(R.id.inizio_fascia);
             fineFascia = itemView.findViewById(R.id.fine_fascia);
-
             buttonSelectedFascia = itemView.findViewById(R.id.badge_selected);
             buttonColoreFascia = itemView.findViewById(R.id.button_fascia_color);
+            buttonInfoColoreFascia = itemView.findViewById(R.id.button_fascia_color);
+
             singolaFascia = itemView.findViewById(R.id.singola_fascia);
 
         }
@@ -145,8 +157,39 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
         void onItemClick(View view, int position);
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
+
+    public void createInfoFasce(Button infoFasce){
+        new MaterialShowcaseView.Builder((Activity) mContext).withCircleShape()
+                .setTarget(infoFasce)
+                .setTitleText("Informazioni")
+                .setDismissText("OK! HO CAPITO!")
+                .setContentText("Ad ogni fascia è associato un numero con relativo colore:\n" +
+                        "VERDE indica che l'orario di ritiro è prossimo all'inizio della fascia.\n" +
+                        "GIALLO indica che è a metà della fascia.\n" +
+                        "ROSSO verso la fine della fascia.\n\n" +
+                        "Per esempio:\nFascia selezionata: 19:00:00 - 19:15:00\n" +
+                        "Se ha il simbolo verde, allora l'ordine sarà pronto circa per le 19:05:00.")
+                .setDelay(200)
+                .singleUse("nuovo") // provide a unique ID used to ensure it is only shown once
+                .useFadeAnimation()
+                .show();
     }
+
+    public void infoButtonFasce(Button infoFasce){
+        new MaterialShowcaseView.Builder((Activity) mContext).withCircleShape()
+                .setTarget(infoFasce)
+                .setTitleText("Informazioni")
+                .setDismissText("OK! HO CAPITO!")
+                .setContentTextColor(Color.parseColor("#ffffff"))
+                .setContentText("Ad ogni fascia è associato un numero con relativo colore:\n" +
+                        "VERDE indica che l'orario di ritiro è prossimo all'inizio della fascia.\n" +
+                        "GIALLO indica che è a metà della fascia.\n" +
+                        "ROSSO verso la fine della fascia.\n\n" +
+                        "Per esempio:\nFascia selezionata: 19:00:00 - 19:15:00\n" +
+                        "Se ha il simbolo verde, allora l'ordine sarà pronto circa per le 19:05:00.")
+                .setDelay(200)
+                .useFadeAnimation()
+                .show();
+    }
+
 }
