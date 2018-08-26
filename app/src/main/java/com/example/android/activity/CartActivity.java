@@ -71,6 +71,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     DBHelper helper;
     TextView tvTot;
     View view;
+    Toolbar toolbar;
     static Context mContext;
     Calendar dateCalendar;
 
@@ -99,7 +100,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         mContext = this;
         helper = new DBHelper(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -118,9 +119,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         });
 
         //cs.persistData(getApplicationContext(),true);
+
         // ricevo l'elemento inserito nel carrello
-
-
         if (data == null || data.size()==0) {
             Toast.makeText(mContext, "Non ci sono elementi nel carrello", Toast.LENGTH_SHORT).show();
         } else {
@@ -318,6 +318,18 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+            setSupportActionBar(toolbar);
+            getSupportActionBar().show();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+
+    }
 
     public void stopNotificationService(){
         Intent intent = new Intent(CartActivity.this, NotificationService.class);

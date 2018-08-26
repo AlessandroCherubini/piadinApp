@@ -66,6 +66,17 @@ public class JSONHelper {
         return "";
     }
 
+    public static int getIntFromObj(JSONObject source,String field)
+    {
+        try {
+            return source.getInt(field);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public static long getLongFromObj(JSONObject source,String field)
     {
         try {
