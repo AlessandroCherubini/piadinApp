@@ -111,8 +111,9 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
         }
     }
 
-
-
+    public void clear(){
+        itemList.clear();
+    }
 }
 
 

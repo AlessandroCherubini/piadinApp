@@ -1,6 +1,8 @@
 package com.example.android.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.carteasy.v1.lib.Carteasy;
 import com.example.android.R;
+import com.example.android.activity.CustomizePiadinaActivity;
 import com.example.android.classi.Piadina;
 import com.example.android.fragments.TabLeMiePiadine;
 import com.example.android.home.ClickListener;
@@ -38,6 +42,11 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
     private OnlineHelper onlineHelper;
     TabLeMiePiadine fragmentPiadine;
     private int nuovoVoto;
+
+    private Carteasy cs = new Carteasy();
+    Map<Integer, Map> data;
+    String identificatore;
+
     GenericCallback callback;
     Map<String, String> utente;
     
@@ -64,14 +73,26 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
     }
 
     @Override
-    public void onBindViewHolder(final PiadinaViewHolder holder, int position) {
+    public void onBindViewHolder(final PiadinaViewHolder holder, final int position) {
         final Piadina piadina = piadinaList.get(position);
 
         holder.textViewTitle.setText(piadina.getNome());
         holder.impastoPiadina.setText(piadina.getImpasto());
-        if(piadina.getImpasto() == "Normale"){
 
+        if(piadina.getFormato().equals("Piadina")){
+            holder.iconaFormato.setBackgroundResource(R.drawable.ic_piadina);
+        }else if(piadina.getFormato().equals("Rotolo")){
+            holder.iconaFormato.setBackgroundResource(R.drawable.ic_rotolo);
+        }else{
+            holder.iconaFormato.setBackgroundResource(R.drawable.ic_baby);
         }
+
+        if(piadina.getImpasto().equals("Normale")){
+            holder.iconaImpasto.setBackgroundResource(R.drawable.ic_impasto_tradizionale);
+        }else{
+            holder.iconaImpasto.setBackgroundResource(R.drawable.ic_impasto_4cereali);
+        }
+
         holder.formatoPiadina.setText(piadina.getFormato());
         holder.textViewIngredients.setText(piadina.printIngredienti());
         holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
@@ -103,7 +124,7 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
                 ratingBar.setRating(piadina.getRating());
 
                 dialogBuilder.setTitle("Vota la piadina!");
-                dialogBuilder.setIcon(R.drawable.ic_stars_black_24dp);
+                dialogBuilder.setIcon(R.drawable.ic_stars_brown_24dp);
                 dialogBuilder.setMessage("È data la possibilità di votare la piadina per poterla ritrovare più facilamente.");
 
                 final AlertDialog alertDialog = dialogBuilder.create();
@@ -122,6 +143,7 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
 
                         // todo: non funziona
                         fragmentPiadine.riordinaClassifica();
+                        fragmentPiadine.setEmptyMessage();
 
                         Snackbar.make(holder.itemView, "Hai modificato il voto alla piadina", Snackbar.LENGTH_SHORT).show();
                         alertDialog.dismiss();
@@ -133,10 +155,9 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
         holder.orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(mContext, CustomizePiadinaActivity.class);
-                intent.putExtra("indexPiadina",position);
-                (intent);*/
-                Toast.makeText(mContext, "Redirect da fare", Toast.LENGTH_SHORT).show();
+                aggiungiAlCarrello(piadinaList.get(position));
+                ((Activity) mContext).finish();
+                mContext.startActivity(((Activity) mContext).getIntent());
             }
         });
 
@@ -171,7 +192,7 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
         TextView formatoPiadina, impastoPiadina;
         Button orderButton;
         Button rateButton;
-        Button impastoButton, formatoButton;
+        Button iconaFormato, iconaImpasto;
         RatingBar ratingBar;
         LinearLayout buttonsPiadina;
         private WeakReference<ClickListener> listenerRef;
@@ -181,6 +202,8 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
 
             textViewTitle = itemView.findViewById(R.id.nome_la_mia_piadina);
             formatoPiadina = itemView.findViewById(R.id.formato_la_mia_piadina);
+            iconaFormato = itemView.findViewById(R.id.icona_formato);
+            iconaImpasto = itemView.findViewById(R.id.icona_impasto);
             impastoPiadina = itemView.findViewById(R.id.impasto_la_mia_piadina);
             textViewIngredients = itemView.findViewById(R.id.descrizione_la_mia_piadina);
             textViewPrezzo = itemView.findViewById(R.id.prezzo_la_mia_piadina);
@@ -191,5 +214,49 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
             buttonsPiadina = itemView.findViewById(R.id.layout_button_le_mie_piadine);
 
         }
+    }
+
+
+    private void aggiungiAlCarrello(Piadina piadina){
+
+        data = cs.ViewAll(mContext);
+        String id;
+
+        if (data == null || data.size() == 0) {
+            id = "Piadina " + 1;
+        }
+        else if ((cs.get(identificatore,"nome", mContext)) != null && identificatore != null){
+
+            id = identificatore;
+
+        }
+        else {
+
+            int k = 0;
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+                k++;
+            }
+
+            int numero = k + 1;
+            id = "Piadina " + numero;
+        }
+
+        cs.add(id,"nome", piadina.getNome());
+        cs.add(id, "formato", piadina.getFormato());
+        cs.add(id,"impasto", piadina.getImpasto());
+
+        cs.add(id,"prezzo", piadina.getPrice());
+        cs.add(id,"ingredienti", piadina.printIngredienti());
+        cs.add(id, "quantita", piadina.getQuantita());
+        cs.add(id, "rating", piadina.getRating());
+        cs.add(id,"identifier", id);
+        cs.commit(mContext);
+
+        if(piadina.getQuantita() > 1){
+            Toast.makeText(mContext, "Piadine aggiunte al carrello!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(mContext, "Piadina aggiunta al carrello!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

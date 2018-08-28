@@ -60,6 +60,31 @@ public class Piadina implements Parcelable{
         this.lastUpdated = lastUpdated;
     }
 
+    protected Piadina(Parcel in) {
+        id = in.readLong();
+        nome = in.readString();
+        ingredienti = in.createTypedArrayList(Ingrediente.CREATOR);
+        price = in.readDouble();
+        formato = in.readString();
+        impasto = in.readString();
+        quantita = in.readInt();
+        rating = in.readInt();
+        idEsterno = in.readInt();
+        lastUpdated = in.readLong();
+    }
+
+    public static final Creator<Piadina> CREATOR = new Creator<Piadina>() {
+        @Override
+        public Piadina createFromParcel(Parcel in) {
+            return new Piadina(in);
+        }
+
+        @Override
+        public Piadina[] newArray(int size) {
+            return new Piadina[size];
+        }
+    };
+
     public long getId() {
         return id;
     }
@@ -170,6 +195,30 @@ public class Piadina implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(nome);
+        dest.writeTypedList(ingredienti);
+        dest.writeDouble(price);
+        dest.writeString(formato);
+        dest.writeString(impasto);
+        dest.writeInt(quantita);
+        dest.writeInt(rating);
+        dest.writeInt(idEsterno);
+        dest.writeLong(lastUpdated);
+    }
 
+    @Override
+    public int hashCode() {
+        return nome.hashCode() ^ impasto.hashCode() ^ formato.hashCode() ^ printIngredienti().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Piadina))
+            return false;
+
+        Piadina mdc = (Piadina) obj;
+        return mdc.nome.equals(nome) && mdc.impasto.equals(impasto) && mdc.formato.equals(formato)
+                && mdc.printIngredienti().equals(printIngredienti());
     }
 }

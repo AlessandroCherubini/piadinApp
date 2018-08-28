@@ -493,6 +493,7 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
         });
         dialog.show();
     }
+
     private void aggiungiAlCarrello(){
 
         data = cs.ViewAll(mContext);

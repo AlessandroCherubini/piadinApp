@@ -80,7 +80,9 @@ public class ShakerActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                shake_button.setText("SCUOTI!");
+                shake_button.setText("Scuoti il telefono!");
+                shake_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_shake_phone, 0, 0, 0);
+                shake_button.setCompoundDrawablePadding(5);
                 shakeDetector = new ShakeDetector(options).start(getApplicationContext(), new ShakeCallback() {
                     @Override
                     public void onShake() {
@@ -103,7 +105,9 @@ public class ShakerActivity extends AppCompatActivity
                         cv_piadina.setVisibility(View.VISIBLE);
                         btn_personalizza.setVisibility(View.VISIBLE);
                         shakeDetector.stopShakeDetector(getBaseContext());
-                        shake_button.setText("CLICCAMI");
+                        shake_button.setText("NE VOGLIO UN\'ALTRA");
+                        shake_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_replay_black_24dp, 0, 0, 0);
+                        shake_button.setCompoundDrawablePadding(5);
 
                     }
                 });
@@ -228,8 +232,7 @@ public class ShakerActivity extends AppCompatActivity
         }
     }
 
-    public Piadina getRandomPiadina()
-    {
+    public Piadina getRandomPiadina() {
         randomGenerator = new Random();
         int index = randomGenerator.nextInt(randomPiadinaList.size());
         Piadina randomPiadina = randomPiadinaList.get(index);

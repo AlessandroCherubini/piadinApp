@@ -77,8 +77,8 @@
     <string name="ings">Ingredienti:\u00A0</string>
     <!-- Pagina Shaker Piadina -->
     <string name="title_activity_shaker">Shake Piadina</string>
-    <string name="shake_button">"Non sai che piadina scegliere? \n Ci pensiamo noi! \n Premi il pulsante e scuoti lo smartphone!"</string>
-    <string name="messaggio_random_piadina">\"Personalizza e vai al Carrello\" per procedere con l\'ordine, oppure \"Premi e Scuoti\" per ottenere una piadina diversa!</string>
+    <string name="shake_button">"Non sai che piadina scegliere? \n Ci penso io! \n Premi il pulsante e \n scuoti lo smartphone!"</string>
+    <string name="messaggio_random_piadina">\"Scelgo questa\" per la personalizzazione e procedere con l\'ordine, oppure \"NE VOGLIO UN\'ALTRA\" e scuoti per ottenere una piadina diversa!</string>
     <!-- Pagina Tessera -->
     <string name="qr_image_description">QR code image</string>
     <string name="numero_timbri_str">Numero di timbri: 0</string>

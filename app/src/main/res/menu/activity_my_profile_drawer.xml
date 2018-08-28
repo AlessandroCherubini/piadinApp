@@ -19,7 +19,7 @@
             android:title="@string/tessera" />
         <item
             android:id="@+id/shaker"
-            android:icon="@drawable/ic_shaker_black_24dp"
+            android:icon="@drawable/ic_shake_phone_gray"
             android:title="@string/shaker" />
 
         <item

@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/la_mia_classifica"
             android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"
             android:textSize="17sp"
             android:textColor="@color/secondaryDarkColor"
