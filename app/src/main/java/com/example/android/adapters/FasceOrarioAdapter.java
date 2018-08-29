@@ -59,7 +59,7 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
             holder.buttonSelectedFascia.setVisibility(View.VISIBLE);
             holder.singolaFascia.setBackgroundColor(Color.parseColor("#dddbdd"));
         }else{
-
+            createInfoFasce(holder.buttonColoreFascia);
             switch(fasciaOraria.getColoreBadge()){
                 case 1:
                     holder.buttonColoreFascia.setBackgroundResource(R.drawable.ic_looks_one_black_24dp);
@@ -100,7 +100,6 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
             });
         }
 
-        createInfoFasce(holder.buttonColoreFascia);
     }
 
     @Override
@@ -180,6 +179,7 @@ public class FasceOrarioAdapter extends RecyclerView.Adapter<FasceOrarioAdapter.
                 .setTarget(infoFasce)
                 .setTitleText("Informazioni")
                 .setDismissText("OK! HO CAPITO!")
+                .setDismissOnTouch(true)
                 .setContentTextColor(Color.parseColor("#ffffff"))
                 .setContentText("Ad ogni fascia è associato un numero con relativo colore:\n" +
                         "VERDE indica che l'orario di ritiro è prossimo all'inizio della fascia.\n" +

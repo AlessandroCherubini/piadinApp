@@ -24,7 +24,6 @@
                 android:fontFamily="@font/museo_slab"
                 android:textSize="16sp"
                 android:text="Nome Piadina"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -38,7 +37,6 @@
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Formato: "
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/primaryDarkColor" />
 
             <TextView
@@ -53,7 +51,6 @@
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Formato"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/primaryDarkColor" />
 
             <TextView
@@ -66,7 +63,6 @@
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Impasto: "
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/primaryDarkColor" />
 
             <TextView
@@ -81,7 +77,6 @@
                 android:fontFamily="@font/museo_slab"
                 android:paddingBottom="5dp"
                 android:text="Impasto"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/primaryDarkColor" />
 
             <TextView

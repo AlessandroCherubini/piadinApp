@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.android.R;
 import com.example.android.classi.Piadina;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class PiadineOrdineAdapter extends RecyclerView.Adapter<PiadineOrdineAdapter.ViewHolder> {
@@ -42,7 +43,12 @@ public class PiadineOrdineAdapter extends RecyclerView.Adapter<PiadineOrdineAdap
         holder.formatoPiadina.setText(piadina.getFormato());
         holder.impastoPiadina.setText(piadina.getImpasto());
         holder.descrizionePiadina.setText(ingredientiToString);
-        holder.prezzoPiadina.setText(String.valueOf(piadina.getPrice()));
+
+        double prezzoPiadina = piadina.getPrice();
+        BigDecimal totale = new BigDecimal(prezzoPiadina);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.prezzoPiadina.setText(totale.toPlainString().replace(".", ","));
+
         holder.quantitaPiadina.setText(String.valueOf(piadina.getQuantita()));
 
     }

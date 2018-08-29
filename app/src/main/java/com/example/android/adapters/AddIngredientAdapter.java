@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.android.R;
 import com.example.android.classi.Ingrediente;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class AddIngredientAdapter extends RecyclerView.Adapter<AddIngredientAdapter.ViewHolder>{
@@ -37,8 +38,11 @@ public class AddIngredientAdapter extends RecyclerView.Adapter<AddIngredientAdap
         Ingrediente ingrediente = mData.get(position);
 
         holder.myTextView.setText(ingrediente.getName());
-        Double prezzo = new Double(ingrediente.getPrice());
-        holder.textPrice.setText(prezzo.toString() + " €");
+        double prezzoIngrediente = ingrediente.getPrice();
+
+        BigDecimal totale = new BigDecimal(prezzoIngrediente);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.textPrice.setText(totale.toPlainString().replace(".", ",") + " €");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

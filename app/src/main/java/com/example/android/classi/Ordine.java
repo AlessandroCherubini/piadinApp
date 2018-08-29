@@ -61,6 +61,17 @@ public class Ordine {
         return cartItems;
     }
 
+    public ArrayList<Piadina> getPiadineSingoleOrdine(){
+        ArrayList<Piadina> piadineSingole = new ArrayList<>();
+        for(Piadina piadina: cartItems){
+            piadina.setPrice(piadina.getPrice() / piadina.getQuantita());
+            piadina.setQuantita(1);
+            piadineSingole.add(piadina);
+        }
+
+        return piadineSingole;
+    }
+
     public void setCartItems(ArrayList<Piadina> cartItems) {
         this.cartItems = cartItems;
     }

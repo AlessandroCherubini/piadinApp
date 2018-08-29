@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,25 +8,23 @@
     tools:context="com.example.android.activity.ShakerActivity"
     tools:showIn="@layout/app_bar_shaker">
 
-    <RelativeLayout
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:layout_marginTop="40dp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/ic_shake_phone_brown"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="20dp" />
 
         <TextView
             android:id="@+id/tv_shake"
-            android:layout_width="328dp"
-            android:layout_height="276dp"
-            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondaryDarkColor"
+            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="19dp"
+            android:layout_marginBottom="20dp"
             android:text="@string/shake_button"
             android:textAlignment="center"
             android:textAllCaps="false"
@@ -36,32 +34,55 @@
         <Button
             android:id="@+id/button_shake"
             style="@android:style/Widget.Material.Button.Inset"
-            android:layout_width="228dp"
-            android:layout_height="69dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="76dp"
             android:background="@color/primaryDarkColor"
             android:text="Cliccami"
+            android:layout_marginBottom="100dp"
+            android:padding="15dp"
             android:textColor="@color/primaryTextColor" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="322dp"
+            android:layout_height="82dp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/cv_piadina"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text='@string/messaggio_random_piadina'
+            android:textColor="@color/secondaryDarkColor"
+            android:textSize="18sp"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btn_personalizza"
-            android:layout_width="300dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_above="@+id/button_shake"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
             android:background="@color/primaryDarkColor"
-            android:text="Personalizza e vai al Carrello"
+            android:gravity="center"
+            android:padding="15dp"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/ic_thumb_up_black_24dp"
+            android:text="Scelgo questa!"
             android:textColor="@color/primaryTextColor"
             android:visibility="gone" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cv_piadina"
-            android:layout_width="326dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_above="@id/btn_personalizza"
+            android:layout_marginBottom="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="118dp"
             android:visibility="gone">
 
             <RelativeLayout
@@ -125,17 +146,5 @@
 
         </android.support.v7.widget.CardView>
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="322dp"
-            android:layout_height="82dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text='@string/messaggio_random_piadina'
-            android:textSize="18sp"
-            android:visibility="gone" />
 
-    </RelativeLayout>
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

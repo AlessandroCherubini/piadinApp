@@ -29,7 +29,10 @@ import com.example.android.home.IngredientsAdapter;
 import com.example.android.utility.DBHelper;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -187,9 +190,7 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
         //EditText nomePiadina = getView().findViewById(R.id.nome_piadina_crea_piadina);
 
         prezzoPiadina = getView().findViewById(R.id.prezzoTotalePiadina_crea_piadina);
-        totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-        prezzoPiadina.setText(totalePiadina + " €");
-
+        setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
 
         rb1 = (RadioButton) getView().findViewById(R.id.rb_normale_crea_piadina);
         rb2 = (RadioButton) getView().findViewById(R.id.rb_rotolo_crea_piadina);
@@ -286,11 +287,9 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
         if(ingredientiPiadina.isEmpty()){
             getView().findViewById(R.id.greca_ingredienti_crea_piadina).setVisibility(View.GONE);
             getView().findViewById(R.id.ingredienti_crea_piadina).setVisibility(View.GONE);
-            getView().findViewById(R.id.scroll_ingredienti_crea_piadina).setVisibility(View.GONE);
         }else{
             getView().findViewById(R.id.greca_ingredienti_crea_piadina).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.ingredienti_crea_piadina).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.scroll_ingredienti_crea_piadina).setVisibility(View.VISIBLE);
         }
 
     }
@@ -400,7 +399,10 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
 
     public void setTotalePiadina(double nuovoTotale){
         totalePiadina = nuovoTotale;
-        prezzoPiadina.setText(new BigDecimal(totalePiadina).setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+        BigDecimal totale = new BigDecimal(totalePiadina);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+
+        prezzoPiadina.setText(totale.toPlainString().replace(".", ",") + " €");
 
     }
 
@@ -493,6 +495,7 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
         });
         dialog.show();
     }
+
     private void aggiungiAlCarrello(){
 
         data = cs.ViewAll(mContext);
@@ -517,11 +520,16 @@ public class TabCreaPiadina extends Fragment implements IngredientsAdapter.ItemC
             id = "Piadina " + numero;
         }
 
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
+        String totaleStringa = df.format(totalePiadina * quantitaPiadina);
+        double totaleTroncato = Double.valueOf(totaleStringa);
+
         cs.add(id,"nome", nomePiadina);
         cs.add(id, "formato", formatoPiadina);
         cs.add(id,"impasto", impastoPiadina);
 
-        cs.add(id,"prezzo", totalePiadina * quantitaPiadina);
+        cs.add(id,"prezzo", totaleTroncato);
         cs.add(id,"ingredienti", ingredientiPiadina.toString());
         cs.add(id, "quantita", quantitaPiadina);
         cs.add(id, "rating", ratingPiadina);
