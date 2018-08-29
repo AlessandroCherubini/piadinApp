@@ -27,6 +27,7 @@ import com.example.android.utility.SessionManager;
 
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -86,7 +87,10 @@ public class LeMiePiadineNonVotateAdapter extends RecyclerView.Adapter<LeMiePiad
 
         holder.formatoPiadina.setText(piadina.getFormato());
         holder.textViewIngredients.setText(piadina.printIngredienti());
-        holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
+
+        BigDecimal totale = new BigDecimal(piadina.getPrice());
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.textViewPrezzo.setText(totale.toPlainString().replace(".", ","));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

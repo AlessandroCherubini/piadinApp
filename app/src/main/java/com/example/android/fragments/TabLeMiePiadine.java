@@ -300,8 +300,11 @@ public class TabLeMiePiadine extends Fragment {
         ArrayList<Piadina> piadineOrdini = getPiadineNonDoppie(ordiniUtente);
 
         for(Piadina piadinaOrdini: piadineOrdini){
-            // todo: da creare il metodo per vedere se le piadine sono uguali o meno.
+
             if(!isAlreadyVotata(piadinaOrdini, piadineVotate)){
+                piadinaOrdini.setQuantita(1);
+                double prezzoSingolo = piadinaOrdini.getPrice() /  piadinaOrdini.getQuantita();
+                piadinaOrdini.setPrice(prezzoSingolo);
                 piadineNonVotate.add(piadinaOrdini);
             }
         }
@@ -314,12 +317,11 @@ public class TabLeMiePiadine extends Fragment {
         ArrayList<Piadina> piadineAppoggio = new ArrayList<>();
 
         for(Ordine ordine: ordiniUtente){
-            piadineAppoggio.addAll(ordine.getCartItems());
+            piadineAppoggio.addAll(ordine.getPiadineSingoleOrdine());
         }
 
         Set<Piadina> piadineOrdine = new HashSet<>(piadineAppoggio);
         piadineNonDoppie.addAll(piadineOrdine);
-
         return piadineNonDoppie;
     }
 
@@ -353,15 +355,6 @@ public class TabLeMiePiadine extends Fragment {
 
         if(piadineNonVotate.isEmpty()){
             testoPiadineVuoteNonVotate.setVisibility(View.VISIBLE);
-        }else{
-            ((RelativeLayout.LayoutParams) recyclerViewPiadineNonVotate.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.le_piadine_non_votate);
-        }
-    }
-
-    public void setEmptyPiadineNonVotate(){
-        if(piadineNonVotate.isEmpty()){
-            testoPiadineVuoteNonVotate.setVisibility(View.VISIBLE);
-            testoPiadineVuoteNonVotate.setText("Greeeat!! Hai dato un voto a tutte le piadine! Fantastico!");
         }else{
             ((RelativeLayout.LayoutParams) recyclerViewPiadineNonVotate.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.le_piadine_non_votate);
         }

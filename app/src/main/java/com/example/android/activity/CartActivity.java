@@ -257,8 +257,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         totaleOrdine = tot;
         BigDecimal totale = new BigDecimal(tot);
-        totale= totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
-        tvTot.setText("Totale: " + totale.toPlainString() + " €");
+        totale= totale.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        tvTot.setText("Totale: " + totale.toPlainString().replace(".", ",") + " €");
     }
 
     public void svuotaCarrello (){

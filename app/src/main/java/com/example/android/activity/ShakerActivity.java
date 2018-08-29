@@ -29,6 +29,7 @@ import com.example.android.utility.DBHelper;
 import com.example.android.utility.SessionManager;
 import com.google.gson.Gson;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -98,7 +99,11 @@ public class ShakerActivity extends AppCompatActivity
                             vibrator.vibrate(300);
                         }
                         titolo.setText(nome);
-                        price.setText(String.valueOf(prezzo));
+
+                        BigDecimal totale = new BigDecimal(prezzo);
+                        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+                        price.setText(totale.toPlainString().replace(".", ","));
+
                         tv_ingredienti.setText(randPiadina.printIngredienti());
                         tv_shake.setVisibility(View.GONE);
                         tv_4.setVisibility(View.VISIBLE);

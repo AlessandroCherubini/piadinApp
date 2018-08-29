@@ -30,6 +30,7 @@ import com.example.android.utility.OnlineHelper;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +96,11 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
 
         holder.formatoPiadina.setText(piadina.getFormato());
         holder.textViewIngredients.setText(piadina.printIngredienti());
-        holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
+
+        BigDecimal totale = new BigDecimal(piadina.getPrice());
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.textViewPrezzo.setText(totale.toPlainString().replace(".", ","));
+
         holder.ratingBar.setRating(piadina.getRating());
         holder.ratingBar.setIsIndicator(true);
 
