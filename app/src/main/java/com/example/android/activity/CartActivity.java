@@ -7,6 +7,9 @@ import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +19,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +42,7 @@ import com.example.android.adapters.CartItemAdapter;
 import com.example.android.classi.CartItem;
 import com.example.android.classi.FasciaOraria;
 import com.example.android.classi.Ingrediente;
+import com.example.android.classi.Piadina;
 import com.example.android.services.NotificationService;
 import com.example.android.fragments.FasceOrarioFragment;
 import com.example.android.home.ClickListener;
@@ -82,10 +87,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     Bundle bundle;
     FasceOrarioFragment fragmentFasce;
 
-
-    VolleyCallback durataCallBack;
-    View v;
-
+    private static final int JOB_ID = 1;
+    private static final int ONE_MIN = 60 * 1000;
 
 
     @Override
@@ -201,7 +204,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                             }else{*/
                                 timestampOrdine = new SimpleDateFormat("yyyy-MM-dd").format(dateCalendar.getTime());
                                 bundle.putString("dataRichiesta", timestampOrdine);
-                                bundle.putInt("quantitaCarrello", cartItems.size());
+                                bundle.putInt("quantitaCarrello", contaPiadine());
                                 bundle.putDouble("totaleOrdine", totaleOrdine);
                                 bundle.putParcelableArrayList("cartItems", cartItems);
 
@@ -235,17 +238,6 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
             getFragmentManager().popBackStack();
         }
 
-    }
-
-    public void stopNotificationService(){
-        Intent intent = new Intent(CartActivity.this, NotificationService.class);
-        PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        stopService(intent);
-        pintent.cancel();
-        alarm.cancel(pintent);
-        stopService(new Intent(mContext, NotificationService.class));
-        Log.d("SERVICE", "Servizio stoppato!");
     }
 
     public void setTotale(){
@@ -293,24 +285,27 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     }
 
     @SuppressLint("MissingPermission")
-
-
     public void startService() {
         LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Log.d("START", "SERVICE: Start Service");
-            Intent intentService = new Intent(mContext, NotificationService.class);
-            intentService.putExtra("orarioRitiro", orarioRitiro);
-            intentService.putExtra("dataRitiro", timestampOrdine);
-            startService(intentService);
 
-            Intent notificationIntent = new Intent(mContext, NotificationService.class);
-            PendingIntent pintent = PendingIntent.getService(this, 0, notificationIntent, 0);
-            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            // Non viene eseguito esattamente ogni x millis perchè decide android quando attivarlo, si potrebbe considerare
-            //SetExact ma porta ad un consumo più elevato e non ci interessa una precisione al minuto
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 10000, pintent);
+            ComponentName component = new ComponentName(mContext, NotificationService.class);
+
+            PersistableBundle bundle = new PersistableBundle();
+            bundle.putString("orarioRitiro", orarioRitiro);
+            bundle.putString("dataRitiro", timestampOrdine);
+
+            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, component)
+                    // schedule it to run any time between 1 - 5 minutes
+                    .setMinimumLatency(ONE_MIN)
+                    .setOverrideDeadline(5 * ONE_MIN)
+                    .setExtras(bundle);
+
+            JobScheduler jobScheduler = (JobScheduler) mContext.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(builder.build());
+
         }
     }
 
@@ -465,6 +460,15 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
             }
 
         }
+    }
+
+    public int contaPiadine(){
+        int numeroPiadine = 0;
+        for(CartItem elemento:cartItems){
+            numeroPiadine = numeroPiadine + elemento.getQuantita();
+        }
+
+        return numeroPiadine;
     }
 
 }

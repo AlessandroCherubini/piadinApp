@@ -41,7 +41,7 @@ public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final char SEPARATOR_QR_STR = ';';
-    private static final int SERVICE_INTERVAL = 10000;
+    private static final int SERVICE_INTERVAL = 30000;
 
     HashMap<String,Integer> badgeData;
     TextView timbriTV;
@@ -53,7 +53,7 @@ public class BadgeActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             updateBadgeValuesString();
             //Dopo aver aggiornato le stringhe, annullo la ripetizione del service
-            stopUpdateService();
+            //stopUpdateService();
             disegnaTessera(badgeData.get("timbri"));
         }
     };
