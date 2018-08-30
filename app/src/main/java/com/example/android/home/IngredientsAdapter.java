@@ -73,8 +73,11 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Ingrediente ingrediente = mData.get(position);
         holder.myTextView.setText(ingrediente.getName());
-        Double prezzo = new Double(ingrediente.getPrice());
-        holder.prezzoIngrediente.setText(prezzo.toString() + " €");
+
+        double prezzoIngrediente = ingrediente.getPrice();
+        BigDecimal totale = new BigDecimal(prezzoIngrediente);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.prezzoIngrediente.setText(totale.toPlainString().replace(".", ",") + " €");
 
         final IngredientsAdapter adapter = (IngredientsAdapter) holder.recyclerIngredienti.getAdapter();
 

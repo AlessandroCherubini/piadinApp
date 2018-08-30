@@ -6,7 +6,6 @@ import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -16,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,6 +31,7 @@ import com.example.android.activity.MyOrderActivity;
 import com.example.android.R;
 import com.example.android.activity.CartActivity;
 import com.example.android.utility.CustomRequest;
+import com.example.android.utility.SessionManager;
 import com.example.android.utility.VolleyCallback;
 import com.example.android.utility.VolleySingleton;
 
@@ -43,17 +42,18 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class NotificationService extends IntentService implements LocationListener{
 
     VolleyCallback durataCallBack;
-    String orarioRitiro;
-    String dataRitiro;
+    String orarioRitiro = "";
+    String dataRitiro = "";
+    Context mContext;
 
 
     public NotificationService(){
@@ -61,19 +61,25 @@ public class NotificationService extends IntentService implements LocationListen
         super("ServiceNotification");
     }
 
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId){
-//        orarioRitiro = (String) intent.getExtras().get("orarioRitiro");
-//        //Log.d("ORARIO_STARTCOMMAND", orarioRitiro);
-//
-//        return START_STICKY;
-//    }
-
     @Override
     protected void onHandleIntent(Intent i)
     {
+        Log.d("EXTRA", "Recupero extra bitcheees");
         dataRitiro = (String) i.getExtras().get("dataRitiro");
         orarioRitiro = (String) i.getExtras().get("orarioRitiro");
+
+        mContext = getApplicationContext();
+
+        if(!(dataRitiro == null && dataRitiro == null)){
+            boolean success = SessionManager.saveOrderTime(mContext, dataRitiro, orarioRitiro);
+            Log.d("EXTRA", "ASSEGNOOOOOOO");
+        }else{
+            Map<String, String> ordineData = SessionManager.loadOrderTime(mContext);
+            dataRitiro = ordineData.get("data_ritiro");
+            orarioRitiro = ordineData.get("orario_ritiro");
+        }
+
+        Log.d("EXTRA", dataRitiro + " " + orarioRitiro);
 
         durataCallBack = new VolleyCallback() {
             @Override

@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -87,25 +88,6 @@ public class MyOrderActivity extends AppCompatActivity
         recyclerViewOrdini.setHasFixedSize(true);
         recyclerViewOrdini.setLayoutManager(new LinearLayoutManager(this));
         adapterOrdini = new OrdiniAdapter(this, ordiniUtente);
-
-        adapterOrdini.setClickListener(new OrdiniAdapter.OrdineListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                layoutDettagli = view.findViewById(R.id.layout_dettagli);
-                RelativeLayout layoutDettagliOrdine = view.findViewById(R.id.layout_dettagli_piadine);
-
-                if(layoutDettagli.getVisibility() == View.VISIBLE){
-
-                    layoutDettagli.setVisibility(View.GONE);
-                    layoutDettagli.animate().alpha(0.0f);
-                    layoutDettagliOrdine.setVisibility(View.GONE);
-                }else{
-
-                    layoutDettagli.setVisibility(View.VISIBLE);
-                    layoutDettagli.animate().alpha(1.0f);
-                }
-            }
-        });
 
         recyclerViewOrdini.setAdapter(adapterOrdini);
 

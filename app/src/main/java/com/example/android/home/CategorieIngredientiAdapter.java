@@ -168,7 +168,7 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
 
                             holder.layoutFragmentCreaPiadina.findViewById(R.id.greca_ingredienti_crea_piadina).setVisibility(View.VISIBLE);
                             holder.layoutFragmentCreaPiadina.findViewById(R.id.ingredienti_crea_piadina).setVisibility(View.VISIBLE);
-                            holder.layoutFragmentCreaPiadina.findViewById(R.id.scroll_ingredienti_crea_piadina).setVisibility(View.VISIBLE);
+                            holder.layoutFragmentCreaPiadina.findViewById(R.id.ingredients_crea_piadina).setVisibility(View.VISIBLE);
                         }else{
                             // Customize Piadina Activity
                             totalePiadina = totalePiadina + prezzoIngrediente;

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,16 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.R;
 import com.example.android.adapters.LeMiePiadineNonVotateAdapter;
 import com.example.android.classi.Ordine;
+import com.example.android.classi.PiadinApp;
 import com.example.android.classi.Piadina;
-import com.example.android.home.ClickListener;
 import com.example.android.adapters.LeMiePiadineAdapter;
 import com.example.android.utility.DBHelper;
 import com.example.android.utility.GenericCallback;
@@ -38,11 +35,12 @@ import com.example.android.utility.SessionManager;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
@@ -172,31 +170,11 @@ public class TabLeMiePiadine extends Fragment {
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.alert_info_le_mie_piadine, null);
-                dialogBuilder.setView(dialogView);
-
-                final TextView testoDialogo = dialogView.findViewById(R.id.text_info_le_mie_piadine);
-
-                dialogBuilder.setTitle("Informazioni aggiuntive");
-                dialogBuilder.setIcon(R.drawable.ic_info_black_24dp);
-                testoDialogo.setText("Vota le piadine preferite per avercele sempre a portata di mano!" +
-                        "\nLa classifica è totalmente privata e personale.\nTrascina verso sinistra o destra le piadine votate per toglierle dalla classifica.");
-
-                dialogBuilder.setNeutralButton("Ok, ho capito!", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                              dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.show();*/
                 new MaterialShowcaseView.Builder((Activity) mContext).withCircleShape()
                         .setTarget(infoButton)
                         .setTitleText("Informazioni")
                         .setDismissText("OK! HO CAPITO!")
+                        .setDismissOnTouch(true)
                         .setContentTextColor(Color.parseColor("#ffffff"))
                         .setContentText("Vota le piadine preferite per avercele sempre a portata di mano!" +
                                 "\nLa classifica è totalmente privata e personale." +
@@ -235,7 +213,7 @@ public class TabLeMiePiadine extends Fragment {
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
                 final int posizione = viewHolder.getAdapterPosition();
-                Piadina piadinaRimossa = piadineVotate.get(posizione);
+                final Piadina piadinaRimossa = piadineVotate.get(posizione);
                 piadinaRimossa.setRating(0);
                 piadineVotate.remove(posizione);
 
@@ -245,11 +223,10 @@ public class TabLeMiePiadine extends Fragment {
 
                         boolean success = JSONHelper.getSuccessResponseValue(resultData);
                         if(success){
-                            helper.deletePiadinaVotata(posizione);
+                            helper.deletePiadinaVotata(piadinaRimossa.getIdEsterno());
                         }else{
                             Log.d("ERRORE", resultData.toString());
                         }
-
                     }
                 };
                 onlineHelper.deleteRatedPiadinaInExternalDB(piadinaRimossa.getIdEsterno(), callback);
@@ -320,17 +297,32 @@ public class TabLeMiePiadine extends Fragment {
     public ArrayList<Piadina> getPiadineNonVotate(ArrayList<Piadina> piadineVotate, ArrayList<Ordine> ordiniUtente){
         ArrayList<Piadina> piadineNonVotate = new ArrayList<>();
 
-        for(Ordine ordine: ordiniUtente){
-            ArrayList<Piadina> piadineOrdine = ordine.getCartItems();
+        ArrayList<Piadina> piadineOrdini = getPiadineNonDoppie(ordiniUtente);
 
-            for(Piadina piadinaOrdine: piadineOrdine){
-                // todo: da creare il metodo per vedere se le piadine sono uguali o meno.
-                if(!isAlreadyVotata(piadinaOrdine, piadineVotate)){
-                    piadineNonVotate.add(piadinaOrdine);
-                }
+        for(Piadina piadinaOrdini: piadineOrdini){
+
+            if(!isAlreadyVotata(piadinaOrdini, piadineVotate)){
+                piadinaOrdini.setQuantita(1);
+                double prezzoSingolo = piadinaOrdini.getPrice() /  piadinaOrdini.getQuantita();
+                piadinaOrdini.setPrice(prezzoSingolo);
+                piadineNonVotate.add(piadinaOrdini);
             }
         }
+
         return piadineNonVotate;
+    }
+
+    public ArrayList<Piadina> getPiadineNonDoppie(ArrayList<Ordine> ordiniUtente){
+        ArrayList<Piadina> piadineNonDoppie = new ArrayList<>();
+        ArrayList<Piadina> piadineAppoggio = new ArrayList<>();
+
+        for(Ordine ordine: ordiniUtente){
+            piadineAppoggio.addAll(ordine.getPiadineSingoleOrdine());
+        }
+
+        Set<Piadina> piadineOrdine = new HashSet<>(piadineAppoggio);
+        piadineNonDoppie.addAll(piadineOrdine);
+        return piadineNonDoppie;
     }
 
     public boolean isAlreadyVotata(Piadina piadinaDaControllare, ArrayList<Piadina> piadineVotate){
@@ -363,15 +355,6 @@ public class TabLeMiePiadine extends Fragment {
 
         if(piadineNonVotate.isEmpty()){
             testoPiadineVuoteNonVotate.setVisibility(View.VISIBLE);
-        }else{
-            ((RelativeLayout.LayoutParams) recyclerViewPiadineNonVotate.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.le_piadine_non_votate);
-        }
-    }
-
-    public void setEmptyPiadineNonVotate(){
-        if(piadineNonVotate.isEmpty()){
-            testoPiadineVuoteNonVotate.setVisibility(View.VISIBLE);
-            testoPiadineVuoteNonVotate.setText("Greeeat!! Hai dato un voto a tutte le piadine! Fantastico!");
         }else{
             ((RelativeLayout.LayoutParams) recyclerViewPiadineNonVotate.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.le_piadine_non_votate);
         }

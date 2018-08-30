@@ -77,6 +77,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
     String timestampOrdine;
     double totaleOrdine;
+    boolean fromOrdine = false;
 
     Bundle bundle;
     FasceOrarioFragment fragmentFasce;
@@ -120,47 +121,7 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         //cs.persistData(getApplicationContext(),true);
 
-        // ricevo l'elemento inserito nel carrello
-        if (data == null || data.size()==0) {
-            Toast.makeText(mContext, "Non ci sono elementi nel carrello", Toast.LENGTH_SHORT).show();
-        } else {
-            int k = 0;
-            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
-                Map map = entry.getValue();
-                String id;
-
-                int numero = k + 1;
-                id = "Piadina " + numero;
-                String nome = cs.getString(id, "nome", mContext);
-                String formato = cs.getString(id, "formato", mContext);
-                String impasto = cs.getString(id, "impasto", mContext);
-                String ingredients = cs.getString(id, "ingredienti", mContext);
-                Double prezzo = cs.getDouble(id, "prezzo", mContext);
-                Integer quantita = Integer.parseInt((String) map.get("quantita"));
-                Integer rating = Integer.parseInt((String) map.get("rating"));
-                String identifier = cs.getString(id,"identifier",mContext);
-
-                //ricostruisco gli ingredienti e l'stanza della classe CartItem
-
-                String strippedIngredients = ingredients.replaceAll("\\[", "").replaceAll("\\]", "");
-                List<String> ings = Arrays.asList(strippedIngredients.split(", "));
-
-                ingredienti = new ArrayList<>();
-                ingredienti.clear();
-
-                for (String ing : ings) {
-                    Ingrediente ingrediente = helper.getIngredienteByName(ing);
-                    ingredienti.add(ingrediente);
-                }
-
-                CartItem item = new CartItem(nome, formato, impasto, prezzo, quantita, rating, ingredienti, identifier);
-                cartItems.add(item);
-
-                k++;
-
-            }
-
-        }
+        riempiCarrello();
 
         final RecyclerView rv = findViewById(R.id.cart_item);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -244,10 +205,6 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                                 bundle.putDouble("totaleOrdine", totaleOrdine);
                                 bundle.putParcelableArrayList("cartItems", cartItems);
 
-                                //bundle.putParcelableArrayList("fasceOrarie", fasceOrarie);
-                                // set Fragmentclass Arguments
-
-
                                 // Create new fragment and transaction
                                 fragmentFasce = new FasceOrarioFragment();
                                 fragmentFasce.setArguments(bundle);
@@ -259,62 +216,11 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
                                 transaction.addToBackStack(null);
                                 // Commit the transaction
                                 transaction.commit();
-                                // preparo per passarli nel fragment
 
-                                //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_fasce, fragmentFasce).commit();
-                            //}
-
-                            //addNotaOrdine();
                         }
                     }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
             }
 
-        });
-
-
-
-        /* START SERVICE */
-        final Button startService = (Button) findViewById(R.id.start_service);
-        startService.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(final View v) {
-
-                LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-               /* String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
-                if (EasyPermissions.hasPermissions(CartActivity.this, perms)) {
-                    Log.d("PERMESSI","" + checkLocationPermission());
-
-                   if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-                   {
-                       Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                       startActivity(intent);
-                   }
-                    else{startService(v);};
-
-                }
-                else {
-
-                    EasyPermissions.requestPermissions(CartActivity.this, "Richiesta permesso per l\'utilizzo della posizione",1, perms);
-                    String [] permission = {"android.permission.ACCESS_FINE_LOCATION","android.permission.INTERNET"};
-                    int res [] = new int[2];
-                    res[0]= checkCallingOrSelfPermission(permission[0]);
-                    res[1]= checkCallingOrSelfPermission(permission[1]);
-                    onRequestPermissionsResult(1,perms,res);
-                }*/
-               locationAndNotification();
-            }
-
-        });
-
-        final Button stopService = (Button) findViewById(R.id.stop_service);
-        stopService.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(final View v) {
-
-                stopNotificationService();
-
-            }
         });
     }
 
@@ -351,8 +257,8 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
         totaleOrdine = tot;
         BigDecimal totale = new BigDecimal(tot);
-        totale= totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
-        tvTot.setText("Totale: " + totale.toPlainString() + " €");
+        totale= totale.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        tvTot.setText("Totale: " + totale.toPlainString().replace(".", ",") + " €");
     }
 
     public void svuotaCarrello (){
@@ -473,13 +379,20 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
     @Override
     public void onRestart(){
         super.onRestart();
-
         LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && fromOrdine == true) {
             startService();
-
+            finish();
         }
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        riempiCarrello();
+        adapter.notifyDataSetChanged();
+        setTotale();
     }
 
     @AfterPermissionGranted(1)
@@ -487,12 +400,15 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
         if (checkLocationPermission()) {
             // Have permissions, do the thing!
             LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            {
+            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
+                fromOrdine = true;
             }
-            else{startService();}
+            else{
+                startService();
+                finish();
+            }
         } else {
             // Ask for both permissions
             String[] perms = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET};
@@ -506,6 +422,49 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
     public void setOrarioRitiro(String orarioRitiro) {
         this.orarioRitiro = orarioRitiro;
+    }
+
+    public void riempiCarrello(){
+        cartItems.clear();
+        // ricevo l'elemento inserito nel carrello
+        if (data == null || data.size()==0) {
+        } else {
+            int k = 0;
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+                String id;
+
+                int numero = k + 1;
+                id = "Piadina " + numero;
+                String nome = cs.getString(id, "nome", mContext);
+                String formato = cs.getString(id, "formato", mContext);
+                String impasto = cs.getString(id, "impasto", mContext);
+                String ingredients = cs.getString(id, "ingredienti", mContext);
+                Double prezzo = cs.getDouble(id, "prezzo", mContext);
+                Integer quantita = cs.getLong(id, "quantita", mContext).intValue();
+                Integer rating = cs.getLong(id, "rating", mContext).intValue();
+                String identifier = cs.getString(id,"identifier",mContext);
+
+                //ricostruisco gli ingredienti e l'stanza della classe CartItem
+
+                String strippedIngredients = ingredients.replaceAll("\\[", "").replaceAll("\\]", "");
+                List<String> ings = Arrays.asList(strippedIngredients.split(", "));
+
+                ingredienti = new ArrayList<>();
+                ingredienti.clear();
+
+                for (String ing : ings) {
+                    Ingrediente ingrediente = helper.getIngredienteByName(ing);
+                    ingredienti.add(ingrediente);
+                }
+
+                CartItem item = new CartItem(nome, formato, impasto, prezzo, quantita, rating, ingredienti, identifier);
+                cartItems.add(item);
+
+                k++;
+
+            }
+
+        }
     }
 
 }

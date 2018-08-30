@@ -8,7 +8,20 @@
     tools:context="com.example.android.activity.MyOrderActivity"
     tools:showIn="@layout/app_bar_my_order">
 
+    <TextView
+        android:id="@+id/text_riepilogo_ordini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/secondaryDarkColor"
+        android:fontFamily="@font/museo_slab"
+        android:text="Riepilogo Ordini effettuati:"
+        android:textSize="18sp"/>
+
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/text_riepilogo_ordini"
         android:id="@+id/recycler_ordini"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
