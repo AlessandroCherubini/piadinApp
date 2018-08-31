@@ -436,9 +436,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         String notaOrdine = ordine.getString("nota");
                         long lastUpdateOrdine = ordine.getLong("timestamp");
+                        String fasciaOrdine = ordine.getString("fascia");
+                        int coloreOrdine = ordine.getInt("colore_fascia");
 
                         Ordine ordineInterno = new Ordine(0,userEmail,phoneOrdine,dataOrdine,
-                                totaleOrdine,piadineOrdine,notaOrdine,lastUpdateOrdine);
+                                totaleOrdine,piadineOrdine,notaOrdine,lastUpdateOrdine, fasciaOrdine, coloreOrdine);
 
                         helper.insertOrdine(ordineInterno);
                     }

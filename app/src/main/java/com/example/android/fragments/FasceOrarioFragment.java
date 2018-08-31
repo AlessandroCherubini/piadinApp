@@ -90,7 +90,10 @@ public class FasceOrarioFragment extends Fragment {
     String notaOrdine;
     long lastlastUpdateOrdine;
     Ordine ordine;
+    FasciaOraria fasciaSelezionata;
+    String fasciaOrariaString;
     int idFasciaSelezionata;
+    int coloreFasciaSelezionata;
     boolean setNotification;
 
     private android.support.v7.widget.Toolbar toolbarFragment;
@@ -234,9 +237,12 @@ public class FasceOrarioFragment extends Fragment {
         buttonOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FasciaOraria fasciaSelezionata = fasceOrarioAdapter.getFasciaSelezionata();
+                fasciaSelezionata = fasceOrarioAdapter.getFasciaSelezionata();
                 if(fasciaSelezionata != null){
                     idFasciaSelezionata = fasciaSelezionata.getIdFascia();
+                    fasciaOrariaString = fasciaSelezionata.getInizioFascia() + " - " + fasciaSelezionata.getFineFascia();
+                    coloreFasciaSelezionata = fasciaSelezionata.getColoreBadge();
+
                     addInfoOrder();
                 }else{
                     Snackbar snackbar = Snackbar
@@ -361,7 +367,7 @@ public class FasceOrarioFragment extends Fragment {
         double totaleTroncato = Double.valueOf(totaleStringa);
 
         ordine = new Ordine(0, emailUtente, telefonoUtente, dataRichiesta, totaleTroncato, piadineOrdine,
-                notaOrdine, lastlastUpdateOrdine);
+                notaOrdine, lastlastUpdateOrdine, fasciaOrariaString, coloreFasciaSelezionata);
 
         // Aggiunta db esterno ed interno
         GenericCallback manageOrderCallback = new GenericCallback() {
@@ -384,7 +390,7 @@ public class FasceOrarioFragment extends Fragment {
         };
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addManageOrder(ordine,dataRichiesta,idFasciaSelezionata,quantitaRichiesta,
+        onlineHelper.addManageOrder(ordine, dataRichiesta, idFasciaSelezionata, quantitaRichiesta,
                 emailUtente, manageOrderCallback);
         //getActivity().finish();
 

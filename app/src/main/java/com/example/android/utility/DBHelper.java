@@ -73,6 +73,8 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_ORDINI_PREZZO = "prezzo";
     public static final String COLUMN_ORDINI_NOTA = "nota";
     public static final String COLUMN_ORDINI_TIMESTAMP = "updated_at";
+    public static final String COLUMN_ORDINI_FASCIA = "fascia";
+    public static final String COLUMN_ORDINI_COLORE = "colore";
 
     //tabella: piadine_votate
     public static final String TABLE_RATED_NAME = "le_mie_piadine";
@@ -140,7 +142,9 @@ public class DBHelper extends SQLiteOpenHelper{
                 " VARCHAR, " + COLUMN_ORDINI_PREZZO +
                 " DOUBLE, " + COLUMN_ORDINI_DESCRIZIONE +
                 " VARCHAR, " + COLUMN_ORDINI_NOTA +
-                " VARCHAR, " + COLUMN_ORDINI_TIMESTAMP + " LONG);";
+                " VARCHAR, " + COLUMN_ORDINI_TIMESTAMP +
+                " LONG, " + COLUMN_ORDINI_FASCIA +
+                " VARCHAR, " +  COLUMN_ORDINI_COLORE + " INTEGER);";
 
         String query_rating = "CREATE TABLE " + TABLE_RATED_NAME
                 + "(" + COLUMN_RATED_ID +
@@ -735,6 +739,8 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put(COLUMN_ORDINI_DESCRIZIONE, piadineOrdine);
         values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
         values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getLastUpdated());
+        values.put(COLUMN_ORDINI_FASCIA, ordine.getFasciaOrdine());
+        values.put(COLUMN_ORDINI_COLORE, ordine.getColoreOrdine());
 
         try {
             long id = database.insert(TABLE_ORDINI_NAME, null, values);
@@ -752,7 +758,7 @@ public class DBHelper extends SQLiteOpenHelper{
         ArrayList<Piadina> piadineOrdine;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "Select id_ordine, telefono_utente, data_ordine, descrizione, prezzo, nota, updated_at from ordini where email_utente ='"+email+"'";
+        String sql = "Select id_ordine, telefono_utente, data_ordine, descrizione, prezzo, nota, updated_at, fascia, colore from ordini where email_utente ='"+email+"'";
         Cursor cursorOrdini = db.rawQuery(sql, null);
         if (cursorOrdini.moveToFirst()) {
             do {
@@ -764,8 +770,12 @@ public class DBHelper extends SQLiteOpenHelper{
                 double prezzoOrdine = cursorOrdini.getDouble(4);
                 String notaOrdine = cursorOrdini.getString(5);
                 long lastUpdateOrdine = cursorOrdini.getLong(6);
+                String fasciaOrdine = cursorOrdini.getString(7);
+                int coloreOrdine = cursorOrdini.getInt(8);
 
-                Ordine ordine = new Ordine(idOrdine, email, telefonoOrdine, dataOrdine, prezzoOrdine, piadineOrdine, notaOrdine, lastUpdateOrdine);
+
+                Ordine ordine = new Ordine(idOrdine, email, telefonoOrdine, dataOrdine, prezzoOrdine, piadineOrdine,
+                        notaOrdine, lastUpdateOrdine, fasciaOrdine, coloreOrdine);
 
                 ordiniUtente.add(ordine);
             } while (cursorOrdini.moveToNext());

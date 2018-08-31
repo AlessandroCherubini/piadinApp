@@ -18,6 +18,8 @@
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Notifiche anche se il telefono viene spento e riacceso -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 
 

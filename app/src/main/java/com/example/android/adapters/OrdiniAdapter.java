@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,11 +56,29 @@ public class OrdiniAdapter extends RecyclerView.Adapter<OrdiniAdapter.ViewHolder
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Ordine ordine = mData.get(position);
         holder.dataOrdine.setText(ordine.getTimestampOrdine());
+        holder.fasciaOrdine.setText(ordine.getFasciaOrdine());
+        int colore = ordine.getColoreOrdine();
+
+
         double totaleOrdine = ordine.getPrezzoOrdine();
 
         BigDecimal totale = new BigDecimal(totaleOrdine);
         totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
         holder.totaleOrdine.setText(totale.toPlainString().replace(".", ","));
+
+        switch(colore){
+            case 1:
+                holder.coloreOrdine.setBackgroundResource(R.drawable.ic_looks_one_black_24dp);
+                break;
+            case 2:
+                holder.coloreOrdine.setBackgroundResource(R.drawable.ic_looks_two_black_24dp);
+                break;
+            case 3:
+                holder.coloreOrdine.setBackgroundResource(R.drawable.ic_looks_3_black_24dp);
+                break;
+            default:
+                break;
+        }
 
         holder.recyclerViewPiadine.setHasFixedSize(true);
         holder.recyclerViewPiadine.setLayoutManager(new LinearLayoutManager(mContext));
@@ -148,6 +167,8 @@ public class OrdiniAdapter extends RecyclerView.Adapter<OrdiniAdapter.ViewHolder
 
         TextView dataOrdine;
         TextView totaleOrdine;
+        TextView fasciaOrdine;
+        ImageView coloreOrdine;
         Button buttonDropDownMenu;
         Button buttonRiOrdina;
         RecyclerView recyclerViewPiadine;
@@ -159,7 +180,9 @@ public class OrdiniAdapter extends RecyclerView.Adapter<OrdiniAdapter.ViewHolder
 
             dataOrdine = itemView.findViewById(R.id.data_ordine);
             totaleOrdine = itemView.findViewById(R.id.prezzo_piadine_ordine);
+            fasciaOrdine = itemView.findViewById(R.id.fascia_ordine);
             buttonDropDownMenu = itemView.findViewById(R.id.button_dropdown_ordini);
+            coloreOrdine = itemView.findViewById(R.id.colore_fascia);
             buttonRiOrdina = itemView.findViewById(R.id.button_ri_ordina);
             layoutDettagliOrdine = itemView.findViewById(R.id.layout_dettagli_piadine);
 

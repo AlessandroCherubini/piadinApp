@@ -29,6 +29,7 @@
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/museo_slab"
                 android:text="Data Ordine: "
+                android:textColor="@color/secondaryDarkColor"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textSize="16sp" />
 
@@ -44,6 +45,7 @@
                 android:layout_toEndOf="@+id/data_ordine_text"
                 android:fontFamily="@font/museo_slab"
                 android:text="Data Ordine"
+                android:textColor="@color/secondaryDarkColor"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textSize="16sp" />
 
@@ -58,31 +60,6 @@
 
         </RelativeLayout>
 
-        <!--<RelativeLayout
-            android:id="@+id/layout_dettagli"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
-            android:background="@android:color/transparent"
-            android:padding="0dp"
-            android:paddingRight="5dp"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/button_dettagli_ordine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginStart="10dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:drawableLeft="@drawable/ic_info_black_24dp"
-                android:drawablePadding="5dp"
-                android:text="@string/details_order"
-                android:textColor="@color/primaryDarkColor" />
-        </RelativeLayout>-->
-
         <RelativeLayout
             android:id="@+id/layout_dettagli_piadine"
             android:layout_width="wrap_content"
@@ -90,45 +67,70 @@
             android:layout_marginTop="50dp"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/totale_riepilogo_ordine"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/riga_info_ordine"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/museo_slab"
-                android:text="Totale Ordine: "
-                android:textSize="17sp"/>
+                android:paddingTop="10dp">
 
-            <TextView
-                android:id="@+id/prezzo_piadine_ordine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="140dp"
-                android:layout_toEndOf="@+id/totale_riepilogo_ordine"
-                android:fontFamily="@font/museo_slab"
-                android:text="5.9"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/fascia_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/museo_slab"
+                    android:layout_marginStart="15dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="17sp"
+                    android:text="Fascia"/>
 
-            <TextView
-                android:id="@+id/prezzo_euro_ordine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="5dp"
-                android:layout_toEndOf="@id/prezzo_piadine_ordine"
-                android:fontFamily="@font/museo_slab"
-                android:text="@string/euro"
-                android:textSize="17sp" />
+                <TextView
+                    android:id="@+id/totale_riepilogo_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/fascia_ordine"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Totale: "
+                    android:textSize="17sp"/>
+
+                <TextView
+                    android:id="@+id/prezzo_piadine_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/totale_riepilogo_ordine"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="5.9"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/prezzo_euro_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/prezzo_piadine_ordine"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="@string/euro"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:id="@+id/colore_fascia"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/ic_looks_one_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="30dp" />
+            </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_piadine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/totale_riepilogo_ordine"
+                android:layout_below="@id/riga_info_ordine"
                 android:visibility="visible">
 
             </android.support.v7.widget.RecyclerView>

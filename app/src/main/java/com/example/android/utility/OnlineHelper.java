@@ -77,6 +77,8 @@ public class OnlineHelper {
         double totaleOrdine = ordine.getPrezzoOrdine();
         String descrizioneOrdine = ordine.printPiadine();
         String notaOrdine = ordine.getNotaOrdine();
+        String fasciaOrdine = ordine.getFasciaOrdine();
+        int coloreOrdine = ordine.getColoreOrdine();
 
         Map<String, String> params = new HashMap<>();
         try{
@@ -86,6 +88,8 @@ public class OnlineHelper {
             params.put("descrizione", descrizioneOrdine);
             params.put("nota", notaOrdine);
             params.put("prezzo", String.valueOf(totaleOrdine));
+            params.put("fascia", fasciaOrdine);
+            params.put("colore_fascia", String.valueOf(coloreOrdine));
         }catch(Exception e){
             e.fillInStackTrace();
         }

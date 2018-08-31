@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -89,6 +91,7 @@ public class NotificationService extends JobService implements LocationListener{
             @Override
             public void run() {
                 //TODO your background code
+                Log.d("SERVICE", "Eseguo codice nel thread nuovo");
                 durataCallBack = new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {}
@@ -101,7 +104,6 @@ public class NotificationService extends JobService implements LocationListener{
                         GregorianCalendar now = new GregorianCalendar();
                         Date oraAttuale = now.getTime();
 
-
                         DateFormat orarioDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
                             Date orarioDate = orarioDateFormat.parse(dataRitiro + " " + orarioRitiro);
@@ -109,11 +111,11 @@ public class NotificationService extends JobService implements LocationListener{
 
                             Log.d("ORARIO", "" + timeBeforePick);
                             //TODO IDEARE BENE LE CONDIZIONI DEL METODO
-                            if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(5)) <= 0){
-
+                            if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(12)) <= 0){
                                 sendNotification();
                                 stopNotificationService();
-
+                            }else{
+                                Log.d("SERVICE", "Dormo; non è ancora arrivato il tempo di fare la notifica");
                             }
 
                         } catch (ParseException e) {
@@ -123,6 +125,8 @@ public class NotificationService extends JobService implements LocationListener{
                 };
             }
         });
+
+        Log.d("SERVICE", "Vediamo se mi esegui quando sono fuori dal thread");
 
         Location location = getLocation();
         if(location != null){
@@ -136,6 +140,7 @@ public class NotificationService extends JobService implements LocationListener{
 
     @Override
     public boolean onStopJob(JobParameters params) {
+        Log.d("SERVICE", "onStopJob: fermo il job");
         return false;
     }
 
@@ -143,14 +148,14 @@ public class NotificationService extends JobService implements LocationListener{
     @Override
     public void onDestroy()
     {
-        Log.i("PROVA SERVICE", "Distruzione Service");
+        Log.i("PROVA SERVICE", "OnDestroy NotificationService");
     }
 
     public void stopNotificationService(){
         // Distruzione dello JobScheduler!
         JobScheduler jobScheduler = (JobScheduler)this.getSystemService(Context.JOB_SCHEDULER_SERVICE );
         jobScheduler.cancelAll();
-        Log.d("SERVICE", "Servizio stoppato!");
+        Log.d("SERVICE", "Notifica eseguita e distruzione del JobScheduler!");
     }
 
     private void sendNotification(){
@@ -203,6 +208,15 @@ public class NotificationService extends JobService implements LocationListener{
 
         Location net_loc = null, gps_loc = null, finalLoc = null;
 
+        /*Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });*/
+
         if (gps_enabled){
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,100,this);
 
@@ -239,6 +253,8 @@ public class NotificationService extends JobService implements LocationListener{
         {
             Log.d("LOCATION","LOCATION = "+ finalLoc);
         }
+
+
         return finalLoc;
     }
 

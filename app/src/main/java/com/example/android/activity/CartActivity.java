@@ -8,7 +8,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
+import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -299,8 +301,10 @@ public class CartActivity extends AppCompatActivity implements LocationListener{
 
             JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, component)
                     // schedule it to run any time between 1 - 5 minutes
-                    .setMinimumLatency(ONE_MIN)
-                    .setOverrideDeadline(5 * ONE_MIN)
+                    //.setMinimumLatency(ONE_MIN)
+                    //.setOverrideDeadline(5 * ONE_MIN)
+                    .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                    //.setPersisted(true)
                     .setExtras(bundle);
 
             JobScheduler jobScheduler = (JobScheduler) mContext.getSystemService(Context.JOB_SCHEDULER_SERVICE);

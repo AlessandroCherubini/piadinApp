@@ -11,10 +11,13 @@ public class Ordine {
     private double prezzoOrdine;
     private ArrayList<Piadina> cartItems;
     private String notaOrdine;
+    private String fasciaOrdine;
+    private int coloreOrdine;
     private long lastUpdated;
 
     public Ordine(long idOrdine, String emailUtente, String telefonoUtente, String timestampData,
-                  double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated){
+                  double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated,
+                  String fasciaOrdine, int coloreOrdine){
         this.idOrdine = idOrdine;
         this.emailUtente = emailUtente;
         this.telefonoUtente = telefonoUtente;
@@ -23,6 +26,8 @@ public class Ordine {
         this.cartItems = piadineOrdinate;
         this.notaOrdine = notaOrdine;
         this.lastUpdated = lastUpdated;
+        this.fasciaOrdine = fasciaOrdine;
+        this.coloreOrdine = coloreOrdine;
     }
 
     public long getIdOrdine() {
@@ -98,6 +103,22 @@ public class Ordine {
 
     public void setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public String getFasciaOrdine() {
+        return fasciaOrdine;
+    }
+
+    public void setFasciaOrdine(String fasciaOrdine) {
+        this.fasciaOrdine = fasciaOrdine;
+    }
+
+    public int getColoreOrdine() {
+        return coloreOrdine;
+    }
+
+    public void setColoreOrdine(int coloreOrdine) {
+        this.coloreOrdine = coloreOrdine;
     }
 
     public String printPiadine(){
