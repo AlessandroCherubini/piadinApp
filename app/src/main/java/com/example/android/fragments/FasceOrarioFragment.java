@@ -1,8 +1,10 @@
 package com.example.android.fragments;
 
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -44,6 +46,7 @@ import com.example.android.classi.Ordine;
 import com.example.android.classi.Piadina;
 import com.example.android.activity.CartActivity;
 import com.example.android.adapters.FasceOrarioAdapter;
+import com.example.android.services.NotificationService;
 import com.example.android.utility.CustomRequest;
 import com.example.android.utility.DBHelper;
 import com.example.android.utility.GenericCallback;
@@ -273,8 +276,18 @@ public class FasceOrarioFragment extends Fragment {
         final RelativeLayout infoLayoutNotification = dialogView.findViewById(R.id.info_layout_notification);
         final TextView infoTextNotification = dialogView.findViewById(R.id.info_text_notification);
 
+        infoTextNotification.setText("Questo servizio offre la possibilità di ricevere una notifica " +
+                "che ti avvisa quando dovrai partire per ritirare l'ordine.\n" +
+                "E' richiesto il permesso di geolocalizzazione.");
+
         setNotification = SessionManager.getNotificationOption(mContext);
         switchNotification.setChecked(setNotification);
+
+        if(setNotification == true){
+            infoLayoutNotification.setVisibility(View.VISIBLE);
+        }else{
+            infoLayoutNotification.setVisibility(View.GONE);
+        }
 
         switchNota.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -292,9 +305,6 @@ public class FasceOrarioFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     infoLayoutNotification.setVisibility(View.VISIBLE);
-                    infoTextNotification.setText("Questo servizio offre la possibilità di ricevere una notifica " +
-                            "che ti avvisa quando dovrai partire.\n" +
-                            "E' richiesto il permesso di geolocalizzazione.");
                     setNotification = true;
                 }else{
                     infoLayoutNotification.setVisibility(View.GONE);
@@ -502,8 +512,19 @@ public class FasceOrarioFragment extends Fragment {
                     helper.insertOrdine(ordine);
 
                     ((CartActivity) mContext).svuotaCarrello();
+
+                    boolean alarmUp = (PendingIntent.getBroadcast(mContext, 0,
+                            new Intent(mContext, NotificationService.class),
+                            PendingIntent.FLAG_NO_CREATE) != null);
+                    Log.d("ALARM", "" + alarmUp);
+
+                    /*if(alarmUp){
+                        ((NotificationService) mContext).stopNotificationService();
+                    }
+*/
                     // Notifica
                     if(setNotification){
+                        Log.d("ALARM", "Nuovo servizio");
                         ((CartActivity) mContext).locationAndNotification();
                     }else{
                         ((CartActivity) mContext).finish();

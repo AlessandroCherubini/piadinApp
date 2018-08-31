@@ -67,7 +67,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     static double totaleImpastoEFormato = 0;
     public static double totaleIngredienti = 0;
     TextView prezzoPiadina;
-    double prezzoPiadinaSingola;
     public Context mContext;
     String identificatore;
     boolean isEdit = false;
@@ -89,11 +88,35 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
             int position = intent.getIntExtra("indexPiadina",0);
             chosenPiadina = helper.getPiadinaByPosition((long) position + 1);
+            // Attributi variabili della piadina selezionata
+            nomePiadina = chosenPiadina.getNome();
+            formatoPiadina = chosenPiadina.getFormato();
+            impastoPiadina = chosenPiadina.getImpasto();
+            quantitaPiadina = chosenPiadina.getQuantita();
+            ratingPiadina = chosenPiadina.getRating();
+            totaleImpastoEFormato = chosenPiadina.getPrice();
+            totalePiadina = totaleImpastoEFormato;
+
+            prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+
+            setTotalePiadina(totalePiadina);
         }
         else if (intent.getExtras().get("randomPiadina") != null){
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
             chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
+            // Attributi variabili della piadina selezionata
+            nomePiadina = chosenPiadina.getNome();
+            formatoPiadina = chosenPiadina.getFormato();
+            impastoPiadina = chosenPiadina.getImpasto();
+            quantitaPiadina = chosenPiadina.getQuantita();
+            ratingPiadina = chosenPiadina.getRating();
+            totaleImpastoEFormato = chosenPiadina.getPrice();
+            totalePiadina = totaleImpastoEFormato;
+
+            prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+
+            setTotalePiadina(totalePiadina);
         }
         else if (intent.getExtras().get("modificaPiadina") != null) {
             isEdit = true;
@@ -101,13 +124,17 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
             chosenPiadina = cartItem.cartItemToPiadina();
+
+            nomePiadina = chosenPiadina.getNome();
+            formatoPiadina = chosenPiadina.getFormato();
+            impastoPiadina = chosenPiadina.getImpasto();
             ingredientiPiadina = chosenPiadina.getIngredienti();
-            totalePiadina = chosenPiadina.getPrice();
+            totalePiadina = chosenPiadina.getPrice() / chosenPiadina.getQuantita();
             quantitaPiadina = chosenPiadina.getQuantita();
             ratingPiadina = chosenPiadina.getRating();
 
-            prezzoPiadinaSingola = chosenPiadina.getPrice() / chosenPiadina.getQuantita();
-            // Set dei radio button per Formato e Impasto
+            prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+            setTotalePiadina(totalePiadina);
             setRadioButtons(chosenPiadina);
 
             Button editButton = findViewById(R.id.addKart);
@@ -118,21 +145,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Attributi variabili della piadina selezionata
-        nomePiadina = chosenPiadina.getNome();
-        formatoPiadina = chosenPiadina.getFormato();
-        impastoPiadina = chosenPiadina.getImpasto();
-        quantitaPiadina = chosenPiadina.getQuantita();
-        ratingPiadina = chosenPiadina.getRating();
-        totaleImpastoEFormato = chosenPiadina.getPrice();
-        totalePiadina = totaleImpastoEFormato;
-
-        prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
-
-        setTotalePiadina(totalePiadina);
-
-        TextView nomePiadina = findViewById(R.id.nome_piadina);
-        nomePiadina.setText(chosenPiadina.getNome());
+        TextView nomePiadinaTesto = findViewById(R.id.nome_piadina);
+        nomePiadinaTesto.setText(nomePiadina);
 
         // Radio Button
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
@@ -470,7 +484,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         cs.update(idPiadina, "nome", nomePiadina, mContext);
         cs.update(idPiadina, "formato", formatoPiadina, mContext);
         cs.update(idPiadina, "impasto", impastoPiadina, mContext);
-        cs.update(idPiadina, "prezzo", prezzoPiadinaSingola * quantitaPiadina, mContext);
+        cs.update(idPiadina, "prezzo", totalePiadina * quantitaPiadina, mContext);
         cs.update(idPiadina, "ingredienti", ingredientiPiadina.toString(), mContext);
         cs.update(idPiadina, "quantita", quantitaPiadina, mContext);
         cs.update(idPiadina, "rating", ratingPiadina, mContext);
