@@ -269,10 +269,10 @@ public class SessionManager {
     }
 
     public static boolean getNotificationOption(Context context){
-        if(!retrieveSharedPrefs(context,true))
+        if(!retrieveSharedPrefs(context,false))
             return false;
 
-        boolean option = preferences.getBoolean(KEY_NOTIFICATION,false);
+        boolean option = preferences.getBoolean(KEY_NOTIFICATION,true);
         return option;
     }
 

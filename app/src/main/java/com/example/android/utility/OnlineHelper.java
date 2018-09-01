@@ -71,9 +71,10 @@ public class OnlineHelper {
     }
 
     public void addUserOrder(final Ordine ordine, final GenericCallback callback){
+        String dataOrdine = ordine.getDataOrdine();
         String emailOrdine = ordine.getEmailUtente();
         String telefonoOrdine = ordine.getTelefonoUtente();
-        String dataOrdine = ordine.getTimestampOrdine();
+        String timestampOrdine = ordine.getTimestampOrdine();
         double totaleOrdine = ordine.getPrezzoOrdine();
         String descrizioneOrdine = ordine.printPiadine();
         String notaOrdine = ordine.getNotaOrdine();
@@ -82,14 +83,15 @@ public class OnlineHelper {
 
         Map<String, String> params = new HashMap<>();
         try{
+            params.put("data", dataOrdine);
             params.put("email", emailOrdine);
             params.put("phone", telefonoOrdine);
-            params.put("data_ordine", dataOrdine);
             params.put("descrizione", descrizioneOrdine);
             params.put("nota", notaOrdine);
             params.put("prezzo", String.valueOf(totaleOrdine));
             params.put("fascia", fasciaOrdine);
             params.put("colore_fascia", String.valueOf(coloreOrdine));
+            params.put("timestamp_ordine", timestampOrdine);
         }catch(Exception e){
             e.fillInStackTrace();
         }

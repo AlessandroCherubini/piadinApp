@@ -8,6 +8,7 @@ public class Ordine {
     private String emailUtente;
     private String telefonoUtente;
     private String timestampOrdine;
+    private String dataOrdine;
     private double prezzoOrdine;
     private ArrayList<Piadina> cartItems;
     private String notaOrdine;
@@ -15,14 +16,15 @@ public class Ordine {
     private int coloreOrdine;
     private long lastUpdated;
 
-    public Ordine(long idOrdine, String emailUtente, String telefonoUtente, String timestampData,
+    public Ordine(long idOrdine, String dataOrdine, String emailUtente, String telefonoUtente, String timestampOrdine,
                   double prezzoOrdine, ArrayList<Piadina> piadineOrdinate, String notaOrdine, long lastUpdated,
                   String fasciaOrdine, int coloreOrdine){
         this.idOrdine = idOrdine;
+        this.dataOrdine = dataOrdine;
         this.emailUtente = emailUtente;
         this.telefonoUtente = telefonoUtente;
         this.prezzoOrdine = prezzoOrdine;
-        this.timestampOrdine = timestampData;
+        this.timestampOrdine = timestampOrdine;
         this.cartItems = piadineOrdinate;
         this.notaOrdine = notaOrdine;
         this.lastUpdated = lastUpdated;
@@ -36,6 +38,14 @@ public class Ordine {
 
     public void setIdOrdine(long idOrdine) {
         this.idOrdine = idOrdine;
+    }
+
+    public String getDataOrdine() {
+        return dataOrdine;
+    }
+
+    public void setDataOrdine(String dataOrdine) {
+        this.dataOrdine = dataOrdine;
     }
 
     public String getEmailUtente() {

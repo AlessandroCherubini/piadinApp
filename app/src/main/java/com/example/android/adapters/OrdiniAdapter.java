@@ -55,7 +55,8 @@ public class OrdiniAdapter extends RecyclerView.Adapter<OrdiniAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Ordine ordine = mData.get(position);
-        holder.dataOrdine.setText(ordine.getTimestampOrdine());
+        holder.dataOrdine.setText(ordine.getDataOrdine());
+        holder.timestampOrdine.setText(ordine.getTimestampOrdine());
         holder.fasciaOrdine.setText(ordine.getFasciaOrdine());
         int colore = ordine.getColoreOrdine();
 
@@ -166,6 +167,7 @@ public class OrdiniAdapter extends RecyclerView.Adapter<OrdiniAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView dataOrdine;
+        TextView timestampOrdine;
         TextView totaleOrdine;
         TextView fasciaOrdine;
         ImageView coloreOrdine;
@@ -178,7 +180,8 @@ public class OrdiniAdapter extends RecyclerView.Adapter<OrdiniAdapter.ViewHolder
             super(itemView);
             itemView.setOnClickListener(this);
 
-            dataOrdine = itemView.findViewById(R.id.data_ordine);
+            dataOrdine = itemView.findViewById(R.id.data_ordine_text_riepilogo);
+            timestampOrdine = itemView.findViewById(R.id.data_ordine);
             totaleOrdine = itemView.findViewById(R.id.prezzo_piadine_ordine);
             fasciaOrdine = itemView.findViewById(R.id.fascia_ordine);
             buttonDropDownMenu = itemView.findViewById(R.id.button_dropdown_ordini);

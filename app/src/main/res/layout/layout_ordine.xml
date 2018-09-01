@@ -64,14 +64,24 @@
             android:id="@+id/layout_dettagli_piadine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="45dp"
             android:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/riga_info_ordine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp">
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/data_ordine_text_riepilogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25/09/2018"
+                    android:fontFamily="@font/museo_slab"
+                    android:layout_marginStart="15dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/fascia_ordine"
@@ -79,42 +89,10 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/museo_slab"
                     android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@id/data_ordine_text_riepilogo"
                     android:layout_centerVertical="true"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:text="Fascia"/>
-
-                <TextView
-                    android:id="@+id/totale_riepilogo_ordine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/fascia_ordine"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_centerVertical="true"
-                    android:fontFamily="@font/museo_slab"
-                    android:text="Totale: "
-                    android:textSize="17sp"/>
-
-                <TextView
-                    android:id="@+id/prezzo_piadine_ordine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/totale_riepilogo_ordine"
-                    android:fontFamily="@font/museo_slab"
-                    android:text="5.9"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/prezzo_euro_ordine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@id/prezzo_piadine_ordine"
-                    android:fontFamily="@font/museo_slab"
-                    android:text="@string/euro"
-                    android:textSize="17sp" />
 
                 <ImageView
                     android:id="@+id/colore_fascia"
@@ -126,30 +104,75 @@
                     android:layout_marginEnd="30dp" />
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_piadine"
+            <RelativeLayout
+                android:id="@+id/riga_totale_ordine"
+                android:layout_width="match_parent"
+                android:layout_below="@id/riga_info_ordine"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/totale_riepilogo_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Totale: "
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/prezzo_piadine_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_toEndOf="@+id/totale_riepilogo_ordine"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="5.9"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/prezzo_euro_ordine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_toEndOf="@id/prezzo_piadine_ordine"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="@string/euro"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/riga_recycler_ordine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/riga_info_ordine"
-                android:visibility="visible">
+                android:layout_below="@id/riga_totale_ordine">
 
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_piadine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/button_ri_ordina"
-                android:layout_width="wrap_content"
-                android:layout_below="@id/recycler_piadine"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_margin="10dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:drawableRight="@drawable/ic_arrow_forward_black_24dp"
-                android:drawablePadding="5dp"
-                android:fontFamily="@font/museo_slab"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="@string/reorder"
-                android:textColor="@color/primaryDarkColor" />
+                </android.support.v7.widget.RecyclerView>
+
+                <Button
+                    android:id="@+id/button_ri_ordina"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@id/recycler_piadine"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="10dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:drawableRight="@drawable/ic_arrow_forward_black_24dp"
+                    android:drawablePadding="5dp"
+                    android:fontFamily="@font/museo_slab"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="@string/reorder"
+                    android:textColor="@color/primaryDarkColor" />
+
+            </RelativeLayout>
         </RelativeLayout>
 
 
