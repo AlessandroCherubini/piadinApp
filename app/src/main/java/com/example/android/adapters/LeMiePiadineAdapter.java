@@ -1,6 +1,9 @@
 package com.example.android.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,64 +16,112 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.carteasy.v1.lib.Carteasy;
 import com.example.android.R;
+import com.example.android.activity.CustomizePiadinaActivity;
 import com.example.android.classi.Piadina;
+import com.example.android.fragments.TabLeMiePiadine;
 import com.example.android.home.ClickListener;
 import com.example.android.utility.DBHelper;
+import com.example.android.utility.GenericCallback;
+import com.example.android.utility.JSONHelper;
+import com.example.android.utility.OnlineHelper;
+
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapter.PiadinaViewHolder> {
 
 
     //this context we will use to inflate the layout
-    private Context mCtx;
+    private Context mContext;
     private DBHelper helper;
-    String[][] piadineDaModificare;
+    private OnlineHelper onlineHelper;
+    TabLeMiePiadine fragmentPiadine;
+    private int nuovoVoto;
+
+    private Carteasy cs = new Carteasy();
+    Map<Integer, Map> data;
+    String identificatore;
+
+    GenericCallback callback;
+    Map<String, String> utente;
+    
 
     //we are storing all the products in a list
     private List<Piadina> piadinaList;
-    //Listener for buttons
-    private final ClickListener listener;
 
     //getting the context and product list with constructor
-    public LeMiePiadineAdapter(Context mCtx, List<Piadina> piadinaList, ClickListener listener ) {
-        this.mCtx = mCtx;
-        this.listener = listener;
+    public LeMiePiadineAdapter(Context mContext, List<Piadina> piadinaList, TabLeMiePiadine fragmentPiadine) {
+        this.mContext = mContext;
         this.piadinaList = piadinaList;
+        this.fragmentPiadine = fragmentPiadine;
     }
 
     @Override
     public PiadinaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //inflating and returning our view holder
-        LayoutInflater inflater = LayoutInflater.from(mCtx);
-        helper = new DBHelper(mCtx);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        helper = new DBHelper(mContext);
+        onlineHelper = new OnlineHelper(mContext);
+
         View view = inflater.inflate(R.layout.layout_la_mia_piadina, null);
         return new PiadinaViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final PiadinaViewHolder holder, int position) {
+    public void onBindViewHolder(final PiadinaViewHolder holder, final int position) {
         final Piadina piadina = piadinaList.get(position);
 
         holder.textViewTitle.setText(piadina.getNome());
         holder.impastoPiadina.setText(piadina.getImpasto());
-        if(piadina.getImpasto() == "Normale"){
 
+        if(piadina.getFormato().equals("Piadina")){
+            holder.iconaFormato.setBackgroundResource(R.drawable.ic_piadina);
+        }else if(piadina.getFormato().equals("Rotolo")){
+            holder.iconaFormato.setBackgroundResource(R.drawable.ic_rotolo);
+        }else{
+            holder.iconaFormato.setBackgroundResource(R.drawable.ic_baby);
         }
+
+        if(piadina.getImpasto().equals("Normale")){
+            holder.iconaImpasto.setBackgroundResource(R.drawable.ic_impasto_tradizionale);
+        }else{
+            holder.iconaImpasto.setBackgroundResource(R.drawable.ic_impasto_4cereali);
+        }
+
         holder.formatoPiadina.setText(piadina.getFormato());
         holder.textViewIngredients.setText(piadina.printIngredienti());
-        holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
+
+        BigDecimal totale = new BigDecimal(piadina.getPrice());
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.textViewPrezzo.setText(totale.toPlainString().replace(".", ","));
+
         holder.ratingBar.setRating(piadina.getRating());
         holder.ratingBar.setIsIndicator(true);
-        // todo: da sistemare il listener: non funziona il click!!!
+
+        callback = new GenericCallback() {
+            @Override
+            public void onSuccess(JSONObject resultData) {
+                boolean success = JSONHelper.getSuccessResponseValue(resultData);
+                if(success){
+                    helper.updateMiePiadineByID(piadina.getIdEsterno(), nuovoVoto);
+                }else{
+                    Snackbar.make(holder.itemView, "Errore nel salvataggio della piadina", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        };
+
         holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mCtx);
-                LayoutInflater inflater = (LayoutInflater)mCtx.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
                 View dialogView = inflater.inflate(R.layout.alert_rating, null);
                 dialogBuilder.setView(dialogView);
 
@@ -78,39 +129,40 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
                 ratingBar.setRating(piadina.getRating());
 
                 dialogBuilder.setTitle("Vota la piadina!");
-                dialogBuilder.setIcon(R.drawable.ic_stars_black_24dp);
+                dialogBuilder.setIcon(R.drawable.ic_stars_brown_24dp);
                 dialogBuilder.setMessage("È data la possibilità di votare la piadina per poterla ritrovare più facilamente.");
+
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
 
                 ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                        piadina.setRating((int) rating);
+                        nuovoVoto = (int) rating;
+                        piadina.setRating(nuovoVoto);
                         ratingBar.setRating(rating);
                         holder.ratingBar.setRating(rating);
-                        //ratingBar.setNumStars((int) rating);
-                        // Aggiorno il voto della piadina nel DB interno, così da memorizzarla.
-                        helper.updateMiePiadineByID(piadina.getIdEsterno(), (int)rating);
 
-                        // todo: da fare il meccanismo per l'aggiornamento delle piadine votate sul db esterno
-                        // todo: pensavo di memorizzare IDESTERNO, VOTO per ogni piadina cambiata e poi quando si chiude la tab
-                        // todo: far partire la richiesta di aggiornamento per tutte le piadine memorizzate nel vettore.
-                        // todo: (da scrivere ancora in OnlineHelper il metodo per l'update, non c'è neanche il backend)
-                        // todo: magari lo faccio io quando torno, ma per lo meno risolviamo il click listener.
-                        Toast.makeText(mCtx, "Hai votato!", Toast.LENGTH_SHORT).show();
+                        // Aggiorno il voto della piadina nel DB esterno e poi interno.
+                        onlineHelper.updateRatedPiadinaInExternalDB(piadina, nuovoVoto, callback);
+
+                        // todo: non funziona
+                        fragmentPiadine.riordinaClassifica();
+                        fragmentPiadine.setEmptyMessage();
+
+                        Snackbar.make(holder.itemView, "Hai modificato il voto alla piadina", Snackbar.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
                     }
                 });
-                AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.show();
             }
         });
 
         holder.orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(mCtx, CustomizePiadinaActivity.class);
-                intent.putExtra("indexPiadina",position);
-                (intent);*/
-                Toast.makeText(mCtx, "Redirect da fare", Toast.LENGTH_SHORT).show();
+                aggiungiAlCarrello(piadinaList.get(position));
+                ((Activity) mContext).finish();
+                mContext.startActivity(((Activity) mContext).getIntent());
             }
         });
 
@@ -132,7 +184,6 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
 
     }
 
-
     @Override
     public int getItemCount() {
 
@@ -140,13 +191,13 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
     }
 
 
-    class PiadinaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class PiadinaViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewTitle, textViewIngredients, textViewRating, textViewPrezzo;
+        TextView textViewTitle, textViewIngredients, textViewPrezzo;
         TextView formatoPiadina, impastoPiadina;
         Button orderButton;
         Button rateButton;
-        Button impastoButton, formatoButton;
+        Button iconaFormato, iconaImpasto;
         RatingBar ratingBar;
         LinearLayout buttonsPiadina;
         private WeakReference<ClickListener> listenerRef;
@@ -156,6 +207,8 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
 
             textViewTitle = itemView.findViewById(R.id.nome_la_mia_piadina);
             formatoPiadina = itemView.findViewById(R.id.formato_la_mia_piadina);
+            iconaFormato = itemView.findViewById(R.id.icona_formato);
+            iconaImpasto = itemView.findViewById(R.id.icona_impasto);
             impastoPiadina = itemView.findViewById(R.id.impasto_la_mia_piadina);
             textViewIngredients = itemView.findViewById(R.id.descrizione_la_mia_piadina);
             textViewPrezzo = itemView.findViewById(R.id.prezzo_la_mia_piadina);
@@ -164,15 +217,51 @@ public class LeMiePiadineAdapter extends RecyclerView.Adapter<LeMiePiadineAdapte
             rateButton = itemView.findViewById(R.id.button_vota);
             orderButton = itemView.findViewById(R.id.button_ordina_la_mia_piadina);
             buttonsPiadina = itemView.findViewById(R.id.layout_button_le_mie_piadine);
-            listenerRef = new WeakReference<>(listener);
 
-            ratingBar.setOnClickListener(this);
-        }
-
-        public void onClick(View v) {
-            listenerRef.get().onPositionClicked(v, getAdapterPosition());
         }
     }
 
 
+    private void aggiungiAlCarrello(Piadina piadina){
+
+        data = cs.ViewAll(mContext);
+        String id;
+
+        if (data == null || data.size() == 0) {
+            id = "Piadina " + 1;
+        }
+        else if ((cs.get(identificatore,"nome", mContext)) != null && identificatore != null){
+
+            id = identificatore;
+
+        }
+        else {
+
+            int k = 0;
+            for (Map.Entry<Integer, Map> entry : data.entrySet()) {
+                k++;
+            }
+
+            int numero = k + 1;
+            id = "Piadina " + numero;
+        }
+
+        cs.add(id,"nome", piadina.getNome());
+        cs.add(id, "formato", piadina.getFormato());
+        cs.add(id,"impasto", piadina.getImpasto());
+
+        cs.add(id,"prezzo", piadina.getPrice());
+        cs.add(id,"ingredienti", piadina.printIngredienti());
+        cs.add(id, "quantita", piadina.getQuantita());
+        cs.add(id, "rating", piadina.getRating());
+        cs.add(id,"identifier", id);
+        cs.commit(mContext);
+
+        if(piadina.getQuantita() > 1){
+            Toast.makeText(mContext, "Piadine aggiunte al carrello!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(mContext, "Piadina aggiunta al carrello!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 }

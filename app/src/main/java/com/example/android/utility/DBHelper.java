@@ -67,11 +67,14 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String COLUMN_ORDINI_ID = "id_ordine";
     public static final String COLUMN_ORDINI_EMAIL = "email_utente";
     public static final String COLUMN_ORDINI_TELEFONO = "telefono_utente";
-    public static final String COLUMN_ORDINI_DATA = "data_ordine";
+    public static final String COLUMN_ORDINI_DATA_TIMESTAMP = "data_ordine";
     public static final String COLUMN_ORDINI_DESCRIZIONE = "descrizione";
     public static final String COLUMN_ORDINI_PREZZO = "prezzo";
     public static final String COLUMN_ORDINI_NOTA = "nota";
-    public static final String COLUMN_ORDINI_TIMESTAMP = "updated_at";
+    public static final String COLUMN_ORDINI_LASTUPDATE = "updated_at";
+    public static final String COLUMN_ORDINI_FASCIA = "fascia";
+    public static final String COLUMN_ORDINI_COLORE = "colore";
+    public static final String COLUMN_ORDINI_DATA = "data";
 
     //tabella: piadine_votate
     public static final String TABLE_RATED_NAME = "le_mie_piadine";
@@ -133,13 +136,17 @@ public class DBHelper extends SQLiteOpenHelper{
 
         String query_ordini = "CREATE TABLE " + TABLE_ORDINI_NAME
                 + "(" + COLUMN_ORDINI_ID +
-                " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDINI_EMAIL +
-                " VARCHAR, " + COLUMN_ORDINI_TELEFONO +
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 " VARCHAR, " + COLUMN_ORDINI_DATA +
+                " VARCHAR, " + COLUMN_ORDINI_EMAIL +
+                " VARCHAR, " + COLUMN_ORDINI_TELEFONO +
+                " VARCHAR, " +COLUMN_ORDINI_DATA_TIMESTAMP +
                 " VARCHAR, " + COLUMN_ORDINI_PREZZO +
                 " DOUBLE, " + COLUMN_ORDINI_DESCRIZIONE +
                 " VARCHAR, " + COLUMN_ORDINI_NOTA +
-                " VARCHAR, " + COLUMN_ORDINI_TIMESTAMP + " LONG);";
+                " VARCHAR, " +COLUMN_ORDINI_LASTUPDATE+
+                " LONG, " + COLUMN_ORDINI_FASCIA +
+                " VARCHAR, " +  COLUMN_ORDINI_COLORE + " INTEGER);";
 
         String query_rating = "CREATE TABLE " + TABLE_RATED_NAME
                 + "(" + COLUMN_RATED_ID +
@@ -727,13 +734,16 @@ public class DBHelper extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         String piadineOrdine = ordine.printPiadine();
 
+        values.put(COLUMN_ORDINI_DATA, ordine.getDataOrdine());
         values.put(COLUMN_ORDINI_EMAIL, ordine.getEmailUtente());
         values.put(COLUMN_ORDINI_TELEFONO, ordine.getTelefonoUtente());
-        values.put(COLUMN_ORDINI_DATA, ordine.getTimestampOrdine());
+        values.put(COLUMN_ORDINI_DATA_TIMESTAMP, ordine.getTimestampOrdine());
         values.put(COLUMN_ORDINI_PREZZO, ordine.getPrezzoOrdine());
         values.put(COLUMN_ORDINI_DESCRIZIONE, piadineOrdine);
         values.put(COLUMN_ORDINI_NOTA, ordine.getNotaOrdine());
-        values.put(COLUMN_ORDINI_TIMESTAMP, ordine.getLastUpdated());
+        values.put(COLUMN_ORDINI_LASTUPDATE, ordine.getLastUpdated());
+        values.put(COLUMN_ORDINI_FASCIA, ordine.getFasciaOrdine());
+        values.put(COLUMN_ORDINI_COLORE, ordine.getColoreOrdine());
 
         try {
             long id = database.insert(TABLE_ORDINI_NAME, null, values);
@@ -751,20 +761,25 @@ public class DBHelper extends SQLiteOpenHelper{
         ArrayList<Piadina> piadineOrdine;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "Select id_ordine, telefono_utente, data_ordine, descrizione, prezzo, nota, updated_at from ordini where email_utente ='"+email+"'";
+        String sql = "Select id_ordine, data, telefono_utente, data_ordine, descrizione, prezzo, nota, updated_at, fascia, colore from ordini where email_utente ='"+email+"'";
         Cursor cursorOrdini = db.rawQuery(sql, null);
         if (cursorOrdini.moveToFirst()) {
             do {
                 long idOrdine = cursorOrdini.getLong(0);
-                String telefonoOrdine = cursorOrdini.getString(1);
-                String dataOrdine = cursorOrdini.getString(2);
-                String descrizioneOrdine = cursorOrdini.getString(3);
+                String dataOrdine = cursorOrdini.getString(1);
+                String telefonoOrdine = cursorOrdini.getString(2);
+                String timestampOrdine = cursorOrdini.getString(3);
+                String descrizioneOrdine = cursorOrdini.getString(4);
                 piadineOrdine = getPiadineFromDescrizioneOrdine(descrizioneOrdine);
-                double prezzoOrdine = cursorOrdini.getDouble(4);
-                String notaOrdine = cursorOrdini.getString(5);
-                long lastUpdateOrdine = cursorOrdini.getLong(6);
+                double prezzoOrdine = cursorOrdini.getDouble(5);
+                String notaOrdine = cursorOrdini.getString(6);
+                long lastUpdateOrdine = cursorOrdini.getLong(7);
+                String fasciaOrdine = cursorOrdini.getString(8);
+                int coloreOrdine = cursorOrdini.getInt(9);
 
-                Ordine ordine = new Ordine(idOrdine, email, telefonoOrdine, dataOrdine, prezzoOrdine, piadineOrdine, notaOrdine, lastUpdateOrdine);
+
+                Ordine ordine = new Ordine(idOrdine, dataOrdine, email, telefonoOrdine, timestampOrdine, prezzoOrdine, piadineOrdine,
+                        notaOrdine, lastUpdateOrdine, fasciaOrdine, coloreOrdine);
 
                 ordiniUtente.add(ordine);
             } while (cursorOrdini.moveToNext());
@@ -864,6 +879,15 @@ public class DBHelper extends SQLiteOpenHelper{
         database.close();
     }
 
+    public void deletePiadinaVotata(int idEsterno){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        boolean result = database.delete(TABLE_RATED_NAME, "id_esterno=" + idEsterno, null) > 0;
+        if(result == false){
+            Log.d("DELETEVOTO", "Errore nel cancellare la piadina interna");
+        }
+    }
+
     public ArrayList<Piadina> getLeMiePiadineByEmail(String emailUtente){
         ArrayList<Piadina> leMiePiadine = new ArrayList<>();
 
@@ -893,6 +917,7 @@ public class DBHelper extends SQLiteOpenHelper{
             } while (cursorPiadine.moveToNext());
         }
 
+        db.close();
         return leMiePiadine;
     }
 
@@ -908,6 +933,8 @@ public class DBHelper extends SQLiteOpenHelper{
         }else{
             exist = false;
         }
+
+        db.close();
 
         return exist;
     }

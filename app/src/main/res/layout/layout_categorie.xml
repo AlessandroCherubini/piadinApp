@@ -18,30 +18,31 @@
                 android:id="@+id/layout_descrizione_categoria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:paddingBottom="10dp"
-                android:orientation="horizontal">
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/categoria"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_weight="0.5"
                     android:fontFamily="@font/museo_slab"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
                     android:text="Descrizione"
-                    android:textSize="20sp"
-                    android:textColor="@color/secondaryDarkColor"/>
+                    android:textColor="@color/secondaryDarkColor"
+                    android:textSize="20sp" />
 
                 <ImageButton
                     android:id="@+id/dropDownButton"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
+                    android:paddingTop="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/ic_keyboard_arrow_down_black_24dp"
                     android:elevation="4dp" />
             </LinearLayout>
@@ -57,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
-                    tools:itemCount="4" />
+                    android:layout_weight="1" />
             </LinearLayout>
         </RelativeLayout>
 

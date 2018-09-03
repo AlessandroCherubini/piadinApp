@@ -1,5 +1,6 @@
 package com.example.android.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -8,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.R;
+import com.example.android.activity.CustomizePiadinaActivity;
 import com.example.android.classi.Ingrediente;
 import com.example.android.fragments.TabCreaPiadina;
 
@@ -29,7 +32,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     private double totalePiadina;
     private double totaleIngredienti;
     private double totaleImpastoEFormato;
-    View homeView;
+
     Context mContext;
     private boolean fromHome = false;
     TabCreaPiadina fragmentCreaPiadina;
@@ -38,13 +41,16 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     // data is passed into the constructor
     public IngredientsAdapter(Context context, List<Ingrediente> data) {
         this.mInflater = LayoutInflater.from(context);
+        mContext = context;
         this.mData = data;
+        totaleImpastoEFormato = ((CustomizePiadinaActivity) context).getTotaleImpastoEFormato();
+        totalePiadina = ((CustomizePiadinaActivity) context).getTotalePiadina();
     }
     //
-    public IngredientsAdapter(Context context, List<Ingrediente> data, View homeView, TabCreaPiadina fragmentCreaPiadina) {
+    public IngredientsAdapter(Context context, List<Ingrediente> data, TabCreaPiadina fragmentCreaPiadina) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
-        this.homeView = homeView;
+        mContext = context;
         this.fragmentCreaPiadina = fragmentCreaPiadina;
         totalePiadina = fragmentCreaPiadina.getTotalePiadina();
         totaleImpastoEFormato = fragmentCreaPiadina.getTotaleImpastoEFormato();
@@ -57,7 +63,6 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.layout_ingrediente, parent, false);
-        mContext = parent.getContext();
         ingredientiView = parent;
 
         return new ViewHolder(view);
@@ -68,8 +73,11 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Ingrediente ingrediente = mData.get(position);
         holder.myTextView.setText(ingrediente.getName());
-        Double prezzo = new Double(ingrediente.getPrice());
-        holder.prezzoIngrediente.setText(prezzo.toString() + " €");
+
+        double prezzoIngrediente = ingrediente.getPrice();
+        BigDecimal totale = new BigDecimal(prezzoIngrediente);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+        holder.prezzoIngrediente.setText(totale.toPlainString().replace(".", ",") + " €");
 
         final IngredientsAdapter adapter = (IngredientsAdapter) holder.recyclerIngredienti.getAdapter();
 
@@ -115,13 +123,15 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
                                     fragmentCreaPiadina.setTotaleIngredienti(totaleIngredienti - prezzoIngrediente);
                                     fragmentCreaPiadina.setTotalePiadina(totalePiadina);
                                 }else{
-                                    totalePiadina = totaleImpastoEFormato + totaleIngredienti - prezzoIngrediente;
-                                    BigDecimal totale = new BigDecimal(totalePiadina);
-                                    totale = totale.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-                                    holder.prezzoPiadina.setText(totale.toPlainString()+" €");
+                                    totalePiadina = ((CustomizePiadinaActivity) mContext).getTotalePiadina();
+                                    totalePiadina = totalePiadina - prezzoIngrediente;
+                                    ((CustomizePiadinaActivity) mContext).setTotalePiadina(totalePiadina);
                                 }
 
                                 adapter.removeItem(position);
+                                notifyItemChanged(getItemCount() - 1);
+                                holder.recyclerIngredienti.swapAdapter(adapter,true);
+
                                 Toast.makeText(mContext, "Ingrediente rimosso", Toast.LENGTH_SHORT).show();
 
                                 if (adapter.getItemCount() == 0) {
@@ -172,15 +182,13 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
             removeButton = itemView.findViewById(R.id.removeButton);
             prezzoIngrediente = itemView.findViewById(R.id.textViewPrice);
 
-            removeButton.setOnClickListener(this);
-
             if(fromHome){
                 recyclerIngredienti = ingredientiView.findViewById(R.id.ingredients_crea_piadina);
                 prezzoPiadina = itemView.findViewById(R.id.prezzoTotalePiadina_crea_piadina);
 
             }else{
                 recyclerIngredienti = ingredientiView.findViewById(R.id.ingredients);
-                prezzoPiadina = ingredientiView.findViewById(R.id.prezzoTotalePiadina);
+                prezzoPiadina = ((Activity) mContext).findViewById(R.id.prezzoTotalePiadina);
             }
 
         }

@@ -24,6 +24,11 @@ public class SessionManager {
     public static final String KEY_TIMBRI = "timbri";
     public static final String KEY_OMAGGI = "omaggi";
 
+    public static final String KEY_DATA = "data_ritiro";
+    public static final String KEY_ORARIO = "orario_ritiro";
+
+    public static final String KEY_NOTIFICATION = "opzione_notifica";
+
     //Private constructor (static class)
     private SessionManager() {}
 
@@ -225,6 +230,50 @@ public class SessionManager {
         }
 
         return editor.commit();
+    }
+
+    public static boolean saveOrderTime(Context context, String dataRitiro, String oraRitiro) {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
+        //Store date
+        editor.putString(KEY_DATA, dataRitiro);
+        //Store hour
+        editor.putString(KEY_ORARIO, oraRitiro);
+
+        //Commit changes
+        return editor.commit();
+    }
+
+    public static HashMap<String, String> loadOrderTime(Context context){
+        if(!retrieveSharedPrefs(context,false))
+            return null;
+
+        HashMap<String,String> ordineData = new HashMap<>();
+        //Timbri
+        ordineData.put(KEY_DATA, preferences.getString(KEY_DATA,""));
+        //Omaggi
+        ordineData.put(KEY_ORARIO, preferences.getString(KEY_ORARIO,""));
+
+        return ordineData;
+    }
+
+    public static boolean saveNotificationOption(Context context, boolean setNotification) {
+        if(!retrieveSharedPrefs(context,true))
+            return false;
+
+        //Store notification option
+        editor.putBoolean(KEY_NOTIFICATION, setNotification);
+        //Commit changes
+        return editor.commit();
+    }
+
+    public static boolean getNotificationOption(Context context){
+        if(!retrieveSharedPrefs(context,false))
+            return false;
+
+        boolean option = preferences.getBoolean(KEY_NOTIFICATION,true);
+        return option;
     }
 
     //PRIVATE FUNCTIONS------------------------------------------------------------------

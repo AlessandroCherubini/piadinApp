@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:checked="true"
+            android:checked="false"
             android:icon="@drawable/ic_person_24dp"
             android:title="@string/profilo" />
         <item
@@ -19,8 +19,12 @@
             android:title="@string/tessera" />
         <item
             android:id="@+id/shaker"
-            android:icon="@drawable/ic_shaker_black_24dp"
-            android:title="@string/shaker" />
+            android:checkable="true"
+            android:checked="true"
+            android:enabled="true"
+            android:icon="@drawable/ic_shake_phone_gray"
+            android:title="@string/shaker"
+            android:visible="true" />
 
         <item
             android:id="@+id/logout"

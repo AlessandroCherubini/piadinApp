@@ -14,6 +14,7 @@ import com.example.android.classi.Piadina;
 import com.example.android.home.ClickListener;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class PiadineMenuAdapter extends RecyclerView.Adapter<PiadineMenuAdapter.PiadinaViewHolder> {
@@ -51,8 +52,12 @@ public class PiadineMenuAdapter extends RecyclerView.Adapter<PiadineMenuAdapter.
         holder.textViewTitle.setText(piadina.getNome());
         holder.textViewIngredients.setText(piadina.printIngredienti());
         //holder.textViewRating.setText(String.valueOf(piadina.getRating()));
-        holder.textViewPrezzo.setText(String.valueOf(piadina.getPrice()));
-        //piadina.printDettagliIngredienti();
+
+        double totalePiadina = piadina.getPrice();
+        BigDecimal totale = new BigDecimal(totalePiadina);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+
+        holder.textViewPrezzo.setText(totale.toPlainString().replace(".", ","));
 
     }
 

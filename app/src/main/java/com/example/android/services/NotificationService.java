@@ -6,17 +6,21 @@ import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
+import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,6 +37,7 @@ import com.example.android.activity.MyOrderActivity;
 import com.example.android.R;
 import com.example.android.activity.CartActivity;
 import com.example.android.utility.CustomRequest;
+import com.example.android.utility.SessionManager;
 import com.example.android.utility.VolleyCallback;
 import com.example.android.utility.VolleySingleton;
 
@@ -43,70 +48,85 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class NotificationService extends IntentService implements LocationListener{
+public class NotificationService extends JobService implements LocationListener{
 
     VolleyCallback durataCallBack;
-    String orarioRitiro;
-    String dataRitiro;
+    String orarioRitiro = "";
+    String dataRitiro = "";
+    Context mContext;
 
 
     public NotificationService(){
-
-        super("ServiceNotification");
+        super();
     }
 
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId){
-//        orarioRitiro = (String) intent.getExtras().get("orarioRitiro");
-//        //Log.d("ORARIO_STARTCOMMAND", orarioRitiro);
-//
-//        return START_STICKY;
-//    }
-
     @Override
-    protected void onHandleIntent(Intent i)
-    {
-        dataRitiro = (String) i.getExtras().get("dataRitiro");
-        orarioRitiro = (String) i.getExtras().get("orarioRitiro");
+    public boolean onStartJob(JobParameters params) {
 
-        durataCallBack = new VolleyCallback() {
+        Log.d("EXTRA", "Recupero extra bitcheees");
+        dataRitiro = params.getExtras().getString("dataRitiro");
+        orarioRitiro = params.getExtras().getString("orarioRitiro");
+
+        mContext = getApplicationContext();
+
+        if(!(dataRitiro == null && dataRitiro == null)){
+            boolean success = SessionManager.saveOrderTime(mContext, dataRitiro, orarioRitiro);
+            Log.d("EXTRA", "ASSEGNOOOOOOO");
+        }else{
+            Map<String, String> ordineData = SessionManager.loadOrderTime(mContext);
+            dataRitiro = ordineData.get("data_ritiro");
+            orarioRitiro = ordineData.get("orario_ritiro");
+        }
+
+        Log.d("EXTRA", dataRitiro + " " + orarioRitiro);
+
+        // Nuovo thread per l'esecuzione in background
+        AsyncTask.execute(new Runnable() {
             @Override
-            public void onSuccess(String result) {}
+            public void run() {
+                //TODO your background code
+                Log.d("SERVICE", "Eseguo codice nel thread nuovo");
+                durataCallBack = new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {}
 
-            @Override
-            public void onSuccessMap(int duration) {
+                    @Override
+                    public void onSuccessMap(int duration) {
 
-                Log.d("DISTANZA",""+duration);
+                        Log.d("DISTANZA",""+duration);
 
-                GregorianCalendar now = new GregorianCalendar();
-                Date oraAttuale = now.getTime();
+                        GregorianCalendar now = new GregorianCalendar();
+                        Date oraAttuale = now.getTime();
 
+                        DateFormat orarioDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            Date orarioDate = orarioDateFormat.parse(dataRitiro + " " + orarioRitiro);
+                            long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(orarioDate.getTime() - oraAttuale.getTime());
 
-                DateFormat orarioDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    Date orarioDate = orarioDateFormat.parse(dataRitiro + " " + orarioRitiro);
-                    long timeBeforePick = TimeUnit.MILLISECONDS.toSeconds(orarioDate.getTime() - oraAttuale.getTime());
+                            Log.d("ORARIO", "" + timeBeforePick);
+                            //TODO IDEARE BENE LE CONDIZIONI DEL METODO
+                            if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(12)) <= 0){
+                                sendNotification();
+                                stopNotificationService();
+                            }else{
+                                Log.d("SERVICE", "Dormo; non è ancora arrivato il tempo di fare la notifica");
+                            }
 
-                    Log.d("ORARIO", "" + timeBeforePick);
-                    //TODO IDEARE BENE LE CONDIZIONI DEL METODO
-                    if (timeBeforePick - ((long)duration + TimeUnit.MINUTES.toSeconds(5)) <= 0){
-
-                        sendNotification();
-                        stopNotificationService();
-
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                };
             }
-        };
+        });
+
+        Log.d("SERVICE", "Vediamo se mi esegui quando sono fuori dal thread");
 
         Location location = getLocation();
         if(location != null){
@@ -115,24 +135,27 @@ public class NotificationService extends IntentService implements LocationListen
             travelTimeRequest(latitude,longitude);
         }
 
+        return true;
     }
+
+    @Override
+    public boolean onStopJob(JobParameters params) {
+        Log.d("SERVICE", "onStopJob: fermo il job");
+        return false;
+    }
+
 
     @Override
     public void onDestroy()
     {
-        Log.i("PROVA SERVICE", "Distruzione Service");
+        Log.i("PROVA SERVICE", "OnDestroy NotificationService");
     }
 
     public void stopNotificationService(){
-
-        Intent intent = new Intent(CartActivity.getAppContext(), NotificationService.class);
-        PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        stopService(intent);
-        pintent.cancel();
-        alarm.cancel(pintent);
-        stopService(new Intent(getApplicationContext(), NotificationService.class));
-        Log.d("SERVICE", "Servizio stoppato!");
+        // Distruzione dello JobScheduler!
+        JobScheduler jobScheduler = (JobScheduler)this.getSystemService(Context.JOB_SCHEDULER_SERVICE );
+        jobScheduler.cancelAll();
+        Log.d("SERVICE", "Notifica eseguita e distruzione del JobScheduler!");
     }
 
     private void sendNotification(){
@@ -185,6 +208,15 @@ public class NotificationService extends IntentService implements LocationListen
 
         Location net_loc = null, gps_loc = null, finalLoc = null;
 
+        /*Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });*/
+
         if (gps_enabled){
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,100,this);
 
@@ -221,6 +253,8 @@ public class NotificationService extends IntentService implements LocationListen
         {
             Log.d("LOCATION","LOCATION = "+ finalLoc);
         }
+
+
         return finalLoc;
     }
 

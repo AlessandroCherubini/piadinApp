@@ -14,7 +14,11 @@ import com.example.android.classi.CartItem;
 import com.example.android.home.ClickListener;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemViewHolder> {
 
@@ -52,7 +56,12 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
         holder.formato.setText(item.getFormato());
         holder.tvImpasto.setText(item.getImpasto());
         holder.tvIngredienti.setText(item.printIngredienti());
-        holder.tvPrezzo.setText(String.valueOf(item.getPrezzo()));
+
+        double totalePiadina = item.getPrezzo();
+        BigDecimal totale = new BigDecimal(totalePiadina);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+
+        holder.tvPrezzo.setText(totale.toPlainString().replace(".", ","));
         holder.tvQuantita.setText(String.valueOf(item.getQuantita()));
 
     }
@@ -111,8 +120,9 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ItemVi
         }
     }
 
-
-
+    public void clear(){
+        itemList.clear();
+    }
 }
 
 

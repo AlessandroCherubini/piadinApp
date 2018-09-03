@@ -18,6 +18,8 @@
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Notifiche anche se il telefono viene spento e riacceso -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 
 
@@ -136,8 +138,11 @@
         </activity>
 
         <!-- SERVICES -->
-        <service android:name=".services.NotificationService"/>
+        <service android:name=".services.NotificationService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
         <service android:name=".services.BadgeUpdateService"/>
+
         
     </application>
 

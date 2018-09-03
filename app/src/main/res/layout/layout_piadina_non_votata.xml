@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="0dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/button_ordina_la_mia_piadina"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="10dp">
+
+                <Button
+                    android:id="@+id/icona_formato"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/ic_rotolo"
+                    android:elevation="4dp"
+                    android:layout_marginTop="3dp"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/icona_impasto"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_below="@+id/formato_string"
+                    android:layout_alignStart="@+id/icona_formato"
+                    android:background="@drawable/ic_impasto_tradizionale"
+                    android:elevation="4dp"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/nome_la_mia_piadina_non_votata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Nome Piadina"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/formato_string"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/nome_la_mia_piadina_non_votata"
+                    android:layout_marginStart="40dp"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Formato: "
+                    android:textColor="@color/primaryDarkColor" />
+
+                <TextView
+                    android:id="@+id/formato_la_mia_piadina_non_votata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/nome_la_mia_piadina_non_votata"
+                    android:layout_toEndOf="@id/formato_string"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Formato"
+                    android:textColor="@color/primaryDarkColor" />
+
+                <TextView
+                    android:id="@+id/impasto_string"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/formato_string"
+                    android:layout_marginStart="40dp"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Impasto: "
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                    android:textColor="@color/primaryDarkColor" />
+
+                <TextView
+                    android:id="@+id/impasto_la_mia_piadina_non_votata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/formato_string"
+                    android:layout_toEndOf="@id/impasto_string"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Impasto"
+                    android:textColor="@color/primaryDarkColor" />
+
+                <TextView
+                    android:id="@+id/descrizione_la_mia_piadina_non_votata"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/impasto_string"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/museo_slab"
+                    android:text="Descrizione" />
+
+                <TextView
+                    android:id="@+id/prezzo_la_mia_piadina_non_votata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/prezzo_euro_la_mia_piadina"
+                    android:fontFamily="@font/museo_slab"
+                    android:gravity="center"
+                    android:text="5.9"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/prezzo_euro_la_mia_piadina"
+                    android:layout_width="19dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="@font/museo_slab"
+                    android:gravity="center"
+                    android:text="@string/euro"
+                    android:textSize="15sp" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_button_le_mie_piadine_non_votate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/secondaryTextColor"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/button_vota_non_votata"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:background="@color/primaryDarkColor"
+                    android:drawableRight="@drawable/ic_stars_black_24dp"
+                    android:paddingEnd="15dp"
+                    android:text="VOTA"
+                    android:textColor="@color/primaryTextColor"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/button_ordina_la_mia_piadina_non_votata"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:background="@color/primaryDarkColor"
+                    android:drawableRight="@drawable/ic_arrow_forward_white_24dp"
+                    android:paddingEnd="15dp"
+                    android:text="@string/reorder"
+                    android:textColor="@color/primaryTextColor" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

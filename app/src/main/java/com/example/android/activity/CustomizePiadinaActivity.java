@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +14,10 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -32,7 +35,10 @@ import com.example.android.utility.DBHelper;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 public class CustomizePiadinaActivity extends AppCompatActivity
@@ -60,8 +66,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     public static double totalePiadina = 0;
     static double totaleImpastoEFormato = 0;
     public static double totaleIngredienti = 0;
+    TextView prezzoPiadina;
     public Context mContext;
     String identificatore;
+    boolean isEdit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +77,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         setContentView(R.layout.activity_customize_piadina);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mContext = CustomizePiadinaActivity.this;
+        mContext = getApplicationContext();
 
         // uso l'extra per prendere la piadina selezionata
         helper = new DBHelper(this);
@@ -79,19 +87,54 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         if (intent.getExtras().get("indexPiadina")!= null){
 
             int position = intent.getIntExtra("indexPiadina",0);
-            chosenPiadina = helper.getPiadinaByPosition((long)position+1);
+            chosenPiadina = helper.getPiadinaByPosition((long) position + 1);
+            // Attributi variabili della piadina selezionata
+            nomePiadina = chosenPiadina.getNome();
+            formatoPiadina = chosenPiadina.getFormato();
+            impastoPiadina = chosenPiadina.getImpasto();
+            quantitaPiadina = chosenPiadina.getQuantita();
+            ratingPiadina = chosenPiadina.getRating();
+            totaleImpastoEFormato = chosenPiadina.getPrice();
+            totalePiadina = totaleImpastoEFormato;
+
+            prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+
+            setTotalePiadina(totalePiadina);
         }
-        else if (intent.getExtras().get("randomPiadina")!= null){
+        else if (intent.getExtras().get("randomPiadina") != null){
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("randomPiadina");
             chosenPiadina = gson.fromJson(chosenPiadinaString, Piadina.class);
+            // Attributi variabili della piadina selezionata
+            nomePiadina = chosenPiadina.getNome();
+            formatoPiadina = chosenPiadina.getFormato();
+            impastoPiadina = chosenPiadina.getImpasto();
+            quantitaPiadina = chosenPiadina.getQuantita();
+            ratingPiadina = chosenPiadina.getRating();
+            totaleImpastoEFormato = chosenPiadina.getPrice();
+            totalePiadina = totaleImpastoEFormato;
+
+            prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+
+            setTotalePiadina(totalePiadina);
         }
-        else if (intent.getExtras().get("modificaPiadina")!= null) {
+        else if (intent.getExtras().get("modificaPiadina") != null) {
+            isEdit = true;
             Gson gson = new Gson();
             String chosenPiadinaString = getIntent().getStringExtra("modificaPiadina");
             cartItem = gson.fromJson(chosenPiadinaString, CartItem.class);
             chosenPiadina = cartItem.cartItemToPiadina();
-            // Set dei radio button per Formato e Impasto
+
+            nomePiadina = chosenPiadina.getNome();
+            formatoPiadina = chosenPiadina.getFormato();
+            impastoPiadina = chosenPiadina.getImpasto();
+            ingredientiPiadina = chosenPiadina.getIngredienti();
+            totalePiadina = chosenPiadina.getPrice() / chosenPiadina.getQuantita();
+            quantitaPiadina = chosenPiadina.getQuantita();
+            ratingPiadina = chosenPiadina.getRating();
+
+            prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
+            setTotalePiadina(totalePiadina);
             setRadioButtons(chosenPiadina);
 
             Button editButton = findViewById(R.id.addKart);
@@ -102,20 +145,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Attributi variabili della piadina selezionata
-        nomePiadina = chosenPiadina.getNome();
-        formatoPiadina = chosenPiadina.getFormato();
-        impastoPiadina = chosenPiadina.getImpasto();
-        quantitaPiadina = chosenPiadina.getQuantita();
-        ratingPiadina = chosenPiadina.getRating();
-        totaleImpastoEFormato = chosenPiadina.getPrice();
-        totalePiadina = totaleImpastoEFormato;
-
-        final TextView prezzoPiadina = findViewById(R.id.prezzoTotalePiadina);
-        prezzoPiadina.setText(totalePiadina + " €");
-
-        TextView nomePiadina = findViewById(R.id.nome_piadina);
-        nomePiadina.setText(chosenPiadina.getNome());
+        TextView nomePiadinaTesto = findViewById(R.id.nome_piadina);
+        nomePiadinaTesto.setText(nomePiadina);
 
         // Radio Button
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb_normale);
@@ -126,10 +157,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         final Button button = findViewById(R.id.addKart);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Piadina aggiunta al carrello", Toast.LENGTH_SHORT);
-                toast.show();
-                aggiungiAlCarrello();
-                finish();
+                addQuantitaPiadina();
             }
         });
 
@@ -145,6 +173,7 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
         recyclerView = findViewById(R.id.ingredients);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         adapter = new IngredientsAdapter(this, ingredientiPiadina);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
@@ -229,8 +258,6 @@ public class CustomizePiadinaActivity extends AppCompatActivity
 
                 break;
         }
-
-        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -257,10 +284,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             formatoPiadina = "Piadina";
             impastoPiadina = "Normale";
             totaleImpastoEFormato = prezzoPiadinaBase;
-            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
 
-            BigDecimal totale = new BigDecimal(totalePiadina);
-            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+            setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
         }
         else if (rb2.isChecked() && rb4.isChecked()){
 
@@ -274,9 +299,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             formatoPiadina = "Rotolo";
             impastoPiadina = "Normale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO;
-            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            BigDecimal totale = new BigDecimal(totalePiadina);
-            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+
+            setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
         }
         else if (rb3.isChecked() && rb4.isChecked()){
 
@@ -290,9 +314,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             formatoPiadina = "Baby";
             impastoPiadina = "Normale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY;
-            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            BigDecimal totale = new BigDecimal(totalePiadina);
-            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+
+            setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
         }
 
         else if (rb1.isChecked() && rb5.isChecked()){
@@ -307,9 +330,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             formatoPiadina = "Piadina";
             impastoPiadina = "Integrale";
             totaleImpastoEFormato = prezzoPiadinaBase + IMPASTO_INTEGRALE;
-            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            BigDecimal totale = new BigDecimal(totalePiadina);
-            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+
+            setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
         }
 
         else if (rb2.isChecked() && rb5.isChecked()){
@@ -324,9 +346,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             formatoPiadina = "Rotolo";
             impastoPiadina = "Integrale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_ROTOLO + IMPASTO_INTEGRALE;
-            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
-            BigDecimal totale = new BigDecimal(totalePiadina);
-            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+
+            setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
         }
 
         else if (rb3.isChecked() && rb5.isChecked()){
@@ -341,14 +362,84 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             formatoPiadina = "Baby";
             impastoPiadina = "Integrale";
             totaleImpastoEFormato = prezzoPiadinaBase + FORMATO_BABY + IMPASTO_INTEGRALE;
-            totalePiadina = totaleImpastoEFormato + totaleIngredienti;
 
-            BigDecimal totale = new BigDecimal(totalePiadina);
-            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+            setTotalePiadina(totaleImpastoEFormato + totaleIngredienti);
         }
 
     }
 
+    private void addQuantitaPiadina(){
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_quantita_piadina, null);
+
+        final Button buttonMeno = dialogView.findViewById(R.id.button_quantita_meno);
+        final TextView quantitaTesto = dialogView.findViewById(R.id.quantita_testo);
+        final Button buttonPiu = dialogView.findViewById(R.id.button_quantita_piu);
+        quantitaTesto.setText("Quantità: " + quantitaPiadina);
+
+        final AlertDialog dialog = new AlertDialog.Builder(CustomizePiadinaActivity.this)
+                .setView(dialogView)
+                .setTitle("Quantità della Piadina:")
+                .setIcon(R.drawable.ic_impasto_tradizionale)
+                .setMessage("Scegli la quantità da ordinare!")
+                .setPositiveButton("Ok, ordina", null) //Set to null. We override the onclick
+                .setNegativeButton("Annulla", null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isEdit){
+                            editItemCarrello();
+                            dialog.dismiss();
+                            finish();
+                        }else{
+                            aggiungiAlCarrello();
+                            Snackbar.make(view, "Piadina aggiunta al carrello", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            finish();
+                        }
+                     }
+                });
+
+                Button buttonAnnulla = (dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                buttonAnnulla.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        quantitaPiadina = 1;
+                        dialog.dismiss();
+                    }
+                });
+
+                buttonMeno.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(quantitaPiadina != 1) {
+                            quantitaPiadina = quantitaPiadina - 1;
+                            quantitaTesto.setText("Quantità: " + String.valueOf(quantitaPiadina));
+                        }
+                    }
+                });
+
+                buttonPiu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        quantitaPiadina = quantitaPiadina + 1;
+                        quantitaTesto.setText("Quantità: " + String.valueOf(quantitaPiadina));
+                    }
+                });
+
+            }
+        });
+        dialog.show();
+
+    }
     private void aggiungiAlCarrello(){
         data = cs.ViewAll(getApplicationContext());
         String id;
@@ -359,11 +450,10 @@ public class CustomizePiadinaActivity extends AppCompatActivity
         else if ((cs.get(identificatore,"nome",getApplicationContext())) != null && identificatore != null){
 
             id = identificatore;
-
         }
         else {
-
             int k = 0;
+
             for (Map.Entry<Integer, Map> entry : data.entrySet()) {
                 k++;
             }
@@ -372,15 +462,32 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             id = "Piadina " + numero;
         }
 
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
+        String totaleStringa = df.format(totalePiadina * quantitaPiadina);
+        double totaleTroncato = Double.valueOf(totaleStringa);
+
         cs.add(id,"nome", nomePiadina);
         cs.add(id, "formato", formatoPiadina);
         cs.add(id,"impasto", impastoPiadina);
-        cs.add(id,"prezzo", totalePiadina);
+        cs.add(id,"prezzo", totaleTroncato);
         cs.add(id,"ingredienti", ingredientiPiadina.toString());
         cs.add(id, "quantita", quantitaPiadina);
         cs.add(id, "rating", ratingPiadina);
         cs.add(id,"identifier", id);
         cs.commit(getApplicationContext());
+    }
+
+    private void editItemCarrello(){
+        String idPiadina = cartItem.getIdentifier();
+
+        cs.update(idPiadina, "nome", nomePiadina, mContext);
+        cs.update(idPiadina, "formato", formatoPiadina, mContext);
+        cs.update(idPiadina, "impasto", impastoPiadina, mContext);
+        cs.update(idPiadina, "prezzo", totalePiadina * quantitaPiadina, mContext);
+        cs.update(idPiadina, "ingredienti", ingredientiPiadina.toString(), mContext);
+        cs.update(idPiadina, "quantita", quantitaPiadina, mContext);
+        cs.update(idPiadina, "rating", ratingPiadina, mContext);
     }
 
     public void onFragmentInteraction(Uri uri){}
@@ -414,6 +521,8 @@ public class CustomizePiadinaActivity extends AppCompatActivity
     private void setRadioButtons(Piadina piadina){
         String formato = piadina.getFormato();
         String impasto = piadina.getImpasto();
+        double prezzoFormato;
+        double prezzoImpasto;
 
         RadioGroup radioFormato = findViewById(R.id.rg1);
         RadioGroup radioImpasto = findViewById(R.id.rg2);
@@ -428,10 +537,12 @@ public class CustomizePiadinaActivity extends AppCompatActivity
             case "Piadina":
                 radioFormato.check(R.id.rb_normale);
                 rb1.setTypeface(null, Typeface.BOLD_ITALIC);
+                prezzoFormato = 2.5;
                 break;
             case "Rotolo":
                 radioFormato.check(R.id.rb_rotolo);
                 rb2.setTypeface(null, Typeface.BOLD_ITALIC);
+                prezzoFormato =  + FORMATO_ROTOLO;
                 break;
             case "Baby":
                 radioFormato.check(R.id.rb_baby);
@@ -458,18 +569,28 @@ public class CustomizePiadinaActivity extends AppCompatActivity
                 break;
         }
     }
-    // Funzione utilizzata per stampare gli ingredienti da ArrayList a String per i log.
-/*    private String printIngredienti(ArrayList<Ingrediente> ingredienti){
-        String ingredientiStringa="";
 
-        for(Ingrediente ingrediente:ingredienti){
-            String parziale;
+    public double getTotaleImpastoEFormato(){
+        return totaleImpastoEFormato;
+    }
 
-            parziale = ingrediente.getIdIngrediente() + ingrediente.getName() + ingrediente.getPrice() +
-                    ingrediente.getCategoria() + ingrediente.getLastUpdated();
+    public double getTotalePiadina(){
+        return totalePiadina;
+    }
 
-            ingredientiStringa = ingredientiStringa + " " + parziale;
-        }
-        return ingredientiStringa;
-    }*/
+    public void setTotalePiadina(double nuovoTotale){
+        totalePiadina = nuovoTotale;
+
+        BigDecimal totale = new BigDecimal(totalePiadina);
+        totale = totale.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+
+        prezzoPiadina.setText(totale.toPlainString().replace(".", ",") + " €");
+    }
+
+    public void setTotaleIngredienti(double nuovoTotale){
+        totaleIngredienti = nuovoTotale;
+    }
+
+    public double getTotaleIngredienti(){ return totaleIngredienti; }
+
 }

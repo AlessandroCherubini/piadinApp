@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.R;
+import com.example.android.activity.CustomizePiadinaActivity;
 import com.example.android.adapters.AddIngredientAdapter;
 import com.example.android.classi.Ingrediente;
 import com.example.android.fragments.TabCreaPiadina;
@@ -101,6 +102,23 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
             }
         });
 
+        holder.showButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(holder.recyclerViewAddIngredienti.getVisibility()){
+                    case View.GONE:
+                        holder.recyclerViewAddIngredienti.setVisibility(View.VISIBLE);
+                        holder.recyclerViewAddIngredienti.animate().alpha(1.0f);
+                        holder.showButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
+                        break;
+                    case View.VISIBLE:
+                        holder.recyclerViewAddIngredienti.setVisibility(View.GONE);
+                        holder.recyclerViewAddIngredienti.animate().alpha(0.0f);
+                        holder.showButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp);
+                }
+            }
+        });
+
         // Prendo l'adapter e la lista degli Ingredienti correnti della piadina.
         final IngredientsAdapter adapter = (IngredientsAdapter) holder.recyclerViewIngredienti.getAdapter();
         final List<Ingrediente> listaIngredientiCorrenti = adapter.getArrayList();
@@ -150,14 +168,15 @@ public class CategorieIngredientiAdapter extends RecyclerView.Adapter<CategorieI
 
                             holder.layoutFragmentCreaPiadina.findViewById(R.id.greca_ingredienti_crea_piadina).setVisibility(View.VISIBLE);
                             holder.layoutFragmentCreaPiadina.findViewById(R.id.ingredienti_crea_piadina).setVisibility(View.VISIBLE);
-                            holder.layoutFragmentCreaPiadina.findViewById(R.id.scroll_ingredienti_crea_piadina).setVisibility(View.VISIBLE);
+                            holder.layoutFragmentCreaPiadina.findViewById(R.id.ingredients_crea_piadina).setVisibility(View.VISIBLE);
                         }else{
                             // Customize Piadina Activity
                             totalePiadina = totalePiadina + prezzoIngrediente;
-
-                            BigDecimal totale = new BigDecimal(totalePiadina);
-                            prezzoPiadina.setText(totale.setScale(2,BigDecimal.ROUND_HALF_EVEN).toPlainString() + " €");
+                            totaleIngredienti = ((CustomizePiadinaActivity) mContext).getTotaleIngredienti();
                             totaleIngredienti = totaleIngredienti + prezzoIngrediente;
+
+                            ((CustomizePiadinaActivity) mContext).setTotaleIngredienti(totaleIngredienti);
+                            ((CustomizePiadinaActivity) mContext).setTotalePiadina(totalePiadina);
                         }
 
                         Toast.makeText(mContext, "Ingrediente aggiunto", Toast.LENGTH_SHORT).show();

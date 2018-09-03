@@ -22,7 +22,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.R;
@@ -37,7 +41,11 @@ public class BadgeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final char SEPARATOR_QR_STR = ';';
-    private static final int SERVICE_INTERVAL = 10000;
+    private static final int SERVICE_INTERVAL = 30000;
+
+    HashMap<String,Integer> badgeData;
+    TextView timbriTV;
+    TextView omaggiTV;
 
     //Broadcast receiver per update stringhe del badge------
     private BroadcastReceiver updateStringsReceiver = new BroadcastReceiver() {
@@ -45,7 +53,8 @@ public class BadgeActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             updateBadgeValuesString();
             //Dopo aver aggiornato le stringhe, annullo la ripetizione del service
-            stopUpdateService();
+            //stopUpdateService();
+            disegnaTessera(badgeData.get("timbri"));
         }
     };
     //------------------------------------------------------
@@ -92,11 +101,28 @@ public class BadgeActivity extends AppCompatActivity
             Log.d("Create QR code image",e.getMessage());
         }
 
+        badgeData = SessionManager.getBadgeDetails(this);
+        timbriTV = findViewById(R.id.timbriTextView);
+        omaggiTV = findViewById(R.id.omaggiTextView);
+
+        if(badgeData == null) {
+            Log.d("Shared Data Error", "Cannot get Badge shared prefs");
+            timbriTV.setText(getTimbriStr(0));
+            omaggiTV.setText(getOmaggiStr(0));
+        } else {
+            //Inserimento numero di timbri
+            timbriTV.setText(getTimbriStr(badgeData.get("timbri")));
+            //Inserimento numero di omaggi
+            omaggiTV.setText(getOmaggiStr(badgeData.get("omaggi")));
+        }
+
+        disegnaTessera(badgeData.get("timbri"));
+
         updateBadgeValuesString();
 
         startUpdateService();
         //Registro il receiver
-        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+        registerReceiver(updateStringsReceiver, new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
     }
 
     @Override
@@ -104,7 +130,7 @@ public class BadgeActivity extends AppCompatActivity
     {
         super.onResume();
         startUpdateService();
-        registerReceiver(updateStringsReceiver,new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
+        registerReceiver(updateStringsReceiver, new IntentFilter(BadgeUpdateService.BROADCAST_ACTION));
     }
 
     @Override
@@ -262,13 +288,9 @@ public class BadgeActivity extends AppCompatActivity
         return "Piadine omaggio guadagnate: " + Integer.toString(omaggiNumber);
     }
 
-    private void updateBadgeValuesString()
-    {
-        TextView timbriTV = findViewById(R.id.timbriTextView);
-        TextView omaggiTV = findViewById(R.id.omaggiTextView);
+    private void updateBadgeValuesString() {
+       //Get badge infos
 
-        //Get badge infos
-        final HashMap<String,Integer> badgeData;
         badgeData = SessionManager.getBadgeDetails(this);
         if(badgeData == null) {
             Log.d("Shared Data Error", "Cannot get Badge shared prefs");
@@ -282,6 +304,29 @@ public class BadgeActivity extends AppCompatActivity
         }
     }
 
+    private void disegnaTessera(int numeroTimbri){
+        GridLayout tessera = findViewById(R.id.tabella_timbri);
+        tessera.removeAllViews();
+
+        for(int i = 0; i < 10; i++){
+            ImageView imageView = new ImageView(this);
+            if( i < numeroTimbri){
+                imageView.setBackgroundResource(R.drawable.timbro_piadina);
+            }else{
+                imageView.setBackgroundResource(R.drawable.timbro_piadina_grigio);
+            }
+
+
+            /*RelativeLayout relativelayout = (RelativeLayout)findViewById(R.id.layout_griglia);
+            LinearLayout.LayoutParams params = new LinearLayout
+                    .LayoutParams(ViewGroup., ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            imageView.setLayoutParams(params);*/
+            //relativelayout.addView(imageView);
+
+            tessera.addView(imageView);
+        }
+    }
     private void startUpdateService()
     {
         Log.d("START","SERVICE: Update badge service");
@@ -311,4 +356,5 @@ public class BadgeActivity extends AppCompatActivity
         Log.d("SERVICE","Update Badge stopped");
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 }

@@ -1,11 +1,14 @@
 package com.example.android.fragments;
 
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,9 +20,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +37,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.carteasy.v1.lib.Carteasy;
 import com.example.android.R;
 import com.example.android.classi.CartItem;
 import com.example.android.classi.FasciaOraria;
@@ -40,6 +46,7 @@ import com.example.android.classi.Ordine;
 import com.example.android.classi.Piadina;
 import com.example.android.activity.CartActivity;
 import com.example.android.adapters.FasceOrarioAdapter;
+import com.example.android.services.NotificationService;
 import com.example.android.utility.CustomRequest;
 import com.example.android.utility.DBHelper;
 import com.example.android.utility.GenericCallback;
@@ -53,9 +60,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
 
 public class FasceOrarioFragment extends Fragment {
 
@@ -67,9 +82,11 @@ public class FasceOrarioFragment extends Fragment {
     LinearLayout linlaHeaderProgress;
     RelativeLayout layoutFasce;
     Button buttonOrder;
+    Button tempoFascia;
 
     // Attributi ordine
     HashMap<String, String> utente;
+    ArrayList<FasciaOraria> fasceOrarie;
     String dataRichiesta;
     int quantitaRichiesta;
     double totaleOrdine;
@@ -77,13 +94,29 @@ public class FasceOrarioFragment extends Fragment {
     String notaOrdine;
     long lastlastUpdateOrdine;
     Ordine ordine;
+    FasciaOraria fasciaSelezionata;
+    String fasciaOrariaString;
     int idFasciaSelezionata;
-    String orarioRitiro;
+    int coloreFasciaSelezionata;
+    boolean setNotification;
+
+    private android.support.v7.widget.Toolbar toolbarFragment;
+    private CartActivity cartActivity;
 
     DBHelper helper;
-    ArrayList<FasciaOraria> fasceOrarie;
     Context mContext;
     VolleyCallback fasceCallBack;
+
+    public FasceOrarioFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        cartActivity = ((CartActivity) context);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +131,6 @@ public class FasceOrarioFragment extends Fragment {
             fasceOrarie = getArguments().getParcelableArrayList("fasceOrarie");
             cartItems = getArguments().getParcelableArrayList("cartItems");
             totaleOrdine = getArguments().getDouble("totaleOrdine");
-            Log.d("QUANTITA", "" + quantitaRichiesta);
         }
 
         linlaHeaderProgress = getActivity().findViewById(R.id.linear_spinner);
@@ -127,7 +159,7 @@ public class FasceOrarioFragment extends Fragment {
                         fasceOrarioAdapter.notifyItemRemoved(0);
                         fasceOrarioAdapter.notifyItemRangeChanged(0, fasceOrarie.size());
 
-                        getActivity().setTitle("Scegli una fascia d'orario");
+                        //getActivity().setTitle("Scegli una fascia d'orario");
                         JSONArray fasce = response.getJSONArray("fasce");
                         for(int i = 0; i < fasce.length(); i++){
                             JSONObject fascia = fasce.getJSONObject(i);
@@ -139,14 +171,15 @@ public class FasceOrarioFragment extends Fragment {
                             int coloreFascia = fascia.getInt("colore");
 
                             FasciaOraria fasciaOraria = new FasciaOraria(idFascia, inizioFascia, fineFascia, isOccupata, coloreFascia);
-                            Log.d("FASCIA", fasciaOraria.toString());
                             fasceOrarie.add(fasciaOraria);
                         }
 
                         fasceOrarioAdapter.notifyDataSetChanged();
+                        recyclerViewFasce.swapAdapter(fasceOrarioAdapter, true);
                         getActivity().setProgressBarIndeterminateVisibility(false);
                         linlaHeaderProgress.setVisibility(View.GONE);
                         recyclerViewFasce.setVisibility(View.VISIBLE);
+
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -164,7 +197,11 @@ public class FasceOrarioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fasce_orarie_layout, container, false);
+        View v = inflater.inflate(R.layout.fasce_orarie_layout, container, false);
+        toolbarFragment = (android.support.v7.widget.Toolbar) v.findViewById(R.id.toolbar123);
+        setupToolbar();
+
+        return v;
     }
 
     @Override
@@ -184,16 +221,7 @@ public class FasceOrarioFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-/*        android.support.v7.widget.Toolbar toolbar = getView().findViewById(R.id.fragment_fasce_toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().onBackPressed();
-            }
-        });*/
-
-        fasceOrarie = new ArrayList<FasciaOraria>();
+        fasceOrarie = new ArrayList<>();
 
         recyclerViewFasce = getView().findViewById(R.id.recycler_fasce);
         recyclerViewFasce.setHasFixedSize(true);
@@ -213,10 +241,13 @@ public class FasceOrarioFragment extends Fragment {
         buttonOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FasciaOraria fasciaSelezionata = fasceOrarioAdapter.getFasciaSelezionata();
+                fasciaSelezionata = fasceOrarioAdapter.getFasciaSelezionata();
                 if(fasciaSelezionata != null){
                     idFasciaSelezionata = fasciaSelezionata.getIdFascia();
-                    addNotaOrdine();
+                    fasciaOrariaString = fasciaSelezionata.getInizioFascia() + " - " + fasciaSelezionata.getFineFascia();
+                    coloreFasciaSelezionata = fasciaSelezionata.getColoreBadge();
+
+                    addInfoOrder();
                 }else{
                     Snackbar snackbar = Snackbar
                             .make(getActivity().findViewById(android.R.id.content), "Nessuna fascia selezionata! Scegli e continua!", Snackbar.LENGTH_LONG);
@@ -229,23 +260,76 @@ public class FasceOrarioFragment extends Fragment {
             }
         });
 
+        final Button infoButton = getView().findViewById(R.id.info_fasce);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fasceOrarioAdapter.infoButtonFasce(infoButton);
+            }
+        });
+
+
     }
 
-    public void addNotaOrdine(){
+    public void addInfoOrder(){
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = this.getLayoutInflater();
+        final LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_nota, null);
         dialogBuilder.setView(dialogView);
 
+        final Switch switchNota = dialogView.findViewById(R.id.switch_nota);
         final EditText editText = dialogView.findViewById(R.id.testo_nota);
+        final TextInputLayout textInputLayout = dialogView.findViewById(R.id.text_input_layout);
 
-        dialogBuilder.setTitle("Nota dell'ordine:");
-        dialogBuilder.setIcon(R.drawable.ic_note_add_black_24dp);
-        dialogBuilder.setMessage("È data la possibilità di scrivere una eventuale nota per il gestore.");
+        final Switch switchNotification = dialogView.findViewById(R.id.switch_notification);
+        final RelativeLayout infoLayoutNotification = dialogView.findViewById(R.id.info_layout_notification);
+        final TextView infoTextNotification = dialogView.findViewById(R.id.info_text_notification);
+
+        infoTextNotification.setText("Questo servizio offre la possibilità di ricevere una notifica " +
+                "che ti avvisa quando dovrai partire per ritirare l'ordine.\n" +
+                "E' richiesto il permesso di geolocalizzazione.");
+
+        setNotification = SessionManager.getNotificationOption(mContext);
+        switchNotification.setChecked(setNotification);
+
+        if(setNotification == true){
+            infoLayoutNotification.setVisibility(View.VISIBLE);
+        }else{
+            infoLayoutNotification.setVisibility(View.GONE);
+        }
+
+        switchNota.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    textInputLayout.setVisibility(View.VISIBLE);
+                }else{
+                    textInputLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        switchNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    infoLayoutNotification.setVisibility(View.VISIBLE);
+                    setNotification = true;
+                }else{
+                    infoLayoutNotification.setVisibility(View.GONE);
+                    setNotification = false;
+                }
+            }
+        });
+
+        dialogBuilder.setTitle("Opzioni Aggiuntive:");
+        //dialogBuilder.setIcon(R.drawable.ic_note_add_black_24dp);
+        //dialogBuilder.setMessage("È data la possibilità di scrivere una eventuale nota per il gestore.");
         dialogBuilder.setPositiveButton("Ok, ordina", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 notaOrdine = editText.getText().toString().trim();
+                SessionManager.saveNotificationOption(mContext, setNotification);
 
                 // Procediamo con l'ordine!!
                 final ProgressDialog progressDialog = new ProgressDialog(getActivity(),
@@ -280,9 +364,14 @@ public class FasceOrarioFragment extends Fragment {
         String telefonoUtente = utente.get("phone");
         piadineOrdine = creaPiadineOrdine(cartItems);
         lastlastUpdateOrdine = 0;
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
 
-        ordine = new Ordine(0, emailUtente, telefonoUtente, dataRichiesta, totaleOrdine, piadineOrdine,
-                notaOrdine, lastlastUpdateOrdine);
+        String totaleStringa = df.format(totaleOrdine);
+        double totaleTroncato = Double.valueOf(totaleStringa);
+
+        ordine = new Ordine(0, dataRichiesta, emailUtente, telefonoUtente, "", totaleTroncato, piadineOrdine,
+                notaOrdine, lastlastUpdateOrdine, fasciaOrariaString, coloreFasciaSelezionata);
 
         // Aggiunta db esterno ed interno
         GenericCallback manageOrderCallback = new GenericCallback() {
@@ -292,13 +381,13 @@ public class FasceOrarioFragment extends Fragment {
                 Log.d("JSON", resultData.toString());
 
                 boolean success = JSONHelper.getSuccessResponseValue(resultData);
-                String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp_fine");
-                ((CartActivity) mContext).setOrarioRitiro(timestamp);
-
                 Log.d("JSON", "success: " + success);
 
                 if(success) {
-                    addUserOrderRequest(ordine);
+                    String orarioRitiro = JSONHelper.getStringFromObj(resultData,"timestamp_fine");
+                    int manageID = JSONHelper.getIntFromObj(resultData, "manage");
+                    ((CartActivity) mContext).setOrarioRitiro(orarioRitiro);
+                    addUserOrderRequest(ordine, manageID);
                 } else {
                     Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
                 }
@@ -306,9 +395,8 @@ public class FasceOrarioFragment extends Fragment {
         };
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addManageOrder(ordine,dataRichiesta,idFasciaSelezionata,quantitaRichiesta,
+        onlineHelper.addManageOrder(ordine, dataRichiesta, idFasciaSelezionata, quantitaRichiesta,
                 emailUtente, manageOrderCallback);
-        //getActivity().finish();
 
     }
 
@@ -354,7 +442,28 @@ public class FasceOrarioFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (error instanceof TimeoutError){
-                            Toast.makeText(mContext, "TimeOut Error!", Toast.LENGTH_SHORT).show();
+
+                            getActivity().setProgressBarIndeterminateVisibility(false);
+                            linlaHeaderProgress.setVisibility(View.GONE);
+
+                            Snackbar snackbar = Snackbar
+                                    .make(getActivity().findViewById(android.R.id.content), "Errore nella richiesta!", Snackbar.LENGTH_LONG)
+                                    .setAction("Riprova!", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            getDayFasceRequest(date, itemCount);
+                                        }
+                                    });
+
+                            // Changing message text color
+                            snackbar.setActionTextColor(Color.RED);
+
+                            // Changing action button text color
+                            View sbView = snackbar.getView();
+                            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                            textView.setTextColor(Color.WHITE);
+                            snackbar.show();
+
                         }else if (error instanceof NoConnectionError) {
                             getActivity().setProgressBarIndeterminateVisibility(false);
                             linlaHeaderProgress.setVisibility(View.GONE);
@@ -394,7 +503,7 @@ public class FasceOrarioFragment extends Fragment {
     }
     //-----------------------------------------------------------
 
-    private void addUserOrderRequest(final Ordine ordine) {
+    private void addUserOrderRequest(final Ordine ordine, int manageID) {
         GenericCallback orderCallback = new GenericCallback() {
             @Override
             public void onSuccess(JSONObject resultData)
@@ -410,11 +519,31 @@ public class FasceOrarioFragment extends Fragment {
                 if(success) {
                     Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
                     DBHelper helper = new DBHelper(mContext);
+
+                    DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    DateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String inputDateStr = dataRichiesta;
+                    Date date = null;
+                    try {
+                        date = inputFormat.parse(inputDateStr);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String outputDateStr = outputFormat.format(date);
+                    ordine.setDataOrdine(outputDateStr);
                     helper.insertOrdine(ordine);
 
-                    // Notifica
-                    ((CartActivity) mContext).locationAndNotification();
                     ((CartActivity) mContext).svuotaCarrello();
+
+                    // Notifica
+                    if(setNotification){
+                        Log.d("ALARM", "Nuovo servizio");
+                        ((CartActivity) mContext).locationAndNotification();
+                    }else{
+                        ((CartActivity) mContext).finish();
+                    }
+
+
                 } else {
                     Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
                 }
@@ -422,8 +551,14 @@ public class FasceOrarioFragment extends Fragment {
         };
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addUserOrder(ordine,orderCallback);
+        onlineHelper.addUserOrder(ordine, manageID, orderCallback);
     }
     //-----------------------------------------------------------
+
+    private void setupToolbar(){
+        toolbarFragment.setTitle("Scegli una fascia oraria");
+        cartActivity.getSupportActionBar().hide();
+        cartActivity.setSupportActionBar(toolbarFragment);
+    }
 
 }
