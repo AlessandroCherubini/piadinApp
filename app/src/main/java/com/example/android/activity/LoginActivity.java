@@ -428,17 +428,19 @@ public class LoginActivity extends AppCompatActivity {
                     JSONArray ordini = resultData.getJSONArray("ordini");
                     for(int i = 0; i < ordini.length(); i++) {
                         JSONObject ordine = ordini.getJSONObject(i);
-                        String phoneOrdine = ordine.getString("user_phone");
                         String dataOrdine = ordine.getString("data_ordine");
+                        String phoneOrdine = ordine.getString("user_phone");
+                        String timestampOrdine = ordine.getString("timestamp_ordine");
                         double totaleOrdine = ordine.getDouble("prezzo");
                         String descrizioneOrdine = ordine.getString("descrizione");
                         ArrayList<Piadina> piadineOrdine = helper.getPiadineFromDescrizioneOrdine(descrizioneOrdine);
-
                         String notaOrdine = ordine.getString("nota");
-                        long lastUpdateOrdine = ordine.getLong("timestamp");
+                        String fasciaOrdine = ordine.getString("fascia");
+                        int coloreOrdine = ordine.getInt("colore_fascia");
+                        long lastUpdateOrdine = ordine.getLong("lastupdate_ordine");
 
-                        Ordine ordineInterno = new Ordine(0,userEmail,phoneOrdine,dataOrdine,
-                                totaleOrdine,piadineOrdine,notaOrdine,lastUpdateOrdine);
+                        Ordine ordineInterno = new Ordine(0, dataOrdine, userEmail, phoneOrdine, timestampOrdine,
+                                totaleOrdine,piadineOrdine,notaOrdine,lastUpdateOrdine, fasciaOrdine, coloreOrdine);
 
                         helper.insertOrdine(ordineInterno);
                     }

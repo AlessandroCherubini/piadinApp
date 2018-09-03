@@ -60,9 +60,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -90,7 +94,10 @@ public class FasceOrarioFragment extends Fragment {
     String notaOrdine;
     long lastlastUpdateOrdine;
     Ordine ordine;
+    FasciaOraria fasciaSelezionata;
+    String fasciaOrariaString;
     int idFasciaSelezionata;
+    int coloreFasciaSelezionata;
     boolean setNotification;
 
     private android.support.v7.widget.Toolbar toolbarFragment;
@@ -234,9 +241,12 @@ public class FasceOrarioFragment extends Fragment {
         buttonOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FasciaOraria fasciaSelezionata = fasceOrarioAdapter.getFasciaSelezionata();
+                fasciaSelezionata = fasceOrarioAdapter.getFasciaSelezionata();
                 if(fasciaSelezionata != null){
                     idFasciaSelezionata = fasciaSelezionata.getIdFascia();
+                    fasciaOrariaString = fasciaSelezionata.getInizioFascia() + " - " + fasciaSelezionata.getFineFascia();
+                    coloreFasciaSelezionata = fasciaSelezionata.getColoreBadge();
+
                     addInfoOrder();
                 }else{
                     Snackbar snackbar = Snackbar
@@ -360,8 +370,8 @@ public class FasceOrarioFragment extends Fragment {
         String totaleStringa = df.format(totaleOrdine);
         double totaleTroncato = Double.valueOf(totaleStringa);
 
-        ordine = new Ordine(0, emailUtente, telefonoUtente, dataRichiesta, totaleTroncato, piadineOrdine,
-                notaOrdine, lastlastUpdateOrdine);
+        ordine = new Ordine(0, dataRichiesta, emailUtente, telefonoUtente, "", totaleTroncato, piadineOrdine,
+                notaOrdine, lastlastUpdateOrdine, fasciaOrariaString, coloreFasciaSelezionata);
 
         // Aggiunta db esterno ed interno
         GenericCallback manageOrderCallback = new GenericCallback() {
@@ -374,9 +384,10 @@ public class FasceOrarioFragment extends Fragment {
                 Log.d("JSON", "success: " + success);
 
                 if(success) {
-                    String timestamp = JSONHelper.getStringFromObj(resultData,"timestamp_fine");
-                    ((CartActivity) mContext).setOrarioRitiro(timestamp);
-                    addUserOrderRequest(ordine);
+                    String orarioRitiro = JSONHelper.getStringFromObj(resultData,"timestamp_fine");
+                    int manageID = JSONHelper.getIntFromObj(resultData, "manage");
+                    ((CartActivity) mContext).setOrarioRitiro(orarioRitiro);
+                    addUserOrderRequest(ordine, manageID);
                 } else {
                     Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
                 }
@@ -384,9 +395,8 @@ public class FasceOrarioFragment extends Fragment {
         };
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addManageOrder(ordine,dataRichiesta,idFasciaSelezionata,quantitaRichiesta,
+        onlineHelper.addManageOrder(ordine, dataRichiesta, idFasciaSelezionata, quantitaRichiesta,
                 emailUtente, manageOrderCallback);
-        //getActivity().finish();
 
     }
 
@@ -493,7 +503,7 @@ public class FasceOrarioFragment extends Fragment {
     }
     //-----------------------------------------------------------
 
-    private void addUserOrderRequest(final Ordine ordine) {
+    private void addUserOrderRequest(final Ordine ordine, int manageID) {
         GenericCallback orderCallback = new GenericCallback() {
             @Override
             public void onSuccess(JSONObject resultData)
@@ -509,19 +519,22 @@ public class FasceOrarioFragment extends Fragment {
                 if(success) {
                     Toast.makeText(mContext, "Ordine effettuato!", Toast.LENGTH_SHORT).show();
                     DBHelper helper = new DBHelper(mContext);
+
+                    DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    DateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String inputDateStr = dataRichiesta;
+                    Date date = null;
+                    try {
+                        date = inputFormat.parse(inputDateStr);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String outputDateStr = outputFormat.format(date);
+                    ordine.setDataOrdine(outputDateStr);
                     helper.insertOrdine(ordine);
 
                     ((CartActivity) mContext).svuotaCarrello();
 
-                    boolean alarmUp = (PendingIntent.getBroadcast(mContext, 0,
-                            new Intent(mContext, NotificationService.class),
-                            PendingIntent.FLAG_NO_CREATE) != null);
-                    Log.d("ALARM", "" + alarmUp);
-
-                    /*if(alarmUp){
-                        ((NotificationService) mContext).stopNotificationService();
-                    }
-*/
                     // Notifica
                     if(setNotification){
                         Log.d("ALARM", "Nuovo servizio");
@@ -538,7 +551,7 @@ public class FasceOrarioFragment extends Fragment {
         };
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addUserOrder(ordine,orderCallback);
+        onlineHelper.addUserOrder(ordine, manageID, orderCallback);
     }
     //-----------------------------------------------------------
 
