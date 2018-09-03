@@ -70,7 +70,7 @@ public class OnlineHelper {
         };
     }
 
-    public void addUserOrder(final Ordine ordine, final GenericCallback callback){
+    public void addUserOrder(final Ordine ordine, int manageID, final GenericCallback callback){
         String dataOrdine = ordine.getDataOrdine();
         String emailOrdine = ordine.getEmailUtente();
         String telefonoOrdine = ordine.getTelefonoUtente();
@@ -92,6 +92,7 @@ public class OnlineHelper {
             params.put("fascia", fasciaOrdine);
             params.put("colore_fascia", String.valueOf(coloreOrdine));
             params.put("timestamp_ordine", timestampOrdine);
+            params.put("manage_id", String.valueOf(manageID));
         }catch(Exception e){
             e.fillInStackTrace();
         }

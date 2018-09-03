@@ -385,8 +385,9 @@ public class FasceOrarioFragment extends Fragment {
 
                 if(success) {
                     String orarioRitiro = JSONHelper.getStringFromObj(resultData,"timestamp_fine");
+                    int manageID = JSONHelper.getIntFromObj(resultData, "manage");
                     ((CartActivity) mContext).setOrarioRitiro(orarioRitiro);
-                    addUserOrderRequest(ordine);
+                    addUserOrderRequest(ordine, manageID);
                 } else {
                     Toast.makeText(mContext, "Oh no :(", Toast.LENGTH_SHORT).show();
                 }
@@ -502,7 +503,7 @@ public class FasceOrarioFragment extends Fragment {
     }
     //-----------------------------------------------------------
 
-    private void addUserOrderRequest(final Ordine ordine) {
+    private void addUserOrderRequest(final Ordine ordine, int manageID) {
         GenericCallback orderCallback = new GenericCallback() {
             @Override
             public void onSuccess(JSONObject resultData)
@@ -550,7 +551,7 @@ public class FasceOrarioFragment extends Fragment {
         };
 
         OnlineHelper onlineHelper = new OnlineHelper(mContext);
-        onlineHelper.addUserOrder(ordine, orderCallback);
+        onlineHelper.addUserOrder(ordine, manageID, orderCallback);
     }
     //-----------------------------------------------------------
 
